@@ -21,51 +21,51 @@ namespace ActiveMapper;
 interface IEntity
 {
 	/**
-	 * Get columns map
-	 *
-	 * @return array|null
-	 */
-	public static function getColumnsMap();
-	
-	/**
-	 * Get associations map
-	 *
-	 * @return array|null
-	 */
-	public static function getAssociationsMap();
-	
-	/**
 	 * Get table name
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function getTableName();
-	
+
 	/**
 	 * Has primary key
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function hasPrimaryKey();
-	
+
 	/**
 	 * Get primary key name
-	 * 
+	 *
 	 * @return string|null
 	 */
 	public static function getPrimaryKey();
 	
 	/**
+	 * Get columns meta data
+	 *
+	 * @return array|null
+	 */
+	public static function getColumnsMetaData();
+
+	/**
 	 * Has column mapped
-	 * 
+	 *
 	 * @return bool
 	 */
-	public static function hasMappedColumn($name);
-	
+	public static function hasColumnMetaData($name);
+
 	/**
 	 * Get mapped column
-	 * 
+	 *
 	 * @return ActiveMapper\IDataType
 	 */
-	public static function getMappedColumn($name);
+	public static function getColumnMetaData($name);
+
+	/**
+	 * Get associations meta data
+	 *
+	 * @return array|null
+	 */
+	public static function getAssociationsMetaData();
 }

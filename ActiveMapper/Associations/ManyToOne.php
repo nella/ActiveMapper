@@ -49,7 +49,7 @@ class ManyToOne extends Base implements IAssociation
 		parent::__construct($sourceEntity, $targetEntity);
 		
 		if (empty($name))
-			$this->name = lcfirst(substr($targetEntity, strrpos($targetEntity, '\\') + 1));
+			$this->name = lcfirst($targetEntity::getEntityName());
 		else
 			$this->name = $name;
 		
@@ -58,14 +58,14 @@ class ManyToOne extends Base implements IAssociation
 		
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($targetEntity::getPrimaryKey());
-		elseif ($targetEntity::hasMappedColumn($targetColumn))
+		elseif ($targetEntity::hasColumnMetaData($targetColumn))
 			$this->targetColumn = $targetColumn;
 		else
 			throw new \InvalidArgumentException("Target column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
 		
 		
 		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore(substr($targetEntity, strrpos($targetEntity, '\\') + 1) . ucfirst($this->targetColumn));
+			$this->sourceColumn = Tools::underscore($targetEntity::getEntityName().ucfirst($this->targetColumn));
 		else
 			$this->sourceColumn = $sourceColumn;
 	}

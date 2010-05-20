@@ -69,7 +69,7 @@ class ManyToMany extends Base implements IAssociation
 		$this->mapped = $mapped;
 		
 		if (empty($name))
-			$this->name = lcfirst(Tools::pluralize(substr($targetEntity, strrpos($targetEntity, '\\') + 1)));
+			$this->name = lcfirst(Tools::pluralize($targetEntity::getEntityName()));
 		else
 			$this->name = $name;
 		
@@ -83,7 +83,7 @@ class ManyToMany extends Base implements IAssociation
 		
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-		elseif ($sourceEntity::hasMappedColumn($sourceColumn))
+		elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
@@ -97,27 +97,19 @@ class ManyToMany extends Base implements IAssociation
 		
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($targetEntity::getPrimaryKey());
-		elseif ($targetEntity::hasMappedColumn($targetColumn))
+		elseif ($targetEntity::hasColumnMetaData($targetColumn))
 			$this->targetColumn = $targetColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
 		
 		
 		if (empty($joinTableSourceColumn))
-		{
-			$this->joinTableSourceColumn = Tools::underscore(
-				substr($sourceEntity, strrpos($sourceEntity, '\\') + 1) . ucfirst($this->sourceColumn)
-			);
-		}
+			$this->joinTableSourceColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
 		else
 			$this->joinTableSourceColumn = $joinTableSourceColumn;
 		
 		if (empty($joinTableTargetColumn))
-		{
-			$this->joinTableTargetColumn = Tools::underscore(
-				substr($targetEntity, strrpos($targetEntity, '\\') + 1) . ucfirst($this->targetColumn)
-			);
-		}
+			$this->joinTableTargetColumn = Tools::underscore($targetEntity::getEntityName().ucfirst($this->targetColumn));
 		else
 			$this->joinTableTargetColumn = $joinTableTargetColumn;
 		
@@ -127,15 +119,13 @@ class ManyToMany extends Base implements IAssociation
 		elseif ($this->mapped)
 		{
 			$this->joinTable = Tools::underscore(
-				Tools::pluralize(substr($sourceEntity, strrpos($sourceEntity, '\\') + 1)) 
-				. ucfirst(Tools::pluralize(substr($targetEntity, strrpos($targetEntity, '\\') + 1)))
+				Tools::pluralize($sourceEntity::getEntityName()).ucfirst(Tools::pluralize($targetEntity::getEntityName()))
 			);
 		}
 		else
 		{
 			$this->joinTable = Tools::underscore(
-				Tools::pluralize(substr($targetEntity, strrpos($targetEntity, '\\') + 1)) 
-				. ucfirst(Tools::pluralize(substr($sourceEntity, strrpos($sourceEntity, '\\') + 1)))
+				Tools::pluralize($targetEntity::getEntityName()).ucfirst(Tools::pluralize($sourceEntity::getEntityName()))
 			);
 		}
 	}
@@ -222,7 +212,9 @@ class ManyToMany extends Base implements IAssociation
 		$entity = $this->targetEntity;
 		$sourceEntity = $this->sourceEntity;
 		return new \ActiveMapper\RepositoryCollection($entity, \dibi::select("[".$entity::getTableName()."].*")
-			->from($entity::getTableName())->innerJoin($this->joinTable)->on("[".$this->joinTable."].[".$this->joinTableSourceColumn."] = "
+			->from($entity::getTableName())
+			->innerJoin($this->joinTable)
+			->on("[".$this->joinTable."].[".$this->joinTableSourceColumn."] = "
 				.\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
 			->and("[".$this->joinTable."].[".$this->joinTableTargetColumn."] = [".$entity::getTableName()."].[".$this->targetColumn."]"));
 	}

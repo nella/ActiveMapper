@@ -55,7 +55,7 @@ class OneToOne extends Base implements IAssociation
 		$this->mapped = $mapped;
 		
 		if (empty($name))
-			$this->name = lcfirst(substr($targetEntity, strrpos($targetEntity, '\\') + 1));
+			$this->name = lcfirst($targetEntity::getEntityName());
 		else
 			$this->name = $name;
 		
@@ -70,7 +70,7 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($sourceColumn))
 				$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-			elseif ($sourceEntity::hasMappedColumn($sourceColumn))
+			elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
 				$this->sourceColumn = $sourceColumn;
 			else
 				throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
@@ -78,9 +78,7 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($targetColumn))
 			{
-				$this->targetColumn = Tools::underscore(
-					substr($sourceEntity, strrpos($sourceEntity, '\\') + 1) . ucfirst($this->sourceColumn)
-				);
+				$this->targetColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
 			}
 			else
 				$this->targetColumn = $targetColumn;
@@ -96,7 +94,7 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($targetColumn))
 				$this->targetColumn = Tools::underscore($targetEntity::getPrimaryKey());
-			elseif ($targetEntity::hasMappedColumn($targetColumn))
+			elseif ($targetEntity::hasColumnMetaData($targetColumn))
 				$this->targetColumn = $targetColumn;
 			else
 				throw new \InvalidArgumentException("Target column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
@@ -104,9 +102,7 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($sourceColumn))
 			{
-				$this->sourceColumn = Tools::underscore(
-					substr($targetEntity, strrpos($targetEntity, '\\') + 1) . ucfirst($this->targetColumn)
-				);
+				$this->sourceColumn = Tools::underscore($targetEntity::getEntityName().ucfirst($this->targetColumn));
 			}
 			else
 				$this->sourceColumn = $sourceColumn;

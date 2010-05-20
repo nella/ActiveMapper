@@ -49,7 +49,7 @@ class OneToMany extends Base implements IAssociation
 		parent::__construct($sourceEntity, $targetEntity);
 		
 		if (empty($name))
-			$this->name = lcfirst(Tools::pluralize(substr($targetEntity, strrpos($targetEntity, '\\') + 1)));
+			$this->name = lcfirst(Tools::pluralize($targetEntity::getEntityName()));
 		else
 			$this->name = $name;
 		
@@ -58,14 +58,14 @@ class OneToMany extends Base implements IAssociation
 		
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-		elseif ($sourceEntity::hasMappedColumn($sourceColumn))
+		elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
 		
 		
 		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore(substr($sourceEntity, strrpos($sourceEntity, '\\') + 1) . ucfirst($this->sourceColumn));
+			$this->targetColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
 		else
 			$this->targetColumn = $targetColumn;
 	}

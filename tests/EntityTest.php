@@ -4,7 +4,7 @@ namespace App;
 require_once __DIR__ . "/bootstrap.php";
 require_once "PHPUnit/Framework.php";
 
-class MyEntity extends \ActiveMapper\Entity
+class FooEntity extends \ActiveMapper\Entity
 {
 	/**
 	 * @column(Bool)
@@ -80,58 +80,14 @@ class MyEntity extends \ActiveMapper\Entity
 	private $testTime2;
 }
 
-class MyEntity2 extends \ActiveMapper\Entity
-{
-	/**
-	 * @column(exception)
-	 */
-	private $test;
-}
-
-class MyEntity3 extends \ActiveMapper\Entity
-{
-	/**
-	 * @column(Text)
-	 * @autoincrement
-	 */
-	private $testAutoincrementTest;
-}
-
-/**
- * @tableName test
- */
-class MyEntity4 extends \ActiveMapper\Entity
-{
-	/**
-	 * @column(Int)
-	 * @autoincrement
-	 * @primary
-	 */
-	private $testAutoincrementPrimary;
-}
-
-class MyEntity5 extends \ActiveMapper\Entity
-{
-	/**
-	 * @column(Int)
-	 * @primary
-	 */
-	private $testMultiplePrimary1;
-	/**
-	 * @column(Int)
-	 * @primary
-	 */
-	private $testMultiplePrimary2;
-}
-
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
-	/** @var App\MyEntity */
+	/** @var App\FooEntity */
 	private $object;
 
 	public function setUp()
 	{
-		$this->object = new MyEntity(array(
+		$this->object = new FooEntity(array(
 		'testBool1' => TRUE,
 		'testDate1' => "2012-12-21",
 		'testDateTime1' => "2012-12-21 23:59:59",
@@ -141,140 +97,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 		'testText1' => "Test",
 		'testTime1' => "23:59:59"
 		));
-	}
-
-	public function testBoolColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Bool', $map['testBool1']);
-		$this->assertEquals('testBool1', $map['testBool1']->getName());
-		$this->assertFalse($map['testBool1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Bool', $map['testBool2']);
-		$this->assertEquals('testBool2', $map['testBool2']->getName());
-		$this->assertTrue($map['testBool2']->allowNull);
-	}
-
-	public function testDateColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Date', $map['testDate1']);
-		$this->assertEquals('testDate1', $map['testDate1']->getName());
-		$this->assertFalse($map['testDate1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Date', $map['testDate2']);
-		$this->assertEquals('testDate2', $map['testDate2']->getName());
-		$this->assertTrue($map['testDate2']->allowNull);
-	}
-
-	public function testDateTimeColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\DateTime', $map['testDateTime1']);
-		$this->assertEquals('testDateTime1', $map['testDateTime1']->getName());
-		$this->assertFalse($map['testDateTime1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\DateTime', $map['testDateTime2']);
-		$this->assertEquals('testDateTime2', $map['testDateTime2']->getName());
-		$this->assertTrue($map['testDateTime2']->allowNull);
-	}
-
-	public function testFloatColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Float', $map['testFloat1']);
-		$this->assertEquals('testFloat1', $map['testFloat1']->getName());
-		$this->assertFalse($map['testFloat1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Float', $map['testFloat2']);
-		$this->assertEquals('testFloat2', $map['testFloat2']->getName());
-		$this->assertTrue($map['testFloat2']->allowNull);
-	}
-
-	public function testIntColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Int', $map['testInt1']);
-		$this->assertEquals('testInt1', $map['testInt1']->getName());
-		$this->assertFalse($map['testInt1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Int', $map['testInt2']);
-		$this->assertEquals('testInt2', $map['testInt2']->getName());
-		$this->assertTrue($map['testInt2']->allowNull);
-	}
-
-	public function testStringColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\String', $map['testString1']);
-		$this->assertEquals('testString1', $map['testString1']->getName());
-		$this->assertFalse($map['testString1']->allowNull);
-		$this->assertEquals(128, $map['testString1']->length);
-		$this->assertType('ActiveMapper\DataTypes\String', $map['testString2']);
-		$this->assertEquals('testString2', $map['testString2']->getName());
-		$this->assertTrue($map['testString2']->allowNull);
-		$this->assertEquals(250, $map['testString2']->length);
-	}
-
-	public function testTextColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Text', $map['testText1']);
-		$this->assertEquals('testText1', $map['testText1']->getName());
-		$this->assertFalse($map['testText1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Text', $map['testText2']);
-		$this->assertEquals('testText2', $map['testText2']->getName());
-		$this->assertTrue($map['testText2']->allowNull);
-	}
-
-	public function testTimeColumns()
-	{
-		$map = MyEntity::getColumnsMap();
-
-		$this->assertType('ActiveMapper\DataTypes\Time', $map['testTime1']);
-		$this->assertEquals('testTime1', $map['testTime1']->getName());
-		$this->assertFalse($map['testTime1']->allowNull);
-		$this->assertType('ActiveMapper\DataTypes\Time', $map['testTime2']);
-		$this->assertEquals('testTime2', $map['testTime2']->getName());
-		$this->assertTrue($map['testTime2']->allowNull);
-	}
-
-	public function testColumnInvalidDataTypeException1()
-	{
-		$this->setExpectedException("ActiveMapper\InvalidDataTypeException");
-		MyEntity2::getColumnsMap();
-	}
-
-	public function testAutoIncrementBadDataTypeException()
-	{
-		$this->setExpectedException('ActiveMapper\InvalidDataTypeException');
-		MyEntity3::getColumnsMap();
-	}
-
-	public function testHasPrimaryKey()
-	{
-		$this->assertTrue(MyEntity4::hasPrimaryKey());
-		$this->assertFalse(MyEntity::hasPrimaryKey());
-	}
-
-	public function testPrimaryKey()
-	{
-		$this->assertEquals('testAutoincrementPrimary', MyEntity4::getPrimaryKey());
-		$this->assertNull(MyEntity::getPrimaryKey());
-	}
-
-	public function testPrimaryKeyMultipleException()
-	{
-		$this->setExpectedException('NotImplementedException');
-		MyEntity5::getColumnsMap();
-	}
-
-	public function testTableName()
-	{
-		$this->assertEquals('my_entities', MyEntity::getTableName());
-		$this->assertEquals('test', MyEntity4::getTableName());
 	}
 
 	public function testGetValue()
@@ -385,36 +207,36 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 		$this->object->testNonExistProperty = NULL;
 	}
 
-	public function testHasMappedColumn()
+	public function testHasColumnMetaData()
 	{
-		$this->assertTrue(MyEntity::hasMappedColumn('testBool1'));
-		$this->assertFalse(MyEntity::hasMappedColumn('false'));
+		$this->assertTrue(FooEntity::hasColumnMetaData('testBool1'));
+		$this->assertFalse(FooEntity::hasColumnMetaData('false'));
 	}
 
-	public function testGetMappedColumn()
+	public function testGetColumnMetaData()
 	{
-		$column = MyEntity::getMappedColumn('testBool1');
+		$column = FooEntity::getColumnMetaData('testBool1');
 		$this->assertType('ActiveMapper\DataTypes\Bool', $column);
 		$this->assertEquals('testBool1', $column->getName());
 		$this->assertFalse($column->allowNull);
 	}
 
-	public function testGetMappedColumnException()
+	public function testgetColumnMetaDataException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		MyEntity::getMappedColumn('exception');
+		FooEntity::getColumnMetaData('exception');
 	}
 
 	/************************************************************ Associations ********************************************************p*v*/
 
 	public function testOneToOneAssociation1()
 	{
-		$associations = Models\Author::getAssociationsMap();
+		$associations = Models\Author::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Author', 'App\Models\Profile');
 		$this->assertTrue(isset($associations['profile']));
 		$this->assertEquals($object, $associations['profile']);
 
-		$associations = Models\Profile::getAssociationsMap();
+		$associations = Models\Profile::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Profile', 'App\Models\Author', FALSE);
 		$this->assertTrue(isset($associations['author']));
 		$this->assertEquals($object, $associations['author']);
@@ -422,7 +244,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
 	public function testOneToManyAssociation1()
 	{
-		$associations = Models\Author::getAssociationsMap();
+		$associations = Models\Author::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\OneToMany('App\Models\Author', 'App\Models\Article');
 		$this->assertTrue(isset($associations['articles']));
 		$this->assertEquals($object, $associations['articles']);
@@ -430,7 +252,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
 	public function testManyToOneAssociation1()
 	{
-		$associations = Models\Article::getAssociationsMap();
+		$associations = Models\Article::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\ManyToOne('App\Models\Article', 'App\Models\Author');
 		$this->assertTrue(isset($associations['author']));
 		$this->assertEquals($object, $associations['author']);
@@ -438,12 +260,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
 	public function testManyToManyAssociation1()
 	{
-		$associations = Models\Article::getAssociationsMap();
+		$associations = Models\Article::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\ManyToMany('App\Models\Article', 'App\Models\Tag');
 		$this->assertTrue(isset($associations['tags']));
 		$this->assertEquals($object, $associations['tags']);
 
-		$associations = Models\Tag::getAssociationsMap();
+		$associations = Models\Tag::getAssociationsMetaData();
 		$object = new \ActiveMapper\Associations\ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE);
 		$this->assertTrue(isset($associations['articles']));
 		$this->assertEquals($object, $associations['articles']);

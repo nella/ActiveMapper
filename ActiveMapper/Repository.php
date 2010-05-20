@@ -96,10 +96,10 @@ abstract class Repository extends \Nette\Object
 	{
 		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
 			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		if (!$entity::hasMappedColumn($column))
+		if (!$entity::hasColumnMetaData($column))
 			throw new \InvalidArgumentException("Entity [".$entity."] has not '".$column."' column");
 		
-		switch($entity::getMappedColumn($column)->reflection->name)
+		switch($entity::getColumnMetaData($column)->reflection->name)
 		{
 			case 'ActiveMapper\DataTypes\Bool':
 				return '%b';

@@ -6,7 +6,7 @@ require_once __DIR__ . "/../Nette/loader.php";
 use Nette;
 use dibi;
 
-//Nette\Debug::enable();
+Nette\Debug::enable(Nette\Debug::DEVELOPMENT);
 Nette\Environment::setVariable("tempDir", __DIR__ . "/temp");
 $loader = new Nette\Loaders\RobotLoader();
 $loader->addDirectory(__DIR__ . "/..");
