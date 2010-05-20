@@ -16,6 +16,9 @@
  *
  * Connection options:
  *   - 'host' - the MS SQL server host name. It can also include a port number (hostname:port)
+ *   - 'username'
+ *   - 'password'
+ *   - 'database' - the database name to select
  *   - 'options' - connection info array {@link http://msdn.microsoft.com/en-us/library/cc296161(SQL.90).aspx}
  *   - 'lazy' - if TRUE, connection will be established only when required
  *   - 'charset' - character encoding to set (default is UTF-8)
@@ -53,14 +56,15 @@ class DibiMsSql2005Driver extends DibiObject implements IDibiDriver
 	 */
 	public function connect(array &$config)
 	{
+		DibiConnection::alias($config, 'options|UID', 'username');
+		DibiConnection::alias($config, 'options|PWD', 'password');
+		DibiConnection::alias($config, 'options|Database', 'database');
+
 		if (isset($config['resource'])) {
 			$this->connection = $config['resource'];
 
-		} elseif (isset($config['options'])) {
-			$this->connection = sqlsrv_connect($config['host'], (array) $config['options']);
-
 		} else {
-			$this->connection = sqlsrv_connect($config['host']);
+			$this->connection = sqlsrv_connect($config['host'], (array) $config['options']);
 		}
 
 		if (!is_resource($this->connection)) {
@@ -169,17 +173,6 @@ class DibiMsSql2005Driver extends DibiObject implements IDibiDriver
 
 
 	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	public function inTransaction()
-	{
-		throw new NotSupportedException('MSSQL 2005 driver does not support transaction testing.');
-	}
-
-
-
-	/**
 	 * Returns the connection resource.
 	 * @return mixed
 	 */
@@ -210,8 +203,7 @@ class DibiMsSql2005Driver extends DibiObject implements IDibiDriver
 
 		case dibi::IDENTIFIER:
 			// @see http://msdn.microsoft.com/en-us/library/ms176027.aspx
-			$value = str_replace(array('[', ']'), array('[[', ']]'), $value);
-			return '[' . str_replace('.', '].[', $value) . ']';
+			return '[' . str_replace(array('[', ']'), array('[[', ']]'), $value) . ']';
 
 		case dibi::BOOL:
 			return $value ? 1 : 0;

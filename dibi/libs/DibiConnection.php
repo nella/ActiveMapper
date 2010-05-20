@@ -55,7 +55,11 @@ class DibiConnection extends DibiObject
 			parse_str($config, $config);
 
 		} elseif ($config instanceof Traversable) {
-			$config = iterator_to_array($config);
+			$tmp = array();
+			foreach ($config as $key => $val) {
+				$tmp[$key] = $val instanceof Traversable ? iterator_to_array($val) : $val;
+			}
+			$config = $tmp;
 
 		} elseif (!is_array($config)) {
 			throw new InvalidArgumentException('Configuration must be array, string or object.');
@@ -64,6 +68,8 @@ class DibiConnection extends DibiObject
 		self::alias($config, 'username', 'user');
 		self::alias($config, 'password', 'pass');
 		self::alias($config, 'host', 'hostname');
+		self::alias($config, 'result|detectTypes', 'resultDetectTypes'); // back compatibility
+		self::alias($config, 'result|formatDateTime', 'resultDateTime');
 
 		if (!isset($config['driver'])) {
 			$config['driver'] = dibi::$defaultDriver;
@@ -72,7 +78,7 @@ class DibiConnection extends DibiObject
 		$driver = preg_replace('#[^a-z0-9_]#', '_', $config['driver']);
 		$class = "Dibi" . $driver . "Driver";
 		if (!class_exists($class, FALSE)) {
-			include_once __DIR__ . "/../drivers/$driver.php";
+			include_once dirname(__FILE__) . "/../drivers/$driver.php";
 
 			if (!class_exists($class, FALSE)) {
 				throw new DibiException("Unable to create instance of dibi driver '$class'.");
@@ -83,15 +89,20 @@ class DibiConnection extends DibiObject
 		$this->config = $config;
 		$this->driver = new $class;
 
-		if (!empty($config['profiler'])) {
-			$class = $config['profiler'];
-			if (is_numeric($class) || is_bool($class)) {
-				$class = 'DibiProfiler';
-			}
+        // profiler
+		$profilerCfg = & $config['profiler'];
+		if (is_numeric($profilerCfg) || is_bool($profilerCfg)) { // back compatibility
+			$profilerCfg = array('run' => (bool) $profilerCfg);
+		} elseif (is_string($profilerCfg)) {
+			$profilerCfg = array('run' => TRUE, 'class' => $profilerCfg);
+		}
+
+		if (!empty($profilerCfg['run'])) {
+			$class = isset($profilerCfg['class']) ? $profilerCfg['class'] : 'DibiProfiler';
 			if (!class_exists($class)) {
 				throw new DibiException("Unable to create instance of dibi profiler '$class'.");
 			}
-			$this->setProfiler(new $class);
+			$this->setProfiler(new $class($profilerCfg));
 		}
 
 		if (!empty($config['substitutes'])) {
@@ -193,15 +204,14 @@ class DibiConnection extends DibiObject
 	 * @param  string alias key
 	 * @return void
 	 */
-	public static function alias(&$config, $key, $alias=NULL)
+	public static function alias(&$config, $key, $alias)
 	{
-		if (isset($config[$key])) return;
+		$foo = & $config;
+		foreach (explode('|', $key) as $key) $foo = & $foo[$key];
 
-		if ($alias !== NULL && isset($config[$alias])) {
-			$config[$key] = $config[$alias];
+		if (!isset($foo) && isset($config[$alias])) {
+			$foo = $config[$alias];
 			unset($config[$alias]);
-		} else {
-			$config[$key] = NULL;
 		}
 	}
 
@@ -325,7 +335,7 @@ class DibiConnection extends DibiObject
 
 		dibi::$sql = $sql;
 		if ($res = $this->driver->query($sql)) { // intentionally =
-			$res = new DibiResult($res, $this->config);
+			$res = new DibiResult($res, $this->config['result']);
 		} else {
 			$res = $this->driver->getAffectedRows();
 		}
@@ -443,18 +453,6 @@ class DibiConnection extends DibiObject
 		if (isset($ticket)) {
 			$this->profiler->after($ticket);
 		}
-	}
-
-
-
-	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	public function inTransaction()
-	{
-		$this->connect();
-		return $this->driver->inTransaction();
 	}
 
 

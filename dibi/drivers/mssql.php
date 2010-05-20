@@ -96,7 +96,7 @@ class DibiMsSqlDriver extends DibiObject implements IDibiDriver
 		$this->resultSet = @mssql_query($sql, $this->connection); // intentionally @
 
 		if ($this->resultSet === FALSE) {
-			throw new DibiDriverException('Query error', 0, $sql);
+			throw new DibiDriverException(mssql_get_last_message(), 0, $sql);
 		}
 
 		return is_resource($this->resultSet) ? clone $this : NULL;
@@ -171,17 +171,6 @@ class DibiMsSqlDriver extends DibiObject implements IDibiDriver
 
 
 	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	public function inTransaction()
-	{
-		throw new NotSupportedException('MSSQL driver does not support transaction testing.');
-	}
-
-
-
-	/**
 	 * Returns the connection resource.
 	 * @return mixed
 	 */
@@ -212,8 +201,7 @@ class DibiMsSqlDriver extends DibiObject implements IDibiDriver
 
 		case dibi::IDENTIFIER:
 			// @see http://msdn.microsoft.com/en-us/library/ms176027.aspx
-			$value = str_replace(array('[', ']'), array('[[', ']]'), $value);
-			return '[' . str_replace('.', '].[', $value) . ']';
+			return '[' . str_replace(array('[', ']'), array('[[', ']]'), $value) . ']';
 
 		case dibi::BOOL:
 			return $value ? 1 : 0;

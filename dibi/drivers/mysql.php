@@ -68,7 +68,7 @@ class DibiMySqlDriver extends DibiObject implements IDibiDriver
 	 */
 	public function connect(array &$config)
 	{
-		DibiConnection::alias($config, 'options');
+		$foo = & $config['options'];
 
 		if (isset($config['resource'])) {
 			$this->connection = $config['resource'];
@@ -175,6 +175,8 @@ class DibiMySqlDriver extends DibiObject implements IDibiDriver
 	{
 		$res = array();
 		preg_match_all('#(.+?): +(\d+) *#', mysql_info($this->connection), $matches, PREG_SET_ORDER);
+		if (preg_last_error()) throw new PcreException;
+
 		foreach ($matches as $m) {
 			$res[$m[1]] = (int) $m[2];
 		}
@@ -245,17 +247,6 @@ class DibiMySqlDriver extends DibiObject implements IDibiDriver
 
 
 	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	public function inTransaction()
-	{
-		return (bool) mysql_result(mysql_query('SELECT @@autocommit', $this->connection), 0);
-	}
-
-
-
-	/**
 	 * Returns the connection resource.
 	 * @return mixed
 	 */
@@ -288,8 +279,7 @@ class DibiMySqlDriver extends DibiObject implements IDibiDriver
 
 		case dibi::IDENTIFIER:
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
-			$value = str_replace('`', '``', $value);
-			return '`' . str_replace('.', '`.`', $value) . '`';
+			return '`' . str_replace('`', '``', $value) . '`';
 
 		case dibi::BOOL:
 			return $value ? 1 : 0;

@@ -798,6 +798,7 @@ class DibiFirebirdDriver extends DibiObject implements IDibiDriver
 
 
 
+
 /**
  * Database procedure exception.
  *

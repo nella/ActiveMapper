@@ -98,6 +98,7 @@ class DibiException extends Exception implements Nette\IDebugPanel
 
 
 
+
 /**
  * database server exception.
  *

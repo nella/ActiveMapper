@@ -194,17 +194,6 @@ class DibiSqliteDriver extends DibiObject implements IDibiDriver
 
 
 	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	public function inTransaction()
-	{
-		throw new NotSupportedException('SQLite driver does not support transaction testing.');
-	}
-
-
-
-	/**
 	 * Returns the connection resource.
 	 * @return mixed
 	 */
@@ -234,7 +223,7 @@ class DibiSqliteDriver extends DibiObject implements IDibiDriver
 			return "'" . sqlite_escape_string($value) . "'";
 
 		case dibi::IDENTIFIER:
-			return '[' . str_replace('.', '].[', strtr($value, '[]', '  ')) . ']';
+			return '[' . strtr($value, '[]', '  ') . ']';
 
 		case dibi::BOOL:
 			return $value ? 1 : 0;

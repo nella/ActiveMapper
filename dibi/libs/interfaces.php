@@ -24,6 +24,8 @@ interface IDataSource extends Countable, IteratorAggregate
 
 
 
+
+
 /**
  * Defines method that must profiler implement.
  * @package dibi
@@ -70,6 +72,8 @@ interface IDibiProfiler
 	function exception(DibiDriverException $exception);
 
 }
+
+
 
 
 
@@ -140,12 +144,6 @@ interface IDibiDriver
 	 * @throws DibiDriverException
 	 */
 	function rollback($savepoint = NULL);
-
-	/**
-	 * Is in transaction?
-	 * @return bool
-	 */
-	function inTransaction();
 
 	/**
 	 * Returns the connection resource.

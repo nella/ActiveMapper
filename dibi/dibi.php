@@ -62,15 +62,24 @@ if (!class_exists('FileNotFoundException', FALSE)) {
 	class FileNotFoundException extends IOException {}
 }
 
-if (!interface_exists('Nette\IDebugPanel', FALSE)) {
-	require_once __DIR__ . '/Nette/IDebugPanel.php';
+if (!class_exists('PcreException', FALSE)) {
+	/** @package exceptions */
+	class PcreException extends Exception {
+
+		public function __construct()
+		{
+			static $messages = array(
+				PREG_INTERNAL_ERROR => 'Internal error.',
+				PREG_BACKTRACK_LIMIT_ERROR => 'Backtrack limit was exhausted.',
+				PREG_RECURSION_LIMIT_ERROR => 'Recursion limit was exhausted.',
+				PREG_BAD_UTF8_ERROR => 'Malformed UTF-8 data.',
+				5 => 'Offset didn\'t correspond to the begin of a valid UTF-8 code point.', // PREG_BAD_UTF8_OFFSET_ERROR
+			);
+			$code = preg_last_error();
+			parent::__construct(isset($messages[$code]) ? $messages[$code] : 'Unknown error.', $code);
+		}
+	}
 }
-
-if (!class_exists('DateTime53', FALSE)) {
-	require_once __DIR__ . '/Nette/DateTime53.php';
-}
-
-
 
 /**
  * @deprecated
@@ -86,18 +95,20 @@ class DibiVariable extends DateTime53
 
 
 // dibi libraries
-require_once __DIR__ . '/libs/interfaces.php';
-require_once __DIR__ . '/libs/DibiObject.php';
-require_once __DIR__ . '/libs/DibiException.php';
-require_once __DIR__ . '/libs/DibiConnection.php';
-require_once __DIR__ . '/libs/DibiResult.php';
-require_once __DIR__ . '/libs/DibiResultIterator.php';
-require_once __DIR__ . '/libs/DibiRow.php';
-require_once __DIR__ . '/libs/DibiTranslator.php';
-require_once __DIR__ . '/libs/DibiDataSource.php';
-require_once __DIR__ . '/libs/DibiFluent.php';
-require_once __DIR__ . '/libs/DibiDatabaseInfo.php';
-require_once __DIR__ . '/libs/DibiProfiler.php';
+require_once dirname(__FILE__) . '/libs/interfaces.php';
+require_once dirname(__FILE__) . '/libs/DibiObject.php';
+require_once dirname(__FILE__) . '/libs/DibiException.php';
+require_once dirname(__FILE__) . '/libs/DibiConnection.php';
+require_once dirname(__FILE__) . '/libs/DibiResult.php';
+require_once dirname(__FILE__) . '/libs/DibiResultIterator.php';
+require_once dirname(__FILE__) . '/libs/DibiRow.php';
+require_once dirname(__FILE__) . '/libs/DibiTranslator.php';
+require_once dirname(__FILE__) . '/libs/DibiDataSource.php';
+require_once dirname(__FILE__) . '/libs/DibiFluent.php';
+require_once dirname(__FILE__) . '/libs/DibiDatabaseInfo.php';
+require_once dirname(__FILE__) . '/libs/DibiProfiler.php';
+
+
 
 
 
@@ -143,16 +154,10 @@ class dibi
 	 * dibi version
 	 */
 	const VERSION = '1.3-dev';
-	const REVISION = '555e825 released on 2010-04-26';
+	const REVISION = '651c0f8 released on 2010-05-19';
 	/**#@-*/
 
-	/**#@+
-	 * Configuration options
-	 */
-	const RESULT_DETECT_TYPES = 'resultDetectTypes';
-	const RESULT_DATE_TIME = 'resultDateTime';
 	const ASC = 'ASC', DESC = 'DESC';
-	/**#@-*/
 
 	/** @var DibiConnection[]  Connection registry storage for DibiConnection objects */
 	private static $registry = array();

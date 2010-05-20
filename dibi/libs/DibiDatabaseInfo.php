@@ -85,6 +85,7 @@ class DibiDatabaseInfo extends DibiObject
 	 */
 	public function getTable($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->init();
 		$l = strtolower($name);
 		if (isset($this->tables[$l])) {
@@ -103,6 +104,7 @@ class DibiDatabaseInfo extends DibiObject
 	 */
 	public function hasTable($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->init();
 		return isset($this->tables[strtolower($name)]);
 	}
@@ -123,6 +125,7 @@ class DibiDatabaseInfo extends DibiObject
 	}
 
 }
+
 
 
 
@@ -226,6 +229,7 @@ class DibiTableInfo extends DibiObject
 	 */
 	public function getColumn($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->initColumns();
 		$l = strtolower($name);
 		if (isset($this->columns[$l])) {
@@ -244,6 +248,7 @@ class DibiTableInfo extends DibiObject
 	 */
 	public function hasColumn($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->initColumns();
 		return isset($this->columns[strtolower($name)]);
 	}
@@ -332,6 +337,7 @@ class DibiTableInfo extends DibiObject
 
 
 
+
 /**
  * Reflection metadata class for a result set.
  *
@@ -394,6 +400,7 @@ class DibiResultInfo extends DibiObject
 	 */
 	public function getColumn($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->initColumns();
 		$l = strtolower($name);
 		if (isset($this->names[$l])) {
@@ -412,6 +419,7 @@ class DibiResultInfo extends DibiObject
 	 */
 	public function hasColumn($name)
 	{
+		$name = DibiTranslator::substitute($name);
 		$this->initColumns();
 		return isset($this->names[strtolower($name)]);
 	}
@@ -432,6 +440,7 @@ class DibiResultInfo extends DibiObject
 	}
 
 }
+
 
 
 
@@ -636,6 +645,7 @@ class DibiColumnInfo extends DibiObject
 
 
 
+
 /**
  * Reflection metadata class for a foreign key.
  *
@@ -683,6 +693,7 @@ class DibiForeignKeyInfo extends DibiObject
 	}
 
 }
+
 
 
 
