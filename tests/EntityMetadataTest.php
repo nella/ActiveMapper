@@ -302,6 +302,7 @@ class EntityMetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Profile', 'App\Models\Author', FALSE);
 		$this->assertTrue(isset($metadata->associations['author']));
 		$this->assertEquals($object, $metadata->associations['author']);
+		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
 	}
 
 	public function testOneToManyAssociation1()
@@ -318,6 +319,7 @@ class EntityMetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new \ActiveMapper\Associations\ManyToOne('App\Models\Article', 'App\Models\Author');
 		$this->assertTrue(isset($metadata->associations['author']));
 		$this->assertEquals($object, $metadata->associations['author']);
+		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
 	}
 
 	public function testManyToManyAssociation1()
@@ -331,5 +333,15 @@ class EntityMetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new \ActiveMapper\Associations\ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE);
 		$this->assertTrue(isset($metadata->associations['articles']));
 		$this->assertEquals($object, $metadata->associations['articles']);
+	}
+
+	public function testAssociationsKeys()
+	{
+		$metadata = new \ActiveMapper\EntityMetadata('App\Models\Article');
+		$this->assertEquals(array('author_id'), $metadata->getAssociationsKeys());
+		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
+		$metadata = new \ActiveMapper\EntityMetadata('App\Models\Profile');
+		$this->assertEquals(array('author_id'), $metadata->getAssociationsKeys());
+		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
 	}
 }

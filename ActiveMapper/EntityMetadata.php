@@ -22,6 +22,7 @@ use Nette\Reflection\ClassReflection;
  * @property-read string $tableName entity table name
  * @property-read array $columns entity columns array
  * @property-read array $associations entity associations array
+ * @property-read array $associationsKeys entity associations keys array
  * @property-read string $primaryKey entity primary key name
  * @property-read string $name entity name
  */
@@ -33,6 +34,8 @@ class EntityMetadata extends \Nette\Object
 	private $columns;
 	/** @var array */
 	private $associations;
+	/** @var array */
+	private $associationsKeys;
 	/** @var string */
 	private $primaryKey;
 	/** @var string */
@@ -51,7 +54,7 @@ class EntityMetadata extends \Nette\Object
 
 		$this->isAssociationsLoaded = FALSE;
 		$this->entity = $entity;
-		$this->associations = $this->columns = array();
+		$this->associations = $this->columns = $this->associationsKeys = array();
 		$this->tableName = $this->primaryKey = NULL;
 
 		/********************************************************** Columns ***********************************************************p*v*/
@@ -127,6 +130,8 @@ class EntityMetadata extends \Nette\Object
 					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
+				if ($assoc->sourceColumn != $this->primaryKey)
+					$this->associationsKeys[] = $assoc->sourceColumn;
 			}
 		}
 		if (isset($annotations['OneToMany']) && count($annotations['OneToMany']) > 0)
@@ -140,6 +145,8 @@ class EntityMetadata extends \Nette\Object
 					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
+				if ($assoc->sourceColumn != $this->primaryKey)
+					$this->associationsKeys[] = $assoc->sourceColumn;
 			}
 		}
 		if (isset($annotations['ManyToOne']) && count($annotations['ManyToOne']) > 0)
@@ -153,6 +160,8 @@ class EntityMetadata extends \Nette\Object
 					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
+				if ($assoc->sourceColumn != $this->primaryKey)
+					$this->associationsKeys[] = $assoc->sourceColumn;
 			}
 		}
 		if (isset($annotations['ManyToMany']) && count($annotations['ManyToMany']) > 0)
@@ -170,6 +179,8 @@ class EntityMetadata extends \Nette\Object
 					isset($data['joinTableSourceColumn']) ? $data['joinTableSourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
+				if ($assoc->sourceColumn != $this->primaryKey)
+					$this->associationsKeys[] = $assoc->sourceColumn;
 			}
 		}
 
@@ -251,6 +262,19 @@ class EntityMetadata extends \Nette\Object
 			throw new \InvalidArgumentException("Association '".$name."' not exist in '".$this->entity."' entity");
 
 		return $this->associations[$name];
+	}
+
+	/**
+	 * Get associations key
+	 *
+	 * @return array
+	 */
+	public function getAssociationsKeys()
+	{
+		if (!$this->isAssociationsLoaded)
+			$this->loadAssociations();
+		
+		return $this->associationsKeys;
 	}
 
 	/**

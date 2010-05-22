@@ -81,7 +81,9 @@ class RepositoryCollection extends Collection
 		}
 
 		$this->fluent->removeClause('select');
-		$this->fluent->select(array_unique(array_merge(array(Manager::getEntityMetaData($this->entity)->primaryKey), $columns)));
+		$this->fluent->select(array_unique(array_merge(array(
+			Manager::getEntityMetaData($this->entity)->primaryKey), $columns, Manager::getEntityMetaData($this->entity)->associationsKeys
+		)));
 
 		return $this;
 	}

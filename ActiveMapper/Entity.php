@@ -40,33 +40,29 @@ abstract class Entity extends \Nette\Object implements IEntity
 	{
 		$metaData = Manager::getEntityMetaData(get_called_class());
 
-		$this->assocData = array();
-		if (!empty($metaData->columns))
+		$this->data = $this->assocData = $this->assocKeys = array();
+		foreach ($metaData->columns as $column)
 		{
-			$this->data = array();
-			foreach ($metaData->columns as $column)
+			if ($metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
 			{
-				if ($metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
-				{
-					if (isset($data[$column->name]))
-						$this->originalData[$column->name] = $column->sanitize($data[$column->name]);
-					else
-					{
-						$this->originalData[$column->name] = new LazyLoad(get_called_class(), $column->name, $data[$metaData->primaryKey]);
-					}
-				}
+				if (isset($data[$column->name]))
+					$this->originalData[$column->name] = $column->sanitize($data[$column->name]);
 				else
-					$this->originalData[$column->name] = $column->sanitize(isset($data[$column->name]) ? $data[$column->name] : NULL);
+				{
+					$this->originalData[$column->name] = new LazyLoad(get_called_class(), $column->name, $data[$metaData->primaryKey]);
+				}
 			}
+			else
+				$this->originalData[$column->name] = $column->sanitize(isset($data[$column->name]) ? $data[$column->name] : NULL);
 		}
-		if (!empty($metaData->associations))
+		if (count($metaData->associationsKeys) > 0 )
 		{
-			$this->assocKeys = array();
-			$this->data = array();
-			foreach ($metaData->associations as $association)
+			foreach ($metaData->associationsKeys as $key)
 			{
-				if (!isset($this->originalData[$association->sourceColumn]) && isset($data[$association->sourceColumn]))
-					$this->assocKeys[$association->sourceColumn] = $data[$association->sourceColumn];
+				if (!isset($data[$key]) && $metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
+					throw \InvalidStateException("Association key '".$key."' must loaded for '".get_called_class ()."' entity.");
+
+				$this->assocKeys[$key] = $data[$key];
 			}
 		}
 	}
