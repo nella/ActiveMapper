@@ -31,23 +31,18 @@ abstract class ServiceEntity extends Entity
 	 */
 	public static function find($primaryKey)
 	{
-		if (!static::hasPrimaryKey())
-			throw new \InvalidArgumentException("Entity [".get_called_class()."] has not set PRIMARY KEY");
-
-		return \dibi::select("*")->from(static::getTableName())->where("[".Tools::underscore(static::getPrimaryKey())."] = "
-					.Repository::getModificator(get_called_class(), static::getPrimaryKey()), $primaryKey)->execute()
-				->setRowClass(get_called_class())->fetch();
+		return Manager::find(get_called_class(), $primaryKey);
 	}
 
 	/**
 	 * Find all entity
 	 *
-	 * @return ActiveMapper\Collection
+	 * @return ActiveMapper\RepositoryCollection
 	 * @throws InvalidArgumentException
 	 */
 	public static function findAll()
 	{
-		return new RepositoryCollection(get_called_class());
+		return Manager::findAll(get_called_class());
    	}
 
 	/**
@@ -55,17 +50,14 @@ abstract class ServiceEntity extends Entity
 	 *
 	 * @param string $name
 	 * @param array $args
-	 * @return ActiveMapper\Entity
+	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
 	public static function __callStatic($name, $args)
 	{
 		if (strncmp($name, 'findBy', 6) === 0)
 		{
-			$name = lcfirst(substr($name, 6));
-           	return \dibi::select("*")->from(static::getTableName())
-				->where("[".Tools::underscore($name)."] = ".Repository::getModificator(get_called_class(), $name), $args[0])->execute()
-				->setRowClass(get_called_class())->fetch();
+			return callback('ActiveMapper\Manager', $name)->invokeArgs(array_merge(array(get_called_class()), $args));
 		}
 		else
 			return parent::__callStatic($name, $args);
