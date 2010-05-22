@@ -27,6 +27,9 @@ final class ORM
 	const DEVELOPMENT = TRUE;
 	/**#@-*/
 
+	/** @var bool */
+	public static $disableEntityMetaDataCache = FALSE;
+
 	/**
 	 * Static class - cannot be instantiated.
 	 * 
@@ -46,5 +49,16 @@ final class ORM
 	public static function compareVersion($version)
 	{
 		return version_compare($version, self::VERSION);
+	}
+
+	/**
+	 * Get cache
+	 *
+	 * @param string $namespace nella namespace suffix
+	 * @return Nette\Caching\Cache
+	 */
+	public static function getCache($namespace = NULL)
+	{
+		return \Nette\Environment::getCache($namespace ? "ActiveMapper.".$namespace : "ActiveMapper");
 	}
 }

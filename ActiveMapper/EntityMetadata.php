@@ -292,4 +292,17 @@ class EntityMetadata extends \Nette\Object
 	{
 		return $this->name;
 	}
+
+	/**
+	 * To cache
+	 *
+	 * @return ActiveMapper\EntityMetadata
+	 */
+	public function toCache()
+	{
+		if (!$this->isAssociationsLoaded)
+			$this->loadAssociations();
+
+		return $this;
+	}
 }
