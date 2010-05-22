@@ -21,6 +21,13 @@ namespace ActiveMapper;
 interface IEntity
 {
 	/**
+	 * Get entity name
+	 *
+	 * @return string
+	 */
+	public static function getEntityName();
+	
+	/**
 	 * Get table name
 	 *
 	 * @return string
