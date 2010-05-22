@@ -74,16 +74,22 @@ class RepositoryCollection extends Collection
 		if (!Manager::getEntityMetaData($this->entity)->hasPrimaryKey())
 			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
 
+		$selectColumns = array();
 		foreach($columns as $column)
 		{
 			if (!Manager::getEntityMetaData($this->entity)->hasColumn($column))
 				throw new \InvalidArgumentException("Column '".$column."' must be valid '".$this->entity."' column");
+			$selectColumns[] = "[".Manager::getEntityMetaData($this->entity)->tableName."].[".$column."]";
 		}
+		foreach(Manager::getEntityMetaData($this->entity)->associationsKeys as $key)
+		{
+			$selectColumns[] = "[".Manager::getEntityMetaData($this->entity)->tableName."].[".$key."]";
+		}
+		$selectColumns[] = "[".Manager::getEntityMetaData($this->entity)->tableName."].["
+			.Manager::getEntityMetaData($this->entity)->primaryKey."]";
+		$selectColumns = array_unique($selectColumns);
 
-		$this->fluent->removeClause('select');
-		$this->fluent->select(array_unique(array_merge(array(
-			Manager::getEntityMetaData($this->entity)->primaryKey), $columns, Manager::getEntityMetaData($this->entity)->associationsKeys
-		)));
+		callback($this->fluent->removeClause('select'), 'select')->invokeArgs($selectColumns);
 
 		return $this;
 	}
@@ -191,7 +197,9 @@ class RepositoryCollection extends Collection
 				$this->fluent->offset($offset);
 			if (!empty($limit))
 				$this->fluent->limit($limit);
-			$this->data = $this->fluent->execute()->setRowClass($this->entity)->fetchAll($offset, $limit);
+
+			$res = $this->fluent->execute();
+			$this->data = $res->setRowClass($this->entity)->fetchAll($offset, $limit);
 			return $this;
 		}
 		else
