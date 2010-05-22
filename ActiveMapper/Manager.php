@@ -33,7 +33,7 @@ abstract class Manager extends \Nette\Object
 		if (!isset(self::$entitiesMetaData[$entity]))
 		{
 			$cache = ORM::getCache('EntityMetaData');
-			if (isset($cache[$entity]))
+			if (isset($cache[$entity]) && !ORM::$disableEntityMetaDataCache)
 				self::$entitiesMetaData[$entity] = $cache[$entity];
 			else
 			{

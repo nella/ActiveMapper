@@ -23,3 +23,4 @@ dibi::connect(array(
 
 dibi::loadFile(__DIR__ . "/../db.structure.sql");
 dibi::loadFile(__DIR__ . "/../db.data.sql");
+\ActiveMapper\ORM::$disableEntityMetaDataCache = TRUE;
