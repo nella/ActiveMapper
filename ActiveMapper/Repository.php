@@ -49,7 +49,7 @@ abstract class Repository extends \Nette\Object
 	 * Find all entity
 	 *
 	 * @param string $entity
-	 * @return ActiveMapper\Collection
+	 * @return ActiveMapper\RepositoryCollection
 	 * @throws InvalidArgumentException
 	 */
 	public static function findAll($entity)
@@ -65,7 +65,7 @@ abstract class Repository extends \Nette\Object
 	 *
 	 * @param string $name
 	 * @param array $args
-	 * @return ActiveMapper\Entity
+	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
 	public static function __callStatic($name, $args)
