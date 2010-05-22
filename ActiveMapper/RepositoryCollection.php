@@ -58,6 +58,36 @@ class RepositoryCollection extends Collection
 	/********************************************************* Fluent methods *********************************************************p*v*/
 
 	/**
+	 * Replace selected columns
+	 *
+	 * @param array|mixed $columns
+	 * @return ActiveMapper\RepositoryCollection
+	 * @throws InvalidArgumentException
+	 * @throws NotImplementedException
+	 */
+	public function select()
+	{
+		$columns = func_get_args();
+		if (isset($columns[0]) && is_array($columns[0]))
+			$columns = $columns[0];
+
+		$entity = $this->entity;
+		if (!$entity::hasPrimaryKey())
+			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
+
+		foreach($columns as $column)
+		{
+			if (!$entity::hasColumn($column))
+				throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
+		}
+
+		$this->fluent->removeClause('select');
+		$this->fluent->select(array_unique(array_merge(array($entity::getPrimaryKey()), $columns)));
+
+		return $this;
+	}
+
+	/**
 	 * Add where
 	 *
 	 * @param string $column entity column name

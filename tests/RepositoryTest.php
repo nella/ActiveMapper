@@ -6,11 +6,6 @@ require_once "PHPUnit/Framework.php";
 
 class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
-	/** @var null */
-	private $object;
-
-	public function setUp() { }
-
 	public function testFind1()
 	{
 		$data = \ActiveMapper\Repository::find('App\Models\Author', 1);

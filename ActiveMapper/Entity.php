@@ -146,24 +146,36 @@ abstract class Entity extends \Nette\Object implements IEntity
 	 */
 	public function __construct(array $data)
 	{
-		if (!isset(self::$metaData[get_called_class()]))
-			self::$metaData[get_called_class()] = new EntityMetadata(get_called_class());
+		$class = get_called_class();
+
+		if (!isset(self::$metaData[$class]))
+			self::$metaData[$class] = new EntityMetadata($class);
 		
 		$this->assocData = array();
-		if (!empty(self::$metaData[get_called_class()]->columns))
+		if (!empty(self::$metaData[$class]->columns))
 		{
 			$this->data = array();
-			foreach (self::$metaData[get_called_class()]->columns as $column)
+			foreach (self::$metaData[$class]->columns as $column)
 			{
-				// @TODO layzy loading with null
-				$this->originalData[$column->name] = $column->sanitize(isset($data[$column->name]) ? $data[$column->name] : NULL);
+				if (self::$metaData[$class]->hasPrimaryKey() && isset($data[self::$metaData[$class]->getPrimaryKey()]))
+				{
+					if (isset($data[$column->name]))
+						$this->originalData[$column->name] = $column->sanitize($data[$column->name]);
+					else
+					{
+						$this->originalData[$column->name] = new LazyLoad(
+							$class, $column->name, $data[self::$metaData[$class]->getPrimaryKey()]);
+					}
+				}
+				else
+					$this->originalData[$column->name] = $column->sanitize(isset($data[$column->name]) ? $data[$column->name] : NULL);
 			}
 		}
-		if (!empty(self::$metaData[get_called_class()]->associations))
+		if (!empty(self::$metaData[$class]->associations))
 		{
 			$this->assocKeys = array();
 			$this->data = array();
-			foreach (self::$metaData[get_called_class()]->associations as $association)
+			foreach (self::$metaData[$class]->associations as $association)
 			{
 				if (!isset($this->originalData[$association->sourceColumn]) && isset($data[$association->sourceColumn]))
 					$this->assocKeys[$association->sourceColumn] = $data[$association->sourceColumn];
@@ -202,7 +214,16 @@ abstract class Entity extends \Nette\Object implements IEntity
 			if (isset($this->data[$name]))
 				return $this->data[$name];
 			else
-				return $this->originalData[$name];
+			{
+				if ($this->originalData[$name] instanceof LazyLoad)
+				{
+					$this->originalData[$name] = self::$metaData[$class]->columns[$name]->sanitize($this->originalData[$name]->data);
+					return $this->originalData[$name];
+				}
+				else
+					return $this->originalData[$name];
+			}
+				
 		}
 		else
 			throw new \MemberAccessException("Cannot read to undeclared column " . $class . "::\$$name.");

@@ -270,4 +270,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue(isset($associations['articles']));
 		$this->assertEquals($object, $associations['articles']);
 	}
+
+	public function testLazyLoad1()
+	{
+		$authors = Models\Author::findAll()->select()->fetchAll();
+		$this->assertEquals("František Vomáčka", $authors[0]->name);
+	}
 }
