@@ -43,9 +43,9 @@ class LazyLoad extends \Nette\Object
 	{
 		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
 			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entity."]");
-		if (!$entity::hasPrimaryKey())
+		if (!Manager::getEntityMetaData($entity)->hasPrimaryKey())
 			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
-		if (!$entity::hasColumnMetaData($column))
+		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
 			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
 
 		$this->entity = $entity;
@@ -65,8 +65,8 @@ class LazyLoad extends \Nette\Object
 		if (empty($this->data))
 		{
 			$this->data = \dibi::select($this->column)
-				->from($entity::getTableName())
-				->where("[".$entity::getPrimaryKey()."] = %i", $this->primaryKey)
+				->from(Manager::getEntityMetaData($entity)->tableName)
+				->where("[".Manager::getEntityMetaData($entity)->primaryKey."] = %i", $this->primaryKey)
 				->fetchSingle();
 		}
 		if ($this->data === FALSE)

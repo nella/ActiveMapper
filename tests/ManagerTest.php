@@ -6,6 +6,18 @@ require_once "PHPUnit/Framework.php";
 
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
+	public function testGetEntityMetaData1()
+	{
+		$metadata = \ActiveMapper\Manager::getEntityMetaData('App\Models\Author');
+		$metadata->associations;
+		$object = new \ActiveMapper\EntityMetadata('App\Models\Author');
+		$object->associations;
+		$this->assertEquals($object, $metadata);
+		$metadata = \ActiveMapper\Manager::getEntityMetaData('App\Models\Author');
+		$metadata->associations;
+		$this->assertEquals($object, $metadata);
+	}
+
 	public function testFind1()
 	{
 		$data = \ActiveMapper\Manager::find('App\Models\Author', 1);

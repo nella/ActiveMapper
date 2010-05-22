@@ -20,6 +20,22 @@ namespace ActiveMapper;
  */
 abstract class Manager extends \Nette\Object
 {
+	/** @var array */
+	private static $entitiesMetaData = array();
+
+	/**
+	 * Get entity metadata
+	 * @param string $entity valid entity class
+	 * @return ActiveMapper\EntityMetadata
+	 */
+	public static function getEntityMetaData($entity)
+	{
+		if (!isset(self::$entitiesMetaData[$entity]))
+			self::$entitiesMetaData[$entity] = new EntityMetadata($entity);
+
+		return self::$entitiesMetaData[$entity];
+	}
+
 	/**
 	 * Find entity witch id (primary key) is ...
 	 *

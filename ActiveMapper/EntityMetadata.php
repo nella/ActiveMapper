@@ -19,6 +19,11 @@ use Nette\Reflection\ClassReflection;
  * @author     Patrik Votoček
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @package    ActiveMapper
+ * @property-read string $tableName entity table name
+ * @property-read array $columns entity columns array
+ * @property-read array $associations entity associations array
+ * @property-read string $primaryKey entity primary key name
+ * @property-read string $name entity name
  */
 class EntityMetadata extends \Nette\Object
 {

@@ -12,6 +12,7 @@
 namespace ActiveMapper\Associations;
 
 use ActiveMapper\Tools;
+use ActiveMapper\Manager;
 
 /**
  * Many to many entity association
@@ -65,16 +66,18 @@ class ManyToMany extends Base implements IAssociation
 	)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
+		$targetEntityMetaData = Manager::getEntityMetaData($targetEntity);
+		$sourceEntityMetaData = Manager::getEntityMetaData($sourceEntity);
 		
 		$this->mapped = $mapped;
 		
 		if (empty($name))
-			$this->name = lcfirst(Tools::pluralize($targetEntity::getEntityName()));
+			$this->name = lcfirst(Tools::pluralize($targetEntityMetaData->name));
 		else
 			$this->name = $name;
 		
 		
-		if (empty($sourceEntity) && !$sourceEntity::hasPrimaryKey())
+		if (empty($sourceEntity) && !$sourceEntityMetaData->hasPrimaryKey())
 		{
 			throw new \InvalidArgumentException(
 				"Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY"
@@ -82,13 +85,13 @@ class ManyToMany extends Base implements IAssociation
 		}
 		
 		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-		elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
+			$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
+		elseif ($sourceEntityMetaData->hasColumn($sourceColumn))
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
 		
-		if (empty($targetColumn) && !$targetEntity::hasPrimaryKey())
+		if (empty($targetColumn) && !$targetEntityMetaData->hasPrimaryKey())
 		{
 			throw new \InvalidArgumentException(
 				"Must specifi source column, because entity '".$targetEntity."' has not set PRIMARY KEY"
@@ -96,20 +99,20 @@ class ManyToMany extends Base implements IAssociation
 		}
 		
 		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore($targetEntity::getPrimaryKey());
-		elseif ($targetEntity::hasColumnMetaData($targetColumn))
+			$this->targetColumn = Tools::underscore($targetEntityMetaData->primaryKey);
+		elseif ($targetEntityMetaData->hasColumn($targetColumn))
 			$this->targetColumn = $targetColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
 		
 		
 		if (empty($joinTableSourceColumn))
-			$this->joinTableSourceColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
+			$this->joinTableSourceColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));
 		else
 			$this->joinTableSourceColumn = $joinTableSourceColumn;
 		
 		if (empty($joinTableTargetColumn))
-			$this->joinTableTargetColumn = Tools::underscore($targetEntity::getEntityName().ucfirst($this->targetColumn));
+			$this->joinTableTargetColumn = Tools::underscore($targetEntityMetaData->name.ucfirst($this->targetColumn));
 		else
 			$this->joinTableTargetColumn = $joinTableTargetColumn;
 		
@@ -119,13 +122,13 @@ class ManyToMany extends Base implements IAssociation
 		elseif ($this->mapped)
 		{
 			$this->joinTable = Tools::underscore(
-				Tools::pluralize($sourceEntity::getEntityName()).ucfirst(Tools::pluralize($targetEntity::getEntityName()))
+				Tools::pluralize($sourceEntityMetaData->name).ucfirst(Tools::pluralize($targetEntityMetaData->name))
 			);
 		}
 		else
 		{
 			$this->joinTable = Tools::underscore(
-				Tools::pluralize($targetEntity::getEntityName()).ucfirst(Tools::pluralize($sourceEntity::getEntityName()))
+				Tools::pluralize($targetEntityMetaData->name).ucfirst(Tools::pluralize($sourceEntityMetaData->name))
 			);
 		}
 	}
@@ -209,13 +212,13 @@ class ManyToMany extends Base implements IAssociation
 	 */
 	public function getData($assocKey)
 	{	
-		$entity = $this->targetEntity;
-		$sourceEntity = $this->sourceEntity;
-		return new \ActiveMapper\RepositoryCollection($entity, \dibi::select("[".$entity::getTableName()."].*")
-			->from($entity::getTableName())
+		return new \ActiveMapper\RepositoryCollection($this->targetEntity,
+			\dibi::select("[".Manager::getEntityMetaData($this->targetEntity)->tableName."].*")
+			->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
 			->innerJoin($this->joinTable)
 			->on("[".$this->joinTable."].[".$this->joinTableSourceColumn."] = "
 				.\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
-			->and("[".$this->joinTable."].[".$this->joinTableTargetColumn."] = [".$entity::getTableName()."].[".$this->targetColumn."]"));
+			->and("[".$this->joinTable."].[".$this->joinTableTargetColumn."] = ["
+				.Manager::getEntityMetaData($this->targetEntity)->tableName."].[".$this->targetColumn."]"));
 	}
 }

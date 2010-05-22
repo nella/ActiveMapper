@@ -21,58 +21,31 @@ namespace ActiveMapper;
 interface IEntity
 {
 	/**
-	 * Get entity name
+	 * Getter
 	 *
-	 * @return string
+	 * @param string $name
+	 * @return mixed
+	 * @throws MemberAccessException
 	 */
-	public static function getEntityName();
-	
-	/**
-	 * Get table name
-	 *
-	 * @return string
-	 */
-	public static function getTableName();
+	public function &__get($name);
 
 	/**
-	 * Has primary key
+	 * Setter
 	 *
-	 * @return bool
+	 * @param string $name
+	 * @param mixed $value
+	 * @return mixed
+	 * @throws MemberAccessException
 	 */
-	public static function hasPrimaryKey();
+	public function __set($name, $value);
 
 	/**
-	 * Get primary key name
+	 * Method overload for associations
 	 *
-	 * @return string|null
+	 * @param string $name associtation name
+	 * @param array $args
+	 * @return mixed
+	 * @throws MemberAccessException
 	 */
-	public static function getPrimaryKey();
-	
-	/**
-	 * Get columns meta data
-	 *
-	 * @return array|null
-	 */
-	public static function getColumnsMetaData();
-
-	/**
-	 * Has column mapped
-	 *
-	 * @return bool
-	 */
-	public static function hasColumnMetaData($name);
-
-	/**
-	 * Get mapped column
-	 *
-	 * @return ActiveMapper\IDataType
-	 */
-	public static function getColumnMetaData($name);
-
-	/**
-	 * Get associations meta data
-	 *
-	 * @return array|null
-	 */
-	public static function getAssociationsMetaData();
+	public function __call($name, $args);
 }

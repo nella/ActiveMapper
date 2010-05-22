@@ -12,6 +12,7 @@
 namespace ActiveMapper\Associations;
 
 use ActiveMapper\Tools;
+use ActiveMapper\Manager;
 
 /**
  * One to many entity association
@@ -47,25 +48,27 @@ class OneToMany extends Base implements IAssociation
 	public function __construct($sourceEntity, $targetEntity, $name = NULL, $targetColumn = NULL, $sourceColumn = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
+		$targetEntityMetaData = Manager::getEntityMetaData($targetEntity);
+		$sourceEntityMetaData = Manager::getEntityMetaData($sourceEntity);
 		
 		if (empty($name))
-			$this->name = lcfirst(Tools::pluralize($targetEntity::getEntityName()));
+			$this->name = lcfirst(Tools::pluralize($targetEntityMetaData->name));
 		else
 			$this->name = $name;
 		
-		if (empty($sourceColumn) && !$sourceEntity::hasPrimaryKey())
+		if (empty($sourceColumn) && !$sourceEntityMetaData->hasPrimaryKey())
 			throw new \InvalidArgumentException("Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY");
 		
 		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-		elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
+			$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
+		elseif ($sourceEntityMetaData->hasColumn($sourceColumn))
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
 		
 		
 		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
+			$this->targetColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));
 		else
 			$this->targetColumn = $targetColumn;
 	}
@@ -108,9 +111,9 @@ class OneToMany extends Base implements IAssociation
 	 */
 	public function getData($assocKey)
 	{	
-		$entity = $this->targetEntity;
-		return new \ActiveMapper\RepositoryCollection($entity, \dibi::select("*")->from($entity::getTableName())
-			->where("[".$this->targetColumn."] = ".\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), 
-				$assocKey));
+		return new \ActiveMapper\RepositoryCollection($this->targetEntity, \dibi::select("*")
+			->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
+			->where("[".$this->targetColumn."] = "
+				.\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey));
 	}
 }

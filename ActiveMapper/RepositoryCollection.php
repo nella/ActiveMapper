@@ -42,7 +42,7 @@ class RepositoryCollection extends Collection
 		if ($fluent !== NULL)
 			$this->fluent = $fluent;
 		else
-			$this->fluent = dibi::select("*")->from($entity::getTableName());
+			$this->fluent = dibi::select("*")->from(Manager::getEntityMetaData($entity)->tableName);
    	}
 
 	/**
@@ -71,18 +71,17 @@ class RepositoryCollection extends Collection
 		if (isset($columns[0]) && is_array($columns[0]))
 			$columns = $columns[0];
 
-		$entity = $this->entity;
-		if (!$entity::hasPrimaryKey())
+		if (!Manager::getEntityMetaData($this->entity)->hasPrimaryKey())
 			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
 
 		foreach($columns as $column)
 		{
-			if (!$entity::hasColumn($column))
-				throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
+			if (!Manager::getEntityMetaData($this->entity)->hasColumn($column))
+				throw new \InvalidArgumentException("Column '".$column."' must be valid '".$this->entity."' column");
 		}
 
 		$this->fluent->removeClause('select');
-		$this->fluent->select(array_unique(array_merge(array($entity::getPrimaryKey()), $columns)));
+		$this->fluent->select(array_unique(array_merge(array(Manager::getEntityMetaData($this->entity)->primaryKey), $columns)));
 
 		return $this;
 	}

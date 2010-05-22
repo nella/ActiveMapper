@@ -14,6 +14,7 @@ namespace ActiveMapper\Associations;
 use dibi;
 use ActiveMapper\Tools;
 use ActiveMapper\Repository;
+use ActiveMapper\Manager;
 
 /**
  * One to one entity association
@@ -51,17 +52,19 @@ class OneToOne extends Base implements IAssociation
 	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $targetColumn = NULL, $sourceColumn = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
+		$targetEntityMetaData = Manager::getEntityMetaData($targetEntity);
+		$sourceEntityMetaData = Manager::getEntityMetaData($sourceEntity);
 		
 		$this->mapped = $mapped;
 		
 		if (empty($name))
-			$this->name = lcfirst($targetEntity::getEntityName());
+			$this->name = lcfirst($targetEntityMetaData->name);
 		else
 			$this->name = $name;
 		
 		if ($this->mapped)
 		{
-			if (empty($sourceEntity) && !$sourceEntity::hasPrimaryKey())
+			if (empty($sourceEntity) && !$sourceEntityMetaData->hasPrimaryKey())
 			{
 				throw new \InvalidArgumentException(
 					"Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY"
@@ -69,8 +72,8 @@ class OneToOne extends Base implements IAssociation
 			}
 			
 			if (empty($sourceColumn))
-				$this->sourceColumn = Tools::underscore($sourceEntity::getPrimaryKey());
-			elseif ($sourceEntity::hasColumnMetaData($sourceColumn))
+				$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
+			elseif ($sourceEntityMetaData->hasColumn($sourceColumn))
 				$this->sourceColumn = $sourceColumn;
 			else
 				throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
@@ -78,14 +81,14 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($targetColumn))
 			{
-				$this->targetColumn = Tools::underscore($sourceEntity::getEntityName().ucfirst($this->sourceColumn));
+				$this->targetColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));
 			}
 			else
 				$this->targetColumn = $targetColumn;
 		}
 		else
 		{
-			if (empty($targetEntity) && !$targetEntity::hasPrimaryKey())
+			if (empty($targetEntity) && !$targetEntityMetaData->hasPrimaryKey())
 			{
 				throw new \InvalidArgumentException(
 					"Must specifi source column, because entity '".$targetEntity."' has not set PRIMARY KEY"
@@ -93,8 +96,8 @@ class OneToOne extends Base implements IAssociation
 			}
 			
 			if (empty($targetColumn))
-				$this->targetColumn = Tools::underscore($targetEntity::getPrimaryKey());
-			elseif ($targetEntity::hasColumnMetaData($targetColumn))
+				$this->targetColumn = Tools::underscore($targetEntityMetaData->primaryKey);
+			elseif ($targetEntityMetaData->hasColumn($targetColumn))
 				$this->targetColumn = $targetColumn;
 			else
 				throw new \InvalidArgumentException("Target column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
@@ -102,7 +105,7 @@ class OneToOne extends Base implements IAssociation
 			
 			if (empty($sourceColumn))
 			{
-				$this->sourceColumn = Tools::underscore($targetEntity::getEntityName().ucfirst($this->targetColumn));
+				$this->sourceColumn = Tools::underscore($targetEntityMetaData->name.ucfirst($this->targetColumn));
 			}
 			else
 				$this->sourceColumn = $sourceColumn;
@@ -158,18 +161,17 @@ class OneToOne extends Base implements IAssociation
 	 */
 	public function getData($assocKey)
 	{	
-		$entity = $this->targetEntity;
 		if ($this->mapped)
 		{
-			return dibi::select("*")->from($entity::getTableName())
+			return dibi::select("*")->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
 				->where("[".$this->targetColumn."] = ".Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
-				->execute()->setRowClass($entity)->fetch();
+				->execute()->setRowClass($this->targetEntity)->fetch();
 		}
 		else
 		{
-			return dibi::select("*")->from($entity::getTableName())
-				->where("[".$this->targetColumn."] = ".Repository::getModificator($entity, $this->targetColumn), $assocKey)->execute()
-				->setRowClass($entity)->fetch();
+			return dibi::select("*")->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
+				->where("[".$this->targetColumn."] = ".Repository::getModificator($this->targetEntity, $this->targetColumn), $assocKey)
+				->execute()->setRowClass($this->targetEntity)->fetch();
 		}
 	}
 }

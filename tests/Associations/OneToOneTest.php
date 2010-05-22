@@ -114,7 +114,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testGetData2()
 	{
-		$profile = \dibi::select("*")->from(\App\Models\Profile::getTableName())->where("[author_id] = %i", 1)->execute()
+		$profile = \dibi::select("*")->from('profiles')->where("[author_id] = %i", 1)->execute()
 			->setRowClass('App\Models\Profile')->fetch();
 		$this->assertEquals(new \App\Models\Author(array('id' => 1, 'name' => "František Vomáčka")), $profile->author());
 	}

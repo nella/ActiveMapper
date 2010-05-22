@@ -36,12 +36,12 @@ abstract class Repository extends \Nette\Object
 	{
 		if (!class_exists($entity) || !ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
 			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		if (!$entity::hasPrimaryKey())
+		if (!Manager::getEntityMetaData($entity)->hasPrimaryKey())
 			throw new \InvalidArgumentException("Entity [".$entity."] has not set PRIMARY KEY");
 
-		return \dibi::select("*")->from($entity::getTableName())
-				->where("[".Tools::underscore($entity::getPrimaryKey())."] = "
-					.self::getModificator($entity, $entity::getPrimaryKey()), $primaryKey)
+		return \dibi::select("*")->from(Manager::getEntityMetaData($entity)->tableName)
+				->where("[".Tools::underscore(Manager::getEntityMetaData($entity)->primaryKey)."] = "
+					.self::getModificator($entity, Manager::getEntityMetaData($entity)->primaryKey), $primaryKey)
 				->execute()->setRowClass($entity)->fetch();
 	}
 
@@ -76,7 +76,7 @@ abstract class Repository extends \Nette\Object
 				throw new \InvalidArgumentException("Entity [".$args[0]."] must implements 'ActiveMapper\\IEntity'");
 
 			$name = lcfirst(substr($name, 6));
-           	return \dibi::select("*")->from($args[0]::getTableName())
+           	return \dibi::select("*")->from(Manager::getEntityMetaData($args[0])->tableName)
 				->where("[".Tools::underscore($name)."] = ".self::getModificator($args[0], $name), $args[1])
 				->execute()->setRowClass($args[0])->fetch();
 		}
@@ -96,10 +96,10 @@ abstract class Repository extends \Nette\Object
 	{
 		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
 			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		if (!$entity::hasColumnMetaData($column))
+		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
 			throw new \InvalidArgumentException("Entity [".$entity."] has not '".$column."' column");
 		
-		switch($entity::getColumnMetaData($column)->reflection->name)
+		switch(Manager::getEntityMetaData($entity)->getColumn($column)->reflection->name)
 		{
 			case 'ActiveMapper\DataTypes\Bool':
 				return '%b';

@@ -11,6 +11,7 @@
 
 namespace ActiveMapper\Associations;
 
+use ActiveMapper\Manager;
 use Nette\Reflection\ClassReflection;
 
 /**
@@ -76,8 +77,7 @@ abstract class Base extends \Nette\Object
 	 */
 	final public function getSourceTable()
 	{
-		$class = $this->sourceEntity;
-		return $class::getTableName();
+		return Manager::getEntityMetaData($this->sourceEntity)->tableName;
 	}
 	
 	/**
@@ -87,7 +87,6 @@ abstract class Base extends \Nette\Object
 	 */
 	final public function getTargetTable()
 	{
-		$class = $this->targetEntity;
-		return $class::getTableName();
+		return Manager::getEntityMetaData($this->targetEntity)->tableName;
 	}
 }
