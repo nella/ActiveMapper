@@ -56,7 +56,7 @@ abstract class Manager extends \Nette\Object
 	public static function __callStatic($name, $args)
 	{
 		if (strncmp($name, 'findBy', 6) === 0)
-			return call_user_func_array(array('ActiveMapper\Repository', $name), $args);
+			return callback('ActiveMapper\Repository', $name)->invokeArgs($args);
 		else
 			return parent::__callStatic($name, $args);
 	}
