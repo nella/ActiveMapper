@@ -122,4 +122,27 @@ abstract class Repository extends \Nette\Object
 				break;
 		}
 	}
+
+	/**
+	 * Lazy load column
+	 *
+	 * @param entity $entity valid entity class
+	 * @param string $column valid entity column name
+	 * @param mixed $primaryKey
+	 * @return mixed
+	 * @throws InvalidArgumentException
+	 */
+	public static function lazyLoad($entity, $column, $primaryKey)
+	{
+		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
+			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entity."]");
+		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
+			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
+
+		return \dibi::select($column)
+			->from(Manager::getEntityMetaData($entity)->tableName)
+			->where("[".Manager::getEntityMetaData($entity)->primaryKey."] = "
+				.self::getModificator($entity, Manager::getEntityMetaData($entity)->primaryKey), $primaryKey)
+			->fetchSingle();
+	}
 }

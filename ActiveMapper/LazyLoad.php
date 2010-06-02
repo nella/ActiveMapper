@@ -61,14 +61,9 @@ class LazyLoad extends \Nette\Object
 	 */
 	public function getData()
 	{
-		$entity = $this->entity;
 		if (empty($this->data))
-		{
-			$this->data = \dibi::select($this->column)
-				->from(Manager::getEntityMetaData($entity)->tableName)
-				->where("[".Manager::getEntityMetaData($entity)->primaryKey."] = %i", $this->primaryKey)
-				->fetchSingle();
-		}
+			$this->data = Repository::lazyLoad($this->entity, $this->column, $this->primaryKey);
+
 		if ($this->data === FALSE)
 			throw new \InvalidStateException("Primary key '".$this->primaryKey."' for '".$entity."' not exist");
 
