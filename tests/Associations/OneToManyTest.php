@@ -1,5 +1,7 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests\Associations;
+
+use ActiveMapper\Associations\OneToMany;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,7 +10,7 @@ class OneToManyTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new \ActiveMapper\Associations\OneToMany('App\Models\Author', 'App\Models\Article');
+		$object = new OneToMany('App\Models\Author', 'App\Models\Article');
 		$this->assertEquals('articles', $object->getName());
 		$this->assertEquals('articles', $object->name);
 
@@ -30,7 +32,7 @@ class OneToManyTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new \ActiveMapper\Associations\OneToMany('App\Models\Author', 'App\Models\Article', 'test', 'title', 'name');
+		$object = new OneToMany('App\Models\Author', 'App\Models\Article', 'test', 'title', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -53,12 +55,12 @@ class OneToManyTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistSourceColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\OneToMany('App\Models\Author', 'App\Models\Article', 'test', 'title', 'exception');
+		new OneToMany('App\Models\Author', 'App\Models\Article', 'test', 'title', 'exception');
 	}
 	
 	public function testGetData1()
 	{
-		$author = \ActiveMapper\Repository::find('App\Models\Author', 2);
+		$author = \ActiveMapper\Repository::factory('App\Models\Author')->find(2);
 		$articles = $author->articles()->fetchAll(NULL, 1);
 		$this->assertEquals(new \App\Models\Article(array(
 			'id' => 2, 

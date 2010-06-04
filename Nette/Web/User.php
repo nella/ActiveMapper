@@ -4,17 +4,16 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Web
  */
 
 namespace Nette\Web;
 
-use Nette;
-
-use Nette\Environment;
+use Nette,
+	Nette\Environment;
 
 
 
@@ -174,7 +173,7 @@ class User extends Nette\Object implements IUser
 	final public function getAuthenticationHandler()
 	{
 		if ($this->authenticationHandler === NULL) {
-			$this->authenticationHandler = Environment::getService('Nette\Security\IAuthenticator');
+			$this->authenticationHandler = Environment::getService('Nette\\Security\\IAuthenticator');
 		}
 		return $this->authenticationHandler;
 	}
@@ -414,7 +413,7 @@ class User extends Nette\Object implements IUser
 	final public function getAuthorizationHandler()
 	{
 		if ($this->authorizationHandler === NULL) {
-			$this->authorizationHandler = Environment::getService('Nette\Security\IAuthorizator');
+			$this->authorizationHandler = Environment::getService('Nette\\Security\\IAuthorizator');
 		}
 		return $this->authorizationHandler;
 	}

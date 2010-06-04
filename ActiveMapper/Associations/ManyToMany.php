@@ -11,8 +11,8 @@
 
 namespace ActiveMapper\Associations;
 
-use ActiveMapper\Tools;
-use ActiveMapper\Manager;
+use ActiveMapper\Tools,
+	ActiveMapper\Manager;
 
 /**
  * Many to many entity association
@@ -217,7 +217,7 @@ class ManyToMany extends Base implements IAssociation
 			->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
 			->innerJoin($this->joinTable)
 			->on("[".$this->joinTable."].[".$this->joinTableSourceColumn."] = "
-				.\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
+				.\ActiveMapper\Manager::getRepository($this->sourceEntity)->getModificator($this->sourceColumn), $assocKey)
 			->and("[".$this->joinTable."].[".$this->joinTableTargetColumn."] = ["
 				.Manager::getEntityMetaData($this->targetEntity)->tableName."].[".$this->targetColumn."]"));
 	}

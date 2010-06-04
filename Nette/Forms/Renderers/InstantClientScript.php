@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Forms
  */
@@ -103,7 +103,7 @@ final class InstantClientScript extends Nette\Object
 		foreach ($rules as $rule) {
 			if (!is_string($rule->operation)) continue;
 
-			if (strcasecmp($rule->operation, 'Nette\Forms\InstantClientScript::javascript') === 0) {
+			if (strcasecmp($rule->operation, 'Nette\\Forms\\InstantClientScript::javascript') === 0) {
 				$res .= "$rule->arg\n";
 				continue;
 			}

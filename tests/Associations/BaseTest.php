@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests\Associations;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";

@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\Float;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\Float('test');
+		$this->object = new Float('test');
 	}
 
 	public function testValidateString()
@@ -103,7 +105,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Float('test', TRUE);
+		$object = new Float('test', TRUE);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

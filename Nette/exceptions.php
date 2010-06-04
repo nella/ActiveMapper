@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -129,13 +129,16 @@ class DirectoryNotFoundException extends IOException
  * the script should be halted.
  * @package    exceptions
  */
+
 class FatalErrorException extends ErrorException
 {
+
 	public function __construct($message, $code, $severity, $file, $line, $context)
 	{
 		parent::__construct($message, $code, $severity, $file, $line);
 		$this->context = $context;
 	}
 
+}
 
-	}
+

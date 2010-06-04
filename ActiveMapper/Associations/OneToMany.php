@@ -11,8 +11,8 @@
 
 namespace ActiveMapper\Associations;
 
-use ActiveMapper\Tools;
-use ActiveMapper\Manager;
+use ActiveMapper\Tools,
+	ActiveMapper\Manager;
 
 /**
  * One to many entity association
@@ -114,6 +114,6 @@ class OneToMany extends Base implements IAssociation
 		return new \ActiveMapper\RepositoryCollection($this->targetEntity, \dibi::select("*")
 			->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
 			->where("[".$this->targetColumn."] = "
-				.\ActiveMapper\Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey));
+				.\ActiveMapper\Manager::getRepository($this->sourceEntity)->getModificator($this->sourceColumn), $assocKey));
 	}
 }

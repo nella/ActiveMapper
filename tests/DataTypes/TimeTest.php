@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\Time;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class TimeTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\Time('test');
+		$this->object = new Time('test');
 	}
 
 	public function testValidateString()
@@ -41,7 +43,7 @@ class TimeTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidateNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Time('test', TRUE);
+		$object = new Time('test', TRUE);
 		$this->assertTrue($object->validate(NULL));
 	}
 
@@ -85,7 +87,7 @@ class TimeTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Time('test', TRUE);
+		$object = new Time('test', TRUE);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

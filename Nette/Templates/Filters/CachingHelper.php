@@ -4,17 +4,17 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Templates
  */
 
 namespace Nette\Templates;
 
-use Nette;
-
-use Nette\Caching\Cache, Nette\Environment;
+use Nette,
+	Nette\Caching\Cache,
+	Nette\Environment;
 
 
 

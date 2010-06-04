@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Application
  */
@@ -111,9 +111,7 @@ class PresenterLoader implements IPresenterLoader
 	 */
 	public function formatPresenterClass($presenter)
 	{
-		// PHP 5.3
 		return str_replace(':', 'Module\\', $presenter) . 'Presenter';
-		return strtr($presenter, ':', '_') . 'Presenter';
 	}
 
 
@@ -125,9 +123,7 @@ class PresenterLoader implements IPresenterLoader
 	 */
 	public function unformatPresenterClass($class)
 	{
-		// PHP 5.3
 		return str_replace('Module\\', ':', substr($class, 0, -9));
-		return strtr(substr($class, 0, -9), '_', ':');
 	}
 
 

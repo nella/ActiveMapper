@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\Int;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class IntTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\Int('test');
+		$this->object = new Int('test');
 	}
 
 	public function testValidateString()
@@ -51,7 +53,7 @@ class IntTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidateNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Int('test', TRUE);
+		$object = new Int('test', TRUE);
 		$this->assertTrue($object->validate(NULL));
 	}
 
@@ -101,7 +103,7 @@ class IntTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Int('test', TRUE);
+		$object = new Int('test', TRUE);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

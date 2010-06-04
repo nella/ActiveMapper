@@ -4,18 +4,17 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Reflection
  */
 
 namespace Nette\Reflection;
 
-use Nette;
-
-use Nette\ObjectMixin;
-use Nette\Annotations;
+use Nette,
+	Nette\ObjectMixin,
+	Nette\Annotations;
 
 
 
@@ -30,7 +29,7 @@ class MethodParameterReflection extends \ReflectionParameter
 
 	/**
 	 * @return Nette\Reflection\MethodParameterReflection
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function import(\ReflectionParameter $ref)
 	{

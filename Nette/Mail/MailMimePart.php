@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Mail
  */
@@ -35,7 +35,7 @@ class MailMimePart extends Nette\Object
 	const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
 	/**#@-*/
 
-	/**#@+ @internal */
+	/**#@+ @ignore internal */
 	const EOL = "\r\n";
 	const LINE_LENGTH = 76;
 	/**#@-*/

@@ -1,5 +1,8 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests;
+
+use ActiveMapper\Manager,
+	App\Models\Author;
 
 require_once __DIR__ . "/bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,19 +11,19 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 {
 	public function testGetEntityMetaData1()
 	{
-		$metadata = \ActiveMapper\Manager::getEntityMetaData('App\Models\Author');
+		$metadata = Manager::getEntityMetaData('App\Models\Author');
 		$metadata->associations;
 		$object = new \ActiveMapper\EntityMetadata('App\Models\Author');
 		$object->associations;
 		$this->assertEquals($object, $metadata);
-		$metadata = \ActiveMapper\Manager::getEntityMetaData('App\Models\Author');
+		$metadata = Manager::getEntityMetaData('App\Models\Author');
 		$metadata->associations;
 		$this->assertEquals($object, $metadata);
 	}
 
 	public function testFind1()
 	{
-		$data = \ActiveMapper\Manager::find('App\Models\Author', 1);
+		$data = Manager::find('App\Models\Author', 1);
 		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -28,7 +31,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindBy1()
 	{
-		$data = \ActiveMapper\Manager::findByName('App\Models\Author', 'John Doe');
+		$data = Manager::findByName('App\Models\Author', 'John Doe');
 		$ent = new Author(array('id' => 2, 'name' => "John Doe"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -36,7 +39,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindBy2()
 	{
-		$data = \ActiveMapper\Manager::findById('App\Models\Author', 1);
+		$data = Manager::findById('App\Models\Author', 1);
 		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -44,14 +47,14 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindAll1()
 	{
-		$rows = \ActiveMapper\Manager::findAll('App\Models\Author');
+		$rows = Manager::findAll('App\Models\Author');
 		$this->assertType('ActiveMapper\RepositoryCollection', $rows);
 
 
 		$data = array(
-			new \App\Models\Author(array('id' => 1, 'name' => "František Vomáčka")),
-			new \App\Models\Author(array('id' => 2, 'name' => "John Doe")),
-			new \App\Models\Author(array('id' => 3, 'name' => "Jan Novák")),
+			new Author(array('id' => 1, 'name' => "František Vomáčka")),
+			new Author(array('id' => 2, 'name' => "John Doe")),
+			new Author(array('id' => 3, 'name' => "Jan Novák")),
 		);
 		$this->assertEquals(3, count($rows));
 		$this->assertType('ActiveMapper\Collection', $rows);
@@ -69,6 +72,6 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 	public function testCallException()
 	{
 		$this->setExpectedException("MemberAccessException");
-		\ActiveMapper\Manager::exception();
+		Manager::exception();
 	}
 }

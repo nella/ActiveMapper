@@ -22,7 +22,7 @@ namespace ActiveMapper;
 class LazyLoad extends \Nette\Object
 {
 	/** @var string */
-	private $entity;
+	private $entityClass;
 	/** @var string */
 	private $column;
 	/** @var mixed */
@@ -33,22 +33,22 @@ class LazyLoad extends \Nette\Object
 	/**
 	 * Constructor
 	 *
-	 * @param string $entity entity class
+	 * @param string $entityClass
 	 * @param string $column entity column name
 	 * @param mixed $primaryKey
 	 * @throws InvalidArgumentException
 	 * @throws NotImplementedException
 	 */
-	public function __construct($entity, $column, $primaryKey)
+	public function __construct($entityClass, $column, $primaryKey)
 	{
-		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entity."]");
-		if (!Manager::getEntityMetaData($entity)->hasPrimaryKey())
+		if (!class_exists($entityClass) || !\Nette\Reflection\ClassReflection::from($entityClass)->implementsInterface('ActiveMapper\IEntity'))
+			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entityClass."]");
+		if (!Manager::getEntityMetaData($entityClass)->hasPrimaryKey())
 			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
-		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
-			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
+		if (!Manager::getEntityMetaData($entityClass)->hasColumn($column))
+			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entityClass."' column");
 
-		$this->entity = $entity;
+		$this->entityClass = $entityClass;
 		$this->column = $column;
 		$this->primaryKey = $primaryKey;
 	}
@@ -62,10 +62,10 @@ class LazyLoad extends \Nette\Object
 	public function getData()
 	{
 		if (empty($this->data))
-			$this->data = Repository::lazyLoad($this->entity, $this->column, $this->primaryKey);
+			$this->data = Manager::getRepository($this->entityClass)->lazyLoad($this->column, $this->primaryKey);
 
 		if ($this->data === FALSE)
-			throw new \InvalidStateException("Primary key '".$this->primaryKey."' for '".$entity."' not exist");
+			throw new \InvalidStateException("Primary key '".$this->primaryKey."' for '".$this->entityClass."' not exist");
 
 		return $this->data;
 	}

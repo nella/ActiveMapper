@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace ActiveMapperTests;
 
 require_once __DIR__ . "/bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -209,7 +209,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
 	public function testLazyLoad1()
 	{
-		$authors = Models\Author::findAll()->select()->fetchAll();
+		$authors = \App\Models\Author::findAll()->select()->fetchAll();
 		$this->assertEquals("František Vomáčka", $authors[0]->name);
 	}
 }

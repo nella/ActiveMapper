@@ -11,10 +11,9 @@
 
 namespace ActiveMapper\Associations;
 
-use dibi;
-use ActiveMapper\Tools;
-use ActiveMapper\Repository;
-use ActiveMapper\Manager;
+use dibi,
+	ActiveMapper\Tools,
+	ActiveMapper\Manager;
 
 /**
  * One to one entity association
@@ -164,14 +163,26 @@ class OneToOne extends Base implements IAssociation
 		if ($this->mapped)
 		{
 			return dibi::select("*")->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
-				->where("[".$this->targetColumn."] = ".Repository::getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
+				->where("[".$this->targetColumn."] = ".$this->getModificator($this->sourceEntity, $this->sourceColumn), $assocKey)
 				->execute()->setRowClass($this->targetEntity)->fetch();
 		}
 		else
 		{
 			return dibi::select("*")->from(Manager::getEntityMetaData($this->targetEntity)->tableName)
-				->where("[".$this->targetColumn."] = ".Repository::getModificator($this->targetEntity, $this->targetColumn), $assocKey)
+				->where("[".$this->targetColumn."] = ".$this->getModificator($this->targetEntity, $this->targetColumn), $assocKey)
 				->execute()->setRowClass($this->targetEntity)->fetch();
 		}
+	}
+	
+	/**
+	 * Get modificator
+	 * 
+	 * @param string $entityClass
+	 * @param string $column entity column name
+	 * @return string
+	 */
+	private function getModificator($entityClass, $column)
+	{
+		return \ActiveMapper\Manager::getRepository($entityClass)->getModificator($column);
 	}
 }

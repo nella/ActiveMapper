@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\String;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\String('test', FALSE, 4);
+		$this->object = new String('test', FALSE, 4);
 	}
 
 	public function testGetLength()
@@ -64,7 +66,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidateNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\String('test', TRUE, 4);
+		$object = new String('test', TRUE, 4);
 		$this->assertTrue($object->validate(NULL));
 	}
 
@@ -109,7 +111,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\String('test', TRUE, 4);
+		$object = new String('test', TRUE, 4);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

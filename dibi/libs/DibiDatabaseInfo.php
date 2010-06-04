@@ -24,7 +24,7 @@
  */
 class DibiDatabaseInfo extends DibiObject
 {
-	/** @var IDibiDriver */
+	/** @var IDibiReflector */
 	private $driver;
 
 	/** @var string */
@@ -35,7 +35,7 @@ class DibiDatabaseInfo extends DibiObject
 
 
 
-	public function __construct(IDibiDriver $driver, $name)
+	public function __construct(IDibiReflector $driver, $name)
 	{
 		$this->driver = $driver;
 		$this->name = $name;
@@ -128,7 +128,6 @@ class DibiDatabaseInfo extends DibiObject
 
 
 
-
 /**
  * Reflection metadata class for a database table.
  *
@@ -145,7 +144,7 @@ class DibiDatabaseInfo extends DibiObject
  */
 class DibiTableInfo extends DibiObject
 {
-	/** @var IDibiDriver */
+	/** @var IDibiReflector */
 	private $driver;
 
 	/** @var string */
@@ -168,7 +167,7 @@ class DibiTableInfo extends DibiObject
 
 
 
-	public function __construct(IDibiDriver $driver, array $info)
+	public function __construct(IDibiReflector $driver, array $info)
 	{
 		$this->driver = $driver;
 		$this->name = $info['name'];
@@ -337,7 +336,6 @@ class DibiTableInfo extends DibiObject
 
 
 
-
 /**
  * Reflection metadata class for a result set.
  *
@@ -349,7 +347,7 @@ class DibiTableInfo extends DibiObject
  */
 class DibiResultInfo extends DibiObject
 {
-	/** @var IDibiDriver */
+	/** @var IDibiReflector */
 	private $driver;
 
 	/** @var array */
@@ -360,7 +358,7 @@ class DibiResultInfo extends DibiObject
 
 
 
-	public function __construct(IDibiDriver $driver)
+	public function __construct(IDibiReflector $driver)
 	{
 		$this->driver = $driver;
 	}
@@ -443,7 +441,6 @@ class DibiResultInfo extends DibiObject
 
 
 
-
 /**
  * Reflection metadata class for a table or result set column.
  *
@@ -466,7 +463,7 @@ class DibiColumnInfo extends DibiObject
 	/** @var array */
 	private static $types;
 
-	/** @var IDibiDriver */
+	/** @var IDibiReflector */
 	private $driver;
 
 	/** @var array (name, nativetype, [table], [fullname], [size], [nullable], [default], [autoincrement], [vendor]) */
@@ -477,7 +474,7 @@ class DibiColumnInfo extends DibiObject
 
 
 
-	public function __construct(IDibiDriver $driver, array $info)
+	public function __construct(IDibiReflector $driver, array $info)
 	{
 		$this->driver = $driver;
 		$this->info = $info;
@@ -645,7 +642,6 @@ class DibiColumnInfo extends DibiObject
 
 
 
-
 /**
  * Reflection metadata class for a foreign key.
  *
@@ -693,7 +689,6 @@ class DibiForeignKeyInfo extends DibiObject
 	}
 
 }
-
 
 
 

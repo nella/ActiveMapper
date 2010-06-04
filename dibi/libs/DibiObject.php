@@ -15,7 +15,7 @@
 /**
  * DibiObject is the ultimate ancestor of all instantiable classes.
  *
- * DibiObject is copy of Nette\Object from Nette Framework (http://nettephp.com).
+ * DibiObject is copy of Nette\Object from Nette Framework (http://nette.org).
  *
  * It defines some handful methods and enhances object core of PHP:
  *   - access to undeclared members throws exceptions
@@ -64,9 +64,9 @@ abstract class DibiObject
 	 * Returns the name of the class of this object.
 	 * @return string
 	 */
-	final public /*static*/ function getClass()
+	final public static function getClass()
 	{
-		return /*get_called_class()*/ /**/get_class($this)/**/;
+		return get_called_class() ;
 	}
 
 
@@ -77,7 +77,7 @@ abstract class DibiObject
 	 */
 	final public function getReflection()
 	{
-		return new /*\*/ReflectionObject($this);
+		return new \ReflectionObject($this);
 	}
 
 
@@ -94,20 +94,17 @@ abstract class DibiObject
 		$class = get_class($this);
 
 		if ($name === '') {
-			throw new /*\*/MemberAccessException("Call to class '$class' method without name.");
+			throw new \MemberAccessException("Call to class '$class' method without name.");
 		}
 
 		// event functionality
 		if (preg_match('#^on[A-Z]#', $name)) {
-			$rp = new /*\*/ReflectionProperty($class, $name);
+			$rp = new \ReflectionProperty($class, $name);
 			if ($rp->isPublic() && !$rp->isStatic()) {
 				$list = $this->$name;
-				if (is_array($list) || $list instanceof /*\*/Traversable) {
+				if (is_array($list) || $list instanceof \Traversable) {
 					foreach ($list as $handler) {
-						/**/if (is_object($handler)) {
-							call_user_func_array(array($handler, '__invoke'), $args);
-
-						} else /**/{
+						{
 							call_user_func_array($handler, $args);
 						}
 					}
@@ -122,7 +119,7 @@ abstract class DibiObject
 			return call_user_func_array($cb, $args);
 		}
 
-		throw new /*\*/MemberAccessException("Call to undefined method $class::$name().");
+		throw new \MemberAccessException("Call to undefined method $class::$name().");
 	}
 
 
@@ -137,7 +134,7 @@ abstract class DibiObject
 	public static function __callStatic($name, $args)
 	{
 		$class = get_called_class();
-		throw new /*\*/MemberAccessException("Call to undefined static method $class::$name().");
+		throw new \MemberAccessException("Call to undefined static method $class::$name().");
 	}
 
 
@@ -215,7 +212,7 @@ abstract class DibiObject
 		$class = get_class($this);
 
 		if ($name === '') {
-			throw new /*\*/MemberAccessException("Cannot read a class '$class' property without name.");
+			throw new \MemberAccessException("Cannot read a class '$class' property without name.");
 		}
 
 		// property getter support
@@ -236,7 +233,7 @@ abstract class DibiObject
 		}
 
 		$name = func_get_arg(0);
-		throw new /*\*/MemberAccessException("Cannot read an undeclared property $class::\$$name.");
+		throw new \MemberAccessException("Cannot read an undeclared property $class::\$$name.");
 	}
 
 
@@ -253,7 +250,7 @@ abstract class DibiObject
 		$class = get_class($this);
 
 		if ($name === '') {
-			throw new /*\*/MemberAccessException("Cannot assign to a class '$class' property without name.");
+			throw new \MemberAccessException("Cannot assign to a class '$class' property without name.");
 		}
 
 		// property setter support
@@ -266,12 +263,12 @@ abstract class DibiObject
 
 			} else {
 				$name = func_get_arg(0);
-				throw new /*\*/MemberAccessException("Cannot assign to a read-only property $class::\$$name.");
+				throw new \MemberAccessException("Cannot assign to a read-only property $class::\$$name.");
 			}
 		}
 
 		$name = func_get_arg(0);
-		throw new /*\*/MemberAccessException("Cannot assign to an undeclared property $class::\$$name.");
+		throw new \MemberAccessException("Cannot assign to an undeclared property $class::\$$name.");
 	}
 
 
@@ -298,7 +295,7 @@ abstract class DibiObject
 	public function __unset($name)
 	{
 		$class = get_class($this);
-		throw new /*\*/MemberAccessException("Cannot unset the property $class::\$$name.");
+		throw new \MemberAccessException("Cannot unset the property $class::\$$name.");
 	}
 
 

@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Application
  */
@@ -24,7 +24,7 @@ use Nette;
  */
 class MultiRouter extends Nette\Object implements IRouter, \ArrayAccess, \Countable, \IteratorAggregate
 {
-	/** @var SplQueue */
+	/** @var \SplQueue */
 	private $routes;
 
 	/** @var array */

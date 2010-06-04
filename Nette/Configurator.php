@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -29,14 +29,14 @@ class Configurator extends Object
 
 	/** @var array */
 	public $defaultServices = array(
-		'Nette\Application\Application' => 'Nette\Application\Application',
-		'Nette\Web\HttpContext' => 'Nette\Web\HttpContext',
-		'Nette\Web\IHttpRequest' => 'Nette\Web\HttpRequest',
-		'Nette\Web\IHttpResponse' => 'Nette\Web\HttpResponse',
-		'Nette\Web\IUser' => 'Nette\Web\User',
-		'Nette\Caching\ICacheStorage' => array(__CLASS__, 'createCacheStorage'),
-		'Nette\Web\Session' => 'Nette\Web\Session',
-		'Nette\Loaders\RobotLoader' => array(__CLASS__, 'createRobotLoader'),
+		'Nette\\Application\\Application' => 'Nette\Application\Application',
+		'Nette\\Web\\HttpContext' => 'Nette\Web\HttpContext',
+		'Nette\\Web\\IHttpRequest' => 'Nette\Web\HttpRequest',
+		'Nette\\Web\\IHttpResponse' => 'Nette\Web\HttpResponse',
+		'Nette\\Web\\IUser' => 'Nette\Web\User',
+		'Nette\\Caching\\ICacheStorage' => array(__CLASS__, 'createCacheStorage'),
+		'Nette\\Web\\Session' => 'Nette\Web\Session',
+		'Nette\\Loaders\\RobotLoader' => array(__CLASS__, 'createRobotLoader'),
 	);
 
 

@@ -81,6 +81,16 @@ if (!class_exists('PcreException', FALSE)) {
 	}
 }
 
+if (!interface_exists('Nette\IDebugPanel', FALSE)) {
+	require_once __DIR__ . '/Nette/IDebugPanel.php';
+}
+
+if (!class_exists('DateTime53', FALSE)) {
+	require_once __DIR__ . '/Nette/DateTime53.php';
+}
+
+
+
 /**
  * @deprecated
  */
@@ -95,20 +105,18 @@ class DibiVariable extends DateTime53
 
 
 // dibi libraries
-require_once dirname(__FILE__) . '/libs/interfaces.php';
-require_once dirname(__FILE__) . '/libs/DibiObject.php';
-require_once dirname(__FILE__) . '/libs/DibiException.php';
-require_once dirname(__FILE__) . '/libs/DibiConnection.php';
-require_once dirname(__FILE__) . '/libs/DibiResult.php';
-require_once dirname(__FILE__) . '/libs/DibiResultIterator.php';
-require_once dirname(__FILE__) . '/libs/DibiRow.php';
-require_once dirname(__FILE__) . '/libs/DibiTranslator.php';
-require_once dirname(__FILE__) . '/libs/DibiDataSource.php';
-require_once dirname(__FILE__) . '/libs/DibiFluent.php';
-require_once dirname(__FILE__) . '/libs/DibiDatabaseInfo.php';
-require_once dirname(__FILE__) . '/libs/DibiProfiler.php';
-
-
+require_once __DIR__ . '/libs/interfaces.php';
+require_once __DIR__ . '/libs/DibiObject.php';
+require_once __DIR__ . '/libs/DibiException.php';
+require_once __DIR__ . '/libs/DibiConnection.php';
+require_once __DIR__ . '/libs/DibiResult.php';
+require_once __DIR__ . '/libs/DibiResultIterator.php';
+require_once __DIR__ . '/libs/DibiRow.php';
+require_once __DIR__ . '/libs/DibiTranslator.php';
+require_once __DIR__ . '/libs/DibiDataSource.php';
+require_once __DIR__ . '/libs/DibiFluent.php';
+require_once __DIR__ . '/libs/DibiDatabaseInfo.php';
+require_once __DIR__ . '/libs/DibiProfiler.php';
 
 
 
@@ -154,7 +162,7 @@ class dibi
 	 * dibi version
 	 */
 	const VERSION = '1.3-dev';
-	const REVISION = '651c0f8 released on 2010-05-19';
+	const REVISION = '8c99f0c released on 2010-05-26';
 	/**#@-*/
 
 	const ASC = 'ASC', DESC = 'DESC';

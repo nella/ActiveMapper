@@ -4,17 +4,16 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
 
 namespace Nette;
 
-use Nette;
-
-use Nette\Environment;
+use Nette,
+	Nette\Environment;
 
 
 
@@ -137,7 +136,7 @@ final class Debug
 
 	/**
 	 * Static class constructor.
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _init()
 	{
@@ -468,7 +467,7 @@ final class Debug
 	/**
 	 * Shutdown handler to execute of the planned activities.
 	 * @return void
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _shutdownHandler()
 	{
@@ -525,7 +524,7 @@ final class Debug
 	 *
 	 * @param  \Exception
 	 * @return void
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _exceptionHandler(\Exception $exception)
 	{
@@ -548,7 +547,7 @@ final class Debug
 	 * @param  array  an array of variables that existed in the scope the error was triggered in
 	 * @return bool   FALSE to call normal error handler, NULL otherwise
 	 * @throws \FatalErrorException
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _errorHandler($severity, $message, $file, $line, $context)
 	{
@@ -609,7 +608,7 @@ final class Debug
 
 		} elseif (self::$logFile) {
 			try {
-				$hash = md5($exception);
+				$hash = md5($exception );
 				self::log("PHP Fatal error: Uncaught " . str_replace("Stack trace:\n" . $exception->getTraceAsString(), '', $exception));
 				foreach (new \DirectoryIterator(dirname(self::$logFile)) as $entry) {
 					if (strpos($entry, $hash)) {
@@ -652,8 +651,7 @@ final class Debug
 			if (!headers_sent()) {
 				@ob_end_clean(); while (ob_get_level() && @ob_end_clean());
 				header_remove('Content-Encoding');
-				// override gzhandler
-			}
+				}
 			self::_paintBlueScreen($exception);
 
 		} elseif (self::$firebugDetected && !headers_sent()) {
@@ -687,7 +685,7 @@ final class Debug
 	 * Paint blue screen.
 	 * @param  \Exception
 	 * @return void
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _paintBlueScreen(\Exception $exception)
 	{
@@ -700,7 +698,7 @@ final class Debug
 		}
 
 		if (class_exists('Nette\Environment', FALSE)) {
-			$application = Environment::getServiceLocator()->hasService('Nette\Application\Application', TRUE) ? Environment::getServiceLocator()->getService('Nette\Application\Application') : NULL;
+			$application = Environment::getServiceLocator()->hasService('Nette\\Application\\Application', TRUE) ? Environment::getServiceLocator()->getService('Nette\\Application\\Application') : NULL;
 		}
 
 		require __DIR__ . '/Debug.templates/bluescreen.phtml';
@@ -712,7 +710,7 @@ final class Debug
 	 * Redirects output to file.
 	 * @param  string
 	 * @return string
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _writeFile($buffer)
 	{
@@ -791,7 +789,7 @@ final class Debug
 	 * Renders default panel.
 	 * @param  string
 	 * @return void
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function renderTab($id)
 	{
@@ -818,7 +816,7 @@ final class Debug
 	 * Renders default panel.
 	 * @param  string
 	 * @return void
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function renderPanel($id)
 	{

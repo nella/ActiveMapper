@@ -1,5 +1,8 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests;
+
+use ActiveMapper\Repository,
+	App\Models\Author;
 
 require_once __DIR__ . "/bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,7 +11,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
 	public function testFind1()
 	{
-		$data = \ActiveMapper\Repository::find('App\Models\Author', 1);
+		$repository = new Repository('App\Models\Author');
+		$data = $repository->find(1);
 		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -16,7 +20,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindBy1()
 	{
-		$data = \ActiveMapper\Repository::findByName('App\Models\Author', 'John Doe');
+		$repository = new Repository('App\Models\Author');
+		$data = $repository->findByName('John Doe');
 		$ent = new Author(array('id' => 2, 'name' => "John Doe"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -24,7 +29,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindBy2()
 	{
-		$data = \ActiveMapper\Repository::findById('App\Models\Author', 1);
+		$repository = new Repository('App\Models\Author');
+		$data = $repository->findById(1);
 		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
 		$this->assertEquals($ent, $data);
 		$this->assertType('App\Models\Author', $data);
@@ -32,7 +38,8 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindAll1()
 	{
-		$rows = \ActiveMapper\Repository::findAll('App\Models\Author');
+		$repository = new Repository('App\Models\Author');
+		$rows = $repository->findAll();
 		$this->assertType('ActiveMapper\RepositoryCollection', $rows);
 
 
@@ -57,6 +64,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 	public function testCallException()
 	{
 		$this->setExpectedException("MemberAccessException");
-		\ActiveMapper\Repository::exception();
+		$repository = new Repository('App\Models\Author');
+		$repository->exception();
+	}
+	
+	public function testFactory()
+	{
+		$this->assertEquals(Repository::factory('App\Models\Author'), new Repository('App\Models\Author'));
 	}
 }

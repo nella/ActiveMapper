@@ -4,17 +4,16 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Application
  */
 
 namespace Nette\Application;
 
-use Nette;
-
-use Nette\Environment;
+use Nette,
+	Nette\Environment;
 
 
 
@@ -40,7 +39,7 @@ abstract class Presenter extends Control implements IPresenter
 	const INVALID_LINK_EXCEPTION = 3;
 	/**#@-*/
 
-	/**#@+ @internal special parameter key */
+	/**#@+ @ignore internal special parameter key */
 	const SIGNAL_KEY = 'do';
 	const ACTION_KEY = 'action';
 	const FLASH_KEY = '_fid';
@@ -712,7 +711,7 @@ abstract class Presenter extends Control implements IPresenter
 	 * @param  string   forward|redirect|link
 	 * @return string   URL
 	 * @throws InvalidLinkException
-	 * @internal
+	 * @ignore internal
 	 */
 	final protected function createRequest($component, $destination, array $args, $mode)
 	{
@@ -837,17 +836,17 @@ abstract class Presenter extends Control implements IPresenter
 		// PROCESS ARGUMENTS
 		if (is_subclass_of($presenterClass, __CLASS__)) {
 			if ($action === '') {
-				$action = $presenterClass::$defaultAction; // in PHP 5.3
-				}
+				$action = $presenterClass::$defaultAction;
+			}
 
 			$current = ($action === '*' || $action === $this->action) && $presenterClass === get_class($this); // TODO
 
 			$reflection = new PresenterComponentReflection($presenterClass);
 			if ($args || $destination === 'this') {
 				// counterpart of run() & tryCall()
-				$method = $presenterClass::formatActionMethod($action); // in PHP 5.3
+				$method = $presenterClass::formatActionMethod($action);
 				if (!$reflection->hasCallableMethod($method)) {
-					$method = $presenterClass::formatRenderMethod($action); // in PHP 5.3
+					$method = $presenterClass::formatRenderMethod($action);
 					if (!$reflection->hasCallableMethod($method)) {
 						$method = NULL;
 					}

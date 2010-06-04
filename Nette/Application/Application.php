@@ -4,17 +4,16 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Application
  */
 
 namespace Nette\Application;
 
-use Nette;
-
-use Nette\Environment;
+use Nette,
+	Nette\Environment;
 
 
 
@@ -31,8 +30,8 @@ class Application extends Nette\Object
 
 	/** @var array */
 	public $defaultServices = array(
-		'Nette\Application\IRouter' => 'Nette\Application\MultiRouter',
-		'Nette\Application\IPresenterLoader' => array(__CLASS__, 'createPresenterLoader'),
+		'Nette\\Application\\IRouter' => 'Nette\Application\MultiRouter',
+		'Nette\\Application\\IPresenterLoader' => array(__CLASS__, 'createPresenterLoader'),
 	);
 
 	/** @var bool enable fault barrier? */
@@ -169,11 +168,12 @@ class Application extends Nette\Object
 					$this->catchExceptions = Environment::isProduction();
 				}
 
+				$this->onError($this, $e);
+
 				if (!$this->catchExceptions) {
+					$this->onShutdown($this, $e);
 					throw $e;
 				}
-
-				$this->onError($this, $e);
 
 				if ($repeatedError) {
 					$e = new ApplicationException('An error occured while executing error-presenter', 0, $e);
@@ -278,7 +278,7 @@ class Application extends Nette\Object
 	 */
 	public function getRouter()
 	{
-		return $this->getServiceLocator()->getService('Nette\Application\IRouter');
+		return $this->getServiceLocator()->getService('Nette\\Application\\IRouter');
 	}
 
 
@@ -290,7 +290,7 @@ class Application extends Nette\Object
 	 */
 	public function setRouter(IRouter $router)
 	{
-		$this->getServiceLocator()->addService('Nette\Application\IRouter', $router);
+		$this->getServiceLocator()->addService('Nette\\Application\\IRouter', $router);
 		return $this;
 	}
 
@@ -302,7 +302,7 @@ class Application extends Nette\Object
 	 */
 	public function getPresenterLoader()
 	{
-		return $this->getServiceLocator()->getService('Nette\Application\IPresenterLoader');
+		return $this->getServiceLocator()->getService('Nette\\Application\\IPresenterLoader');
 	}
 
 

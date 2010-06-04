@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -59,11 +59,11 @@ final class Environment
 
 	/** @var array */
 	private static $aliases = array(
-		'getHttpContext' => 'Nette\Web\HttpContext',
-		'getHttpRequest' => 'Nette\Web\IHttpRequest',
-		'getHttpResponse' => 'Nette\Web\IHttpResponse',
-		'getApplication' => 'Nette\Application\Application',
-		'getUser' => 'Nette\Web\IUser',
+		'getHttpContext' => 'Nette\\Web\\HttpContext',
+		'getHttpRequest' => 'Nette\\Web\\IHttpRequest',
+		'getHttpResponse' => 'Nette\\Web\\IHttpResponse',
+		'getApplication' => 'Nette\\Application\\Application',
+		'getUser' => 'Nette\\Web\\IUser',
 	);
 
 	/** @var array */
@@ -442,7 +442,7 @@ final class Environment
 	public static function getCache($namespace = '')
 	{
 		return new Nette\Caching\Cache(
-			self::getService('Nette\Caching\ICacheStorage'),
+			self::getService('Nette\\Caching\\ICacheStorage'),
 			$namespace
 		);
 	}
@@ -456,7 +456,7 @@ final class Environment
 	 */
 	public static function getSession($namespace = NULL)
 	{
-		$handler = self::getService('Nette\Web\Session');
+		$handler = self::getService('Nette\\Web\\Session');
 		return $namespace === NULL ? $handler : $handler->getNamespace($namespace);
 	}
 

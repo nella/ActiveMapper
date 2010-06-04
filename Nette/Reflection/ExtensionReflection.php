@@ -4,18 +4,17 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Reflection
  */
 
 namespace Nette\Reflection;
 
-use Nette;
-
-use Nette\ObjectMixin;
-use Nette\Annotations;
+use Nette,
+	Nette\ObjectMixin,
+	Nette\Annotations;
 
 
 
@@ -41,7 +40,7 @@ class ExtensionReflection extends \ReflectionExtension
 
 	/**
 	 * @return Nette\Reflection\ExtensionReflection
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function import(\ReflectionExtension $ref)
 	{

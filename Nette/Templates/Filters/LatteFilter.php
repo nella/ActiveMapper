@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Templates
  */
@@ -24,13 +24,13 @@ use Nette;
  */
 class LatteFilter extends Nette\Object
 {
-	/** @internal single & double quoted PHP string */
+	/** @ignore internal single & double quoted PHP string */
 	const RE_STRING = '\'(?:\\\\.|[^\'\\\\])*\'|"(?:\\\\.|[^"\\\\])*"';
 
-	/** @internal PHP identifier */
+	/** @ignore internal PHP identifier */
 	const RE_IDENTIFIER = '[_a-zA-Z\x7F-\xFF][_a-zA-Z0-9\x7F-\xFF]*';
 
-	/** @internal special HTML tag or attribute prefix */
+	/** @ignore internal special HTML tag or attribute prefix */
 	const HTML_PREFIX = 'n:';
 
 	/** @var ILatteHandler */
@@ -54,7 +54,7 @@ class LatteFilter extends Nette\Object
 	/** @var string */
 	public $context, $escape;
 
-	/**#@+ @internal Context-aware escaping states */
+	/**#@+ @ignore internal Context-aware escaping states */
 	const CONTEXT_TEXT = 'text';
 	const CONTEXT_CDATA = 'cdata';
 	const CONTEXT_TAG = 'tag';

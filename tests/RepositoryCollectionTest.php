@@ -1,5 +1,8 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests;
+
+use ActiveMapper\RepositoryCollection,
+	App\Models\Author;
 
 require_once __DIR__ . "/bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -13,13 +16,13 @@ class RepositoryCollectionTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\RepositoryCollection('App\Models\Author');
+		$this->object = new RepositoryCollection('App\Models\Author');
 	}
 
 	public function testBadEntityException()
 	{
 		$this->setExpectedException("InvalidArgumentException");
-		$data = new \ActiveMapper\RepositoryCollection('App\Models\MyModel');
+		$data = new RepositoryCollection('App\Models\MyModel');
 	}
 
 	public function testWhere1()
@@ -137,9 +140,9 @@ class RepositoryCollectionTest extends \PHPUnit_Framework_TestCase
 		$this->setUp();
 		$rows = $this->object->fetchAll();
 		$data = array(
-			new \App\Models\Author(array('id' => 1, 'name' => "František Vomáčka")),
-			new \App\Models\Author(array('id' => 2, 'name' => "John Doe")),
-			new \App\Models\Author(array('id' => 3, 'name' => "Jan Novák")),
+			new Author(array('id' => 1, 'name' => "František Vomáčka")),
+			new Author(array('id' => 2, 'name' => "John Doe")),
+			new Author(array('id' => 3, 'name' => "Jan Novák")),
 		);
 		$this->assertEquals(3, count($rows));
 		$this->assertType('ActiveMapper\Collection', $rows);
@@ -156,7 +159,7 @@ class RepositoryCollectionTest extends \PHPUnit_Framework_TestCase
 		unset($rows[2]);
 		$this->assertFalse(isset($rows[2]));
 		
-		$data = new \App\Models\Author(array('id' => 4, 'name' => "Josef Pinďa"));
+		$data = new Author(array('id' => 4, 'name' => "Josef Pinďa"));
        	$rows[2] = $data;
 		$this->assertEquals($data, $rows[2]);
    	}

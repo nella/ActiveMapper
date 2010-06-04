@@ -11,9 +11,9 @@
 
 namespace ActiveMapper;
 
-use dibi;
-use Nette\Reflection\ClassReflection;
-use ActiveMapper\Tools;
+use dibi,
+	Nette\Reflection\ClassReflection,
+	ActiveMapper\Tools;
 
 /**
  * Repository
@@ -21,85 +21,107 @@ use ActiveMapper\Tools;
  * @author     Patrik Votoček
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @package    ActiveMapper
+ * @property-read string $entityClass
  */
-abstract class Repository extends \Nette\Object
+class Repository extends \Nette\Object implements IRepository
 {
+	/** @var string */
+	private $entityClass;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param string $entityName
+	 */
+	public function __construct($entityClass)
+	{
+		if (!class_exists($entityClass) || !ClassReflection::from($entityClass)->implementsInterface('ActiveMapper\IEntity'))
+			throw new \InvalidArgumentException("Entity [".$entityClass."] must implements 'ActiveMapper\\IEntity'");
+		
+		$this->entityClass = $entityClass;
+	}
+	
+	/**
+	 * Get entity class
+	 */
+	public function getEntityClass()
+	{
+		return $this->entityClass;
+	}
+	
 	/**
 	 * Find entity witch id (primary key) is ...
 	 *
-	 * @param string $entity
 	 * @param mixed $primaryKey
 	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
-	public static function find($entity, $primaryKey)
+	public function find($primaryKey)
 	{
-		if (!class_exists($entity) || !ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		if (!Manager::getEntityMetaData($entity)->hasPrimaryKey())
-			throw new \InvalidArgumentException("Entity [".$entity."] has not set PRIMARY KEY");
+		if (!static::getMetaData()->hasPrimaryKey())
+			throw new \InvalidArgumentException("Entity [".$this->entityClass."] has not set PRIMARY KEY");
 
-		return \dibi::select("*")->from(Manager::getEntityMetaData($entity)->tableName)
-				->where("[".Tools::underscore(Manager::getEntityMetaData($entity)->primaryKey)."] = "
-					.self::getModificator($entity, Manager::getEntityMetaData($entity)->primaryKey), $primaryKey)
-				->execute()->setRowClass($entity)->fetch();
+		return dibi::select("*")->from(static::getMetaData()->tableName)
+				->where("[".Tools::underscore(static::getMetaData()->primaryKey)."] = "
+					.$this->getModificator(static::getMetaData()->primaryKey), $primaryKey)
+				->execute()->setRowClass($this->entityClass)->fetch();
 	}
 
 	/**
 	 * Find all entity
 	 *
-	 * @param string $entity
 	 * @return ActiveMapper\RepositoryCollection
 	 * @throws InvalidArgumentException
 	 */
-	public static function findAll($entity)
+	public function findAll()
 	{
-		if (!class_exists($entity) || !ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		
-		return new RepositoryCollection($entity);
+		return new RepositoryCollection($this->entityClass);
    	}
 
 	/**
-	 * Static method overload for findBy...
+	 * Method overload for findBy...
 	 *
 	 * @param string $name
 	 * @param array $args
 	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
-	public static function __callStatic($name, $args)
+	public function __call($name, $args)
 	{
 		if (strncmp($name, 'findBy', 6) === 0)
 		{
-			if (!ClassReflection::from($args[0])->implementsInterface('ActiveMapper\IEntity'))
-				throw new \InvalidArgumentException("Entity [".$args[0]."] must implements 'ActiveMapper\\IEntity'");
-
 			$name = lcfirst(substr($name, 6));
-           	return \dibi::select("*")->from(Manager::getEntityMetaData($args[0])->tableName)
-				->where("[".Tools::underscore($name)."] = ".self::getModificator($args[0], $name), $args[1])
-				->execute()->setRowClass($args[0])->fetch();
+           	return \dibi::select("*")->from($this->getMetaData()->tableName)
+				->where("[".Tools::underscore($name)."] = ".$this->getModificator($name), $args[0])
+				->execute()->setRowClass($this->entityClass)->fetch();
 		}
 		else
 			return parent::__callStatic($name, $args);
 	}
 	
 	/**
+	 * Get entity metadata
+	 * 
+	 * @return ActiveMapper\EntityMetaData
+	 */
+	private function getMetaData()
+	{
+		return Manager::getEntityMetaData($this->entityClass);
+	}
+	
+	/**
 	 * Get modificator
 	 * 
-	 * @param string $entity
 	 * @param string $column entity column name
 	 * @return string
 	 * @throws InvalidArgumentException
 	 */
-	public static function getModificator($entity, $column)
+	public function getModificator($column)
 	{
-		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
-		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
-			throw new \InvalidArgumentException("Entity [".$entity."] has not '".$column."' column");
+		if (!$this->getMetaData()->hasColumn($column))
+			throw new \InvalidArgumentException("Entity [".$this->entityClass."] has not '".$column."' column");
 		
-		switch(Manager::getEntityMetaData($entity)->getColumn($column)->reflection->name)
+		switch($this->getMetaData()->getColumn($column)->reflection->name)
 		{
 			case 'ActiveMapper\DataTypes\Bool':
 				return '%b';
@@ -126,23 +148,30 @@ abstract class Repository extends \Nette\Object
 	/**
 	 * Lazy load column
 	 *
-	 * @param entity $entity valid entity class
 	 * @param string $column valid entity column name
 	 * @param mixed $primaryKey
 	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public static function lazyLoad($entity, $column, $primaryKey)
+	public function lazyLoad($column, $primaryKey)
 	{
-		if (!class_exists($entity) || !\Nette\Reflection\ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entity."]");
-		if (!Manager::getEntityMetaData($entity)->hasColumn($column))
-			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entity."' column");
+		if (!$this->getMetaData()->hasColumn($column))
+			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$this->entityClass."' column");
 
 		return \dibi::select($column)
-			->from(Manager::getEntityMetaData($entity)->tableName)
-			->where("[".Manager::getEntityMetaData($entity)->primaryKey."] = "
-				.self::getModificator($entity, Manager::getEntityMetaData($entity)->primaryKey), $primaryKey)
+			->from($this->getMetaData()->tableName)
+			->where("[".$this->getMetaData()->primaryKey."] = ".$this->getModificator($this->getMetaData()->primaryKey), $primaryKey)
 			->fetchSingle();
+	}
+	
+	/**
+	 * Repository factory
+	 * 
+	 * @return ActiveMapper\Repository
+	 */
+	public static function factory($entityClass)
+	{
+		$class = get_called_class();
+		return new $class($entityClass);
 	}
 }

@@ -1,5 +1,7 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests\Associations;
+
+use ActiveMapper\Associations\OneToOne;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,7 +10,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Author', 'App\Models\Profile');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Profile');
 		$this->assertEquals('profile', $object->getName());
 		$this->assertEquals('profile', $object->name);
 
@@ -30,7 +32,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'name');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -53,12 +55,12 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistSourceColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'exception');
+		new OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'exception');
 	}
 	
 	public function testMapped3()
 	{
-		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Profile', 'App\Models\Author', FALSE);
+		$object = new OneToOne('App\Models\Profile', 'App\Models\Author', FALSE);
 		$this->assertEquals('author', $object->getName());
 		$this->assertEquals('author', $object->name);
 
@@ -80,7 +82,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped4()
 	{
-		$object = new \ActiveMapper\Associations\OneToOne('App\Models\Profile', 'App\Models\Author', FALSE, 'test', 'name', 'title');
+		$object = new OneToOne('App\Models\Profile', 'App\Models\Author', FALSE, 'test', 'name', 'title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -103,12 +105,12 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistTargetColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\OneToOne('App\Models\Article', 'App\Models\Author', FALSE, 'test', 'exception', 'title');
+		new OneToOne('App\Models\Article', 'App\Models\Author', FALSE, 'test', 'exception', 'title');
 	}
 	
 	public function testGetData1()
 	{
-		$author = \ActiveMapper\Repository::find('App\Models\Author', 1);
+		$author = \ActiveMapper\Repository::factory('App\Models\Author')->find(1);
 		$this->assertEquals(new \App\Models\Profile(array('author_id' => 1, 'web' => "http://www.example.com")), $author->profile());
 	}
 	

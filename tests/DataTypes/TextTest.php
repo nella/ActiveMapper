@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\Text;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\Text('test');
+		$this->object = new Text('test');
 	}
 
 	public function testValidateBoolean()
@@ -41,7 +43,7 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidateNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Text('test', TRUE);
+		$object = new Text('test', TRUE);
 		$this->assertTrue($object->validate(NULL));
 	}
 
@@ -80,7 +82,7 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Text('test', TRUE);
+		$object = new Text('test', TRUE);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

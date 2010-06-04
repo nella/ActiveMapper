@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -26,6 +26,7 @@ final class Callback extends Object
 {
 	/** @var callback */
 	private $cb;
+
 	/**
 	 * @param  mixed   class, object, function, callback
 	 * @param  string  method
@@ -54,7 +55,8 @@ final class Callback extends Object
 		if (!is_callable($this->cb)) {
 			throw new \InvalidStateException("Callback '$this' is not callable.");
 		}
-		return call_user_func_array($this->cb, func_get_args());
+		$args = func_get_args();
+		return call_user_func_array($this->cb, $args);
 	}
 
 
@@ -68,7 +70,8 @@ final class Callback extends Object
 		if (!is_callable($this->cb)) {
 			throw new \InvalidStateException("Callback '$this' is not callable.");
 		}
-		return call_user_func_array($this->cb, func_get_args());
+		$args = func_get_args();
+		return call_user_func_array($this->cb, $args);
 	}
 
 

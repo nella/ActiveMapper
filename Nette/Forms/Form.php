@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Forms
  */
@@ -70,7 +70,7 @@ class Form extends FormContainer
 	const MIME_TYPE = ':mimeType';
 
 	// special case
-	const SCRIPT = 'Nette\Forms\InstantClientScript::javascript';
+	const SCRIPT = 'Nette\\Forms\\InstantClientScript::javascript';
 	/**#@-*/
 
 	/**#@+ method */
@@ -78,10 +78,10 @@ class Form extends FormContainer
 	const POST = 'post';
 	/**#@-*/
 
-	/** @internal tracker ID */
+	/** @ignore internal tracker ID */
 	const TRACKER_ID = '_form_';
 
-	/** @internal protection token ID */
+	/** @ignore internal protection token ID */
 	const PROTECTOR_ID = '_token_';
 
 	/** @var array of function(Form $sender); Occurs when the form is submitted and successfully validated */

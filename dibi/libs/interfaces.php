@@ -24,8 +24,6 @@ interface IDataSource extends Countable, IteratorAggregate
 
 
 
-
-
 /**
  * Defines method that must profiler implement.
  * @package dibi
@@ -72,8 +70,6 @@ interface IDibiProfiler
 	function exception(DibiDriverException $exception);
 
 }
-
-
 
 
 
@@ -231,12 +227,18 @@ interface IDibiDriver
 	 * @return mixed
 	 */
 	function getResultResource();
+}
 
 
 
-	/********************* reflection ****************d*g**/
-
-
+/**
+ * dibi driver reflection.
+ *
+ * @copyright  Copyright (c) 2005, 2010 David Grudl
+ * @package    dibi
+ */
+interface IDibiReflector
+{
 
 	/**
 	 * Returns list of tables.

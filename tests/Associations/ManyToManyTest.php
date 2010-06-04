@@ -1,5 +1,9 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests\Associations;
+
+use ActiveMapper\Associations\ManyToMany,
+	ActiveMapper\Repository,
+	App\Models\Tag;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,7 +12,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new \ActiveMapper\Associations\ManyToMany('App\Models\Article', 'App\Models\Tag');
+		$object = new ManyToMany('App\Models\Article', 'App\Models\Tag');
 		$this->assertEquals('tags', $object->getName());
 		$this->assertEquals('tags', $object->name);
 
@@ -38,9 +42,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new \ActiveMapper\Associations\ManyToMany(
-			'App\Models\Article', 'App\Models\Tag', TRUE, 'test', 'title', 'name', 'test_test'
-		);
+		$object = new ManyToMany('App\Models\Article', 'App\Models\Tag', TRUE, 'test', 'title', 'name', 'test_test');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -68,12 +70,12 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistSourceColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\OneToOne('App\Models\Article', 'App\Models\Tag', TRUE, 'test', 'title', 'exception');
+		new ManyToMany('App\Models\Article', 'App\Models\Tag', TRUE, 'test', 'title', 'exception');
 	}
 	
 	public function testMapped3()
 	{
-		$object = new \ActiveMapper\Associations\ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE);
+		$object = new ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE);
 		$this->assertEquals('articles', $object->getName());
 		$this->assertEquals('articles', $object->name);
 
@@ -103,9 +105,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped4()
 	{
-		$object = new \ActiveMapper\Associations\ManyToMany(
-			'App\Models\Tag', 'App\Models\Article', FALSE, 'test', 'name', 'title', 'test_test'
-		);
+		$object = new ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE, 'test', 'name', 'title', 'test_test');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -136,22 +136,23 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistTargetColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\OneToOne('App\Models\Tag', 'App\Models\Article', FALSE, 'test', 'exception', 'title');
+		new ManyToMany('App\Models\Tag', 'App\Models\Article', FALSE, 'test', 'exception', 'title');
 	}
 	
 	public function testGetData1()
 	{
-		$article = \ActiveMapper\Repository::find('App\Models\Article', 1);
+		$article = Repository::factory('App\Models\Article')->find(1);
+		
 		$tags = $article->tags();
 		$this->assertType('ActiveMapper\RepositoryCollection', $tags);
-		$this->assertEquals(new \App\Models\Tag(array('id' => 18, 'name' => "Late Static Binding")), $tags[0]);
-		$this->assertEquals(new \App\Models\Tag(array('id' => 17, 'name' => "Singleton")), $tags[1]);
-		$this->assertEquals(new \App\Models\Tag(array('id' => 1, 'name' => "PHP")), $tags[2]);
+		$this->assertEquals(new Tag(array('id' => 18, 'name' => "Late Static Binding")), $tags[0]);
+		$this->assertEquals(new Tag(array('id' => 17, 'name' => "Singleton")), $tags[1]);
+		$this->assertEquals(new Tag(array('id' => 1, 'name' => "PHP")), $tags[2]);
 	}
 	
 	public function testGetData2()
 	{
-		$tag = \ActiveMapper\Repository::find('App\Models\Tag', 18);
+		$tag = Repository::factory('App\Models\Tag')->find(18);
 		$articles = $tag->articles();
 		$this->assertType('ActiveMapper\RepositoryCollection', $articles);
 		$this->assertEquals(new \App\Models\Article(array(

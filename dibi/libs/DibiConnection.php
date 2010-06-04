@@ -78,7 +78,7 @@ class DibiConnection extends DibiObject
 		$driver = preg_replace('#[^a-z0-9_]#', '_', $config['driver']);
 		$class = "Dibi" . $driver . "Driver";
 		if (!class_exists($class, FALSE)) {
-			include_once dirname(__FILE__) . "/../drivers/$driver.php";
+			include_once __DIR__ . "/../drivers/$driver.php";
 
 			if (!class_exists($class, FALSE)) {
 				throw new DibiException("Unable to create instance of dibi driver '$class'.");
@@ -89,7 +89,7 @@ class DibiConnection extends DibiObject
 		$this->config = $config;
 		$this->driver = new $class;
 
-        // profiler
+		// profiler
 		$profilerCfg = & $config['profiler'];
 		if (is_numeric($profilerCfg) || is_bool($profilerCfg)) { // back compatibility
 			$profilerCfg = array('run' => (bool) $profilerCfg);
@@ -717,6 +717,9 @@ class DibiConnection extends DibiObject
 	 */
 	public function getDatabaseInfo()
 	{
+		if (!($this->driver instanceof IDibiReflector)) {
+			throw new NotSupportedException('Driver '. get_class($this->driver) . ' has not reflection capabilities.');
+		}
 		$this->connect();
 		return new DibiDatabaseInfo($this->driver, isset($this->config['database']) ? $this->config['database'] : NULL);
 	}

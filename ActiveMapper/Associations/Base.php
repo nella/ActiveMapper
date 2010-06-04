@@ -11,8 +11,8 @@
 
 namespace ActiveMapper\Associations;
 
-use ActiveMapper\Manager;
-use Nette\Reflection\ClassReflection;
+use ActiveMapper\Manager,
+	Nette\Reflection\ClassReflection;
 
 /**
  * Base entity association

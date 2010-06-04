@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Caching
  */
@@ -24,7 +24,7 @@ use Nette;
  */
 class MemcachedStorage extends Nette\Object implements ICacheStorage
 {
-	/**#@+ @internal cache structure */
+	/**#@+ @ignore internal cache structure */
 	const META_CALLBACKS = 'callbacks';
 	const META_DATA = 'data';
 	const META_DELTA = 'delta';

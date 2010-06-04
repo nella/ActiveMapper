@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Loaders
  */
@@ -95,7 +95,7 @@ class RobotLoader extends AutoLoader
 	public function tryLoad($type)
 	{
 		$type = strtolower($type);
-		$type = ltrim($type, '\\'); // PHP namespace bug #49143 
+		$type = ltrim($type, '\\'); // PHP namespace bug #49143
 		if (isset($this->list[$type])) {
 			if ($this->list[$type] !== FALSE) {
 				LimitedScope::load($this->list[$type][0]);
@@ -139,7 +139,7 @@ class RobotLoader extends AutoLoader
 
 
 	/**
-	 * @internal
+	 * @ignore internal
 	 */
 	public function _rebuildCallback()
 	{

@@ -1,5 +1,7 @@
 <?php
-namespace App\DataTypes;
+namespace ActiveMapperTests\DataTypes;
+
+use ActiveMapper\DataTypes\Bool;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -11,7 +13,7 @@ class BoolTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new \ActiveMapper\DataTypes\Bool('test');
+		$this->object = new Bool('test');
 	}
 
 	public function testValidateString()
@@ -86,7 +88,7 @@ class BoolTest extends \PHPUnit_Framework_TestCase
 
 	public function testValidateNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Bool('test', TRUE);
+		$object = new Bool('test', TRUE);
 		$this->assertTrue($object->validate(NULL));
 	}
 
@@ -186,7 +188,7 @@ class BoolTest extends \PHPUnit_Framework_TestCase
 
 	public function testSanitizeNull2()
 	{
-		$object = new \ActiveMapper\DataTypes\Bool('test', TRUE);
+		$object = new Bool('test', TRUE);
 		$this->assertNull($object->sanitize(NULL));
 	}
 }

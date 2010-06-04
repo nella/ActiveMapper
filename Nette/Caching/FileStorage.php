@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Caching
  */
@@ -35,7 +35,7 @@ class FileStorage extends Nette\Object implements ICacheStorage
 	 * delete* = try unlink, if fails (on NTFS) { lock(EX), truncate, close, unlink } else close (on ext3)
 	 */
 
-	/**#@+ @internal cache file structure */
+	/**#@+ @ignore internal cache file structure */
 	const META_HEADER_LEN = 28; // 22b signature + 6b meta-struct size + serialized meta-struct + data
 	// meta structure: array of
 	const META_TIME = 'time'; // timestamp

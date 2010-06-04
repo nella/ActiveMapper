@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette\Application
  */
@@ -31,7 +31,7 @@ class Route extends Nette\Object implements IRouter
 	/** flag */
 	const CASE_SENSITIVE = 256;
 
-	/**#@+ @internal uri type */
+	/**#@+ @ignore internal uri type */
 	const HOST = 1;
 	const PATH = 2;
 	const RELATIVE = 3;
@@ -45,7 +45,7 @@ class Route extends Nette\Object implements IRouter
 	const FILTER_TABLE = 'filterTable';
 	/**#@-*/
 
-	/**#@+ @internal fixity types - how to handle default value? {@link Route::$metadata} */
+	/**#@+ @ignore internal fixity types - how to handle default value? {@link Route::$metadata} */
 	const OPTIONAL = 0;
 	const PATH_OPTIONAL = 1;
 	const CONSTANT = 2;

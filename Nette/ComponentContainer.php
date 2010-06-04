@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -242,7 +242,7 @@ class ComponentContainer extends Component implements IComponentContainer
 	/**
 	 * Is container cloning now?
 	 * @return NULL|IComponent
-	 * @internal
+	 * @ignore internal
 	 */
 	public function _isCloning()
 	{

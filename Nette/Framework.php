@@ -4,8 +4,8 @@
  * Nette Framework
  *
  * @copyright  Copyright (c) 2004, 2010 David Grudl
- * @license    http://nettephp.com/license  Nette license
- * @link       http://nettephp.com
+ * @license    http://nette.org/license  Nette license
+ * @link       http://nette.org
  * @category   Nette
  * @package    Nette
  */
@@ -30,7 +30,7 @@ final class Framework
 
 	const VERSION = '1.0-dev';
 
-	const REVISION = 'ced2e04 released on 2010-05-11';
+	const REVISION = '3f64cab released on 2010-05-27';
 
 	const PACKAGE = 'PHP 5.3';
 	/**#@-*/
@@ -65,10 +65,9 @@ final class Framework
 	 */
 	public static function promo($xhtml = TRUE)
 	{
-		echo '<a href="http://nettephp.com/" title="Nette Framework - The Most Innovative PHP Framework"><img ',
-			'src="http://nettephp.com/images/nette-powered.gif" alt="Powered by Nette Framework" width="80" height="15"',
+		echo '<a href="http://nette.org/" title="Nette Framework - The Most Innovative PHP Framework"><img ',
+			'src="http://files.nette.org/icons/nette-powered.gif" alt="Powered by Nette Framework" width="80" height="15"',
 			($xhtml ? ' />' : '>'), '</a>';
 	}
 
-
-	}
+}

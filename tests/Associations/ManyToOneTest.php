@@ -1,5 +1,7 @@
 <?php
-namespace App\Models;
+namespace ActiveMapperTests\Associations;
+
+use ActiveMapper\Associations\ManyToOne;
 
 require_once __DIR__ . "/../bootstrap.php";
 require_once "PHPUnit/Framework.php";
@@ -8,7 +10,7 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new \ActiveMapper\Associations\ManyToOne('App\Models\Article', 'App\Models\Author');
+		$object = new ManyToOne('App\Models\Article', 'App\Models\Author');
 		$this->assertEquals('author', $object->getName());
 		$this->assertEquals('author', $object->name);
 
@@ -30,7 +32,7 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new \ActiveMapper\Associations\ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'name', 'title');
+		$object = new ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'name', 'title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -53,12 +55,12 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistTargetColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new \ActiveMapper\Associations\ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'exception', 'title');
+		new ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'exception', 'title');
 	}
 	
 	public function testGetData1()
 	{
-		$article = \ActiveMapper\Repository::find('App\Models\Article', 3);
+		$article = \ActiveMapper\Repository::factory('App\Models\Article')->find(3);
 		$this->assertEquals(new \App\Models\Author(array('id' => 2, 'name' => "John Doe")), $article->author());
 	}
 }
