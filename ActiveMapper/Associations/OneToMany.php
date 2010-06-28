@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper\Associations
  */
@@ -62,7 +62,6 @@ class OneToMany extends Base implements IAssociation
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
-		
 		
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));

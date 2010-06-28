@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper
  */
@@ -72,8 +72,7 @@ class RepositoryCollection extends Collection
 			$columns = $columns[0];
 
 		$selectColumns = array();
-		foreach($columns as $column)
-		{
+		foreach($columns as $column) {
 			if (!$this->getMetaData()->hasColumn($column))
 				throw new \InvalidArgumentException("Column '".$column."' must be valid '".$this->entityClass."' column");
 			$selectColumns[] = "[".$this->getMetaData()->tableName."].[".$column."]";
@@ -166,8 +165,7 @@ class RepositoryCollection extends Collection
 	 */
 	public function count()
 	{
-		if (!$this->isFrozen())
-		{
+		if (!$this->isFrozen()) {
 			$this->freeze();
 			$this->data = $this->fluent->execute()->setRowClass($this->entityClass)->fetchAll();
 		}
@@ -185,8 +183,7 @@ class RepositoryCollection extends Collection
 	 */
 	public function fetchAll($offset = NULL, $limit = NULL)
 	{
-		if (!$this->isFrozen())
-		{
+		if (!$this->isFrozen()) {
 			$this->freeze();
 			if (!empty($offset))
 				$this->fluent->offset($offset);
@@ -196,8 +193,7 @@ class RepositoryCollection extends Collection
 			$res = $this->fluent->execute();
 			$this->data = $res->setRowClass($this->entityClass)->fetchAll($offset, $limit);
 			return $this;
-		}
-		else
+		} else
 			throw new \InvalidStateException("This collection already fetched data");
 	}
 	

@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper\DataTypes
  */
@@ -58,8 +58,7 @@ class Bool extends Base implements IDataType
 	{
 		if ($value === NULL && !$this->allowNull)
 			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
-		elseif ($value !== NULL && !$this->validate($value))
-		{
+		elseif ($value !== NULL && !$this->validate($value)) {
 			throw new \InvalidArgumentException(
 				"Only boolean or 0/1 or 'y'/'n' or 'true'/'false' value accepted for '".$this->name."' [".$value."]"
 			);

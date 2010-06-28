@@ -140,7 +140,6 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	
 	public function testGetData1()
 	{
-		$this->markTestSkipped('loading');
 		$article = Repository::factory('App\Models\Application')->find(1);
 		
 		$tags = $article->tags();

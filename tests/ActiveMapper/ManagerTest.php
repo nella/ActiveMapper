@@ -22,42 +22,38 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testFind1()
 	{
-		$this->markTestSkipped('loader');
-		/*$data = Manager::find('App\Models\Author', 1);
-		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
+		$data = Manager::find('App\Models\Author', 1);
+		$ent = new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		$this->assertEquals($ent, $data);
-		$this->assertType('App\Models\Author', $data);*/
+		$this->assertType('App\Models\Author', $data);
    	}
 
 	public function testFindBy1()
 	{
-		$this->markTestSkipped('loader');
-		/*$data = Manager::findByName('App\Models\Author', 'John Doe');
-		$ent = new Author(array('id' => 2, 'name' => "John Doe"));
+		$data = Manager::findByName('App\Models\Author', 'Patrik Votoček');
+		$ent = new Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/"));
 		$this->assertEquals($ent, $data);
-		$this->assertType('App\Models\Author', $data);*/
+		$this->assertType('App\Models\Author', $data);
 	}
 
 	public function testFindBy2()
 	{
-		$this->markTestSkipped('loader');
-		/*$data = Manager::findById('App\Models\Author', 1);
-		$ent = new Author(array('id' => 1, 'name' => "František Vomáčka"));
+		$data = Manager::findById('App\Models\Author', 2);
+		$ent = new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/"));
 		$this->assertEquals($ent, $data);
-		$this->assertType('App\Models\Author', $data);*/
+		$this->assertType('App\Models\Author', $data);
 	}
 
 	public function testFindAll1()
 	{
-		$this->markTestSkipped('loader');
-		/*$rows = Manager::findAll('App\Models\Author');
+		$rows = Manager::findAll('App\Models\Author');
 		$this->assertType('ActiveMapper\RepositoryCollection', $rows);
 
 
 		$data = array(
-			new Author(array('id' => 1, 'name' => "František Vomáčka")),
-			new Author(array('id' => 2, 'name' => "John Doe")),
-			new Author(array('id' => 3, 'name' => "Jan Novák")),
+			new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")),
+			new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")),
+			new Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")),
 		);
 		$this->assertEquals(3, count($rows));
 		$this->assertType('ActiveMapper\Collection', $rows);
@@ -69,7 +65,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($data[1], $rows[1]);
 		$this->assertType('App\Models\Author', $rows[2]);
 		$this->assertTrue(isset($rows[2]));
-		$this->assertEquals($data[2], $rows[2]);*/
+		$this->assertEquals($data[2], $rows[2]);
 	}
 
 	public function testCallException()

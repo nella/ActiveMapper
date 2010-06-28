@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper
  */
@@ -86,14 +86,12 @@ class Repository extends \Nette\Object implements IRepository
 	 */
 	public function __call($name, $args)
 	{
-		if (strncmp($name, 'findBy', 6) === 0)
-		{
+		if (strncmp($name, 'findBy', 6) === 0) {
 			$name = lcfirst(substr($name, 6));
            	return \dibi::select("*")->from($this->getMetaData()->tableName)
 				->where("[".Tools::underscore($name)."] = ".$this->getModificator($name), $args[0])
 				->execute()->setRowClass($this->entityClass)->fetch();
-		}
-		else
+		} else
 			return parent::__callStatic($name, $args);
 	}
 	
@@ -119,8 +117,7 @@ class Repository extends \Nette\Object implements IRepository
 		if (!$this->getMetaData()->hasColumn($column))
 			throw new \InvalidArgumentException("Entity [".$this->entityClass."] has not '".$column."' column");
 		
-		switch($this->getMetaData()->getColumn($column)->reflection->name)
-		{
+		switch($this->getMetaData()->getColumn($column)->reflection->name) {
 			case 'ActiveMapper\DataTypes\Bool':
 				return '%b';
 				break;
@@ -128,7 +125,6 @@ class Repository extends \Nette\Object implements IRepository
 				return '%d';
 				break;
 			case 'ActiveMapper\DataTypes\DateTime':
-			case 'ActiveMapper\DataTypes\Time':
 				return '%t';
 				break;
 			case 'ActiveMapper\DataTypes\Float':

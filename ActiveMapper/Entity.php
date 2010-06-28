@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper
  */
@@ -41,26 +41,21 @@ abstract class Entity extends \Nette\Object implements IEntity
 		$metaData = Manager::getEntityMetaData(get_called_class());
 
 		$this->_changedData = $this->_assocData = $this->_assocKeys = array();
-		if (count($data) >= 0)
-		{
+		if (count($data) >= 0) {
 			if (!isset($data[$metaData->primaryKey]))
 				throw new \InvalidArgumentException("Data for entity '".$metaData->name."' must be load primary key");
 
-			foreach ($metaData->columns as $column)
-			{
+			foreach ($metaData->columns as $column) {
 				$name = Tools::underscore($column->name);
 				if (array_key_exists($name, $data))
 					$this->_originalData[$column->name] = $column->sanitize($data[$name]);
-				else
-				{
+				else {
 					$this->_originalData[$column->name] = new LazyLoad(get_called_class(), $name,
 						Tools::underscore($data[$metaData->primaryKey]));
 				}
 			}
-			if (count($metaData->associationsKeys) > 0 )
-			{
-				foreach ($metaData->associationsKeys as $key)
-				{
+			if (count($metaData->associationsKeys) > 0 ) {
+				foreach ($metaData->associationsKeys as $key) {
 					if (!isset($data[$key]) && $metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
 						throw \InvalidStateException("Association key '".$key."' must loaded for '".get_called_class ()."' entity.");
 
@@ -118,23 +113,17 @@ abstract class Entity extends \Nette\Object implements IEntity
 	private function &universalGetValue($name)
 	{
 		$metaData = Manager::getEntityMetaData(get_called_class());
-		if ($metaData->hasColumn($name))
-		{
+		if ($metaData->hasColumn($name)) {
 			if (isset($this->_changedData[$name]))
 				return $this->_changedData[$name];
-			else
-			{
-				if ($this->_originalData[$name] instanceof LazyLoad)
-				{
+			else {
+				if ($this->_originalData[$name] instanceof LazyLoad) {
 					$this->_originalData[$name] = $metaData->getColumn($name)->sanitize($this->_originalData[$name]->data);
 					return $this->_originalData[$name];
-				}
-				else
+				} else
 					return $this->_originalData[$name];
 			}
-				
-		}
-		else
+		} else
 			throw new \MemberAccessException("Cannot read to undeclared column " . get_called_class() . "::\$$name.");
 	}
 
@@ -200,14 +189,12 @@ abstract class Entity extends \Nette\Object implements IEntity
 	 */
 	private function &universalGetAssociation($name)
 	{
-		if (Manager::getEntityMetaData(get_called_class())->hasAssociation($name))
-		{
+		if (Manager::getEntityMetaData(get_called_class())->hasAssociation($name)) {
 			if (!isset($this->_assocData[$name]))
 				$this->loadAssociationData($name);
 				
 			return $this->_assocData[$name];
-		}
-		else
+		} else
 			throw new \MemberAccessException("Cannot read undeclared association " . get_called_class() . "::\$$name.");
 	}
 	

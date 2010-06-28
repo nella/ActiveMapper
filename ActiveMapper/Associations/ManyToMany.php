@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper\Associations
  */
@@ -90,7 +90,6 @@ class ManyToMany extends Base implements IAssociation
 			$this->targetColumn = $targetColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$targetColumn."' is not valid column '".$targetEntity."' entity.");
-		
 		
 		if (empty($joinTableSourceColumn))
 			$this->joinTableSourceColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));

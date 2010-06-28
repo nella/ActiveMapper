@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @license    http://nellacms.com/license  New BSD License
- * @link       http://addons.nettephp.com/cs/active-mapper
+ * @link       http://addons.nette.org/cs/active-mapper
  * @category   ActiveMapper
  * @package    ActiveMapper
  */
@@ -33,23 +33,19 @@ abstract class Manager extends \Nette\Object
 	 */
 	public static function getEntityMetaData($entity)
 	{
-		if (!isset(self::$metaData[$entity]))
-		{
+		if (!isset(self::$metaData[$entity])) {
 			$cache = ORM::getCache('metaData');
 			if (isset($cache[$entity]) && !ORM::$metaDataCache)
 				self::$metaData[$entity] = $cache[$entity];
-			else
-			{
+			else {
 				self::$metaData[$entity] = new Metadata($entity);
 
-				if (!ORM::$metaDataCache)
-				{
+				if (!ORM::$metaDataCache) {
 					$cache->save($entity, self::$metaData[$entity]->toCache(),array(
 						'files' => array(\Nette\Reflection\ClassReflection::from($entity)->getFileName()),
 					));
 				}
 			}
-
 		}
 
 		return self::$metaData[$entity];
@@ -115,13 +111,11 @@ abstract class Manager extends \Nette\Object
 	 */
 	public static function __callStatic($name, $args)
 	{
-		if (strncmp($name, 'findBy', 6) === 0)
-		{
+		if (strncmp($name, 'findBy', 6) === 0) {
 			$entityClass = $args[0];
 			unset($args[0]);
 			return callback(self::getRepository($entityClass), $name)->invokeArgs($args);
-		}
-		else
+		} else
 			return parent::__callStatic($name, $args);
 	}
 }
