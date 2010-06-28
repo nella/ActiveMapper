@@ -1,1 +1,1 @@
-c:\PHP\phpunit.bat ./
+c:\PHP\phpunit.bat --configuration configuration.xml ./

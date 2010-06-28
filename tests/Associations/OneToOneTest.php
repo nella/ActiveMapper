@@ -1,28 +1,27 @@
 <?php
 namespace ActiveMapperTests\Associations;
 
-use ActiveMapper\Associations\OneToOne;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\Associations\OneToOne;
 
 class OneToOneTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new OneToOne('App\Models\Author', 'App\Models\Profile');
-		$this->assertEquals('profile', $object->getName());
-		$this->assertEquals('profile', $object->name);
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog');
+		$this->assertEquals('blog', $object->getName());
+		$this->assertEquals('blog', $object->name);
 
 		$this->assertEquals('App\Models\Author', $object->getSourceEntity());
 		$this->assertEquals('App\Models\Author', $object->sourceEntity);
-		$this->assertEquals('App\Models\Profile', $object->getTargetEntity());
-		$this->assertEquals('App\Models\Profile', $object->targetEntity);
+		$this->assertEquals('App\Models\Blog', $object->getTargetEntity());
+		$this->assertEquals('App\Models\Blog', $object->targetEntity);
 		
 		$this->assertEquals('authors', $object->getSourceTable());
 		$this->assertEquals('authors', $object->sourceTable);
-		$this->assertEquals('profiles', $object->getTargetTable());
-		$this->assertEquals('profiles', $object->targetTable);
+		$this->assertEquals('blogs', $object->getTargetTable());
+		$this->assertEquals('blogs', $object->targetTable);
 
 		$this->assertEquals('id', $object->getSourceColumn());
 		$this->assertEquals('id', $object->sourceColumn);
@@ -32,45 +31,45 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'name');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', TRUE, 'test', 'url', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
 		$this->assertEquals('App\Models\Author', $object->getSourceEntity());
 		$this->assertEquals('App\Models\Author', $object->sourceEntity);
-		$this->assertEquals('App\Models\Profile', $object->getTargetEntity());
-		$this->assertEquals('App\Models\Profile', $object->targetEntity);
+		$this->assertEquals('App\Models\Blog', $object->getTargetEntity());
+		$this->assertEquals('App\Models\Blog', $object->targetEntity);
 		
 		$this->assertEquals('authors', $object->getSourceTable());
 		$this->assertEquals('authors', $object->sourceTable);
-		$this->assertEquals('profiles', $object->getTargetTable());
-		$this->assertEquals('profiles', $object->targetTable);
+		$this->assertEquals('blogs', $object->getTargetTable());
+		$this->assertEquals('blogs', $object->targetTable);
 
 		$this->assertEquals('name', $object->getSourceColumn());
 		$this->assertEquals('name', $object->sourceColumn);
-		$this->assertEquals('web', $object->getTargetColumn());
-		$this->assertEquals('web', $object->targetColumn);
+		$this->assertEquals('url', $object->getTargetColumn());
+		$this->assertEquals('url', $object->targetColumn);
 	}
 	
 	public function testNotExistSourceColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new OneToOne('App\Models\Author', 'App\Models\Profile', TRUE, 'test', 'web', 'exception');
+		new OneToOne('App\Models\Author', 'App\Models\Blog', TRUE, 'test', 'web', 'exception');
 	}
 	
 	public function testMapped3()
 	{
-		$object = new OneToOne('App\Models\Profile', 'App\Models\Author', FALSE);
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
 		$this->assertEquals('author', $object->getName());
 		$this->assertEquals('author', $object->name);
 
-		$this->assertEquals('App\Models\Profile', $object->getSourceEntity());
-		$this->assertEquals('App\Models\Profile', $object->sourceEntity);
+		$this->assertEquals('App\Models\Blog', $object->getSourceEntity());
+		$this->assertEquals('App\Models\Blog', $object->sourceEntity);
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 		
-		$this->assertEquals('profiles', $object->getSourceTable());
-		$this->assertEquals('profiles', $object->sourceTable);
+		$this->assertEquals('blogs', $object->getSourceTable());
+		$this->assertEquals('blogs', $object->sourceTable);
 		$this->assertEquals('authors', $object->getTargetTable());
 		$this->assertEquals('authors', $object->targetTable);
 
@@ -82,17 +81,17 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped4()
 	{
-		$object = new OneToOne('App\Models\Profile', 'App\Models\Author', FALSE, 'test', 'name', 'title');
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE, 'test', 'name', 'title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
-		$this->assertEquals('App\Models\Profile', $object->getSourceEntity());
-		$this->assertEquals('App\Models\Profile', $object->sourceEntity);
+		$this->assertEquals('App\Models\Blog', $object->getSourceEntity());
+		$this->assertEquals('App\Models\Blog', $object->sourceEntity);
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 		
-		$this->assertEquals('profiles', $object->getSourceTable());
-		$this->assertEquals('profiles', $object->sourceTable);
+		$this->assertEquals('blogs', $object->getSourceTable());
+		$this->assertEquals('blogs', $object->sourceTable);
 		$this->assertEquals('authors', $object->getTargetTable());
 		$this->assertEquals('authors', $object->targetTable);
 
@@ -111,13 +110,13 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	public function testGetData1()
 	{
 		$author = \ActiveMapper\Repository::factory('App\Models\Author')->find(1);
-		$this->assertEquals(new \App\Models\Profile(array('author_id' => 1, 'web' => "http://www.example.com")), $author->profile());
+		$this->assertEquals(new \App\Models\Blog(array('id' => 1, 'author_id' => 1, 'name' => "PHP triky", 'url' => "http://php.vrana.cz")), $author->blog());
 	}
 	
 	public function testGetData2()
 	{
-		$profile = \dibi::select("*")->from('profiles')->where("[author_id] = %i", 1)->execute()
-			->setRowClass('App\Models\Profile')->fetch();
-		$this->assertEquals(new \App\Models\Author(array('id' => 1, 'name' => "František Vomáčka")), $profile->author());
+		$blog = \dibi::select("*")->from('blogs')->where("[author_id] = %i", 1)->execute()
+			->setRowClass('App\Models\Blog')->fetch();
+		$this->assertEquals(new \App\Models\Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $blog->author());
 	}
 }

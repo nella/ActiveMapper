@@ -43,8 +43,6 @@ class LazyLoad extends \Nette\Object
 	{
 		if (!class_exists($entityClass) || !\Nette\Reflection\ClassReflection::from($entityClass)->implementsInterface('ActiveMapper\IEntity'))
 			throw new \InvalidArgumentException("Argument \$entity must implements 'ActiveMapper\\IEntity'. [".$entityClass."]");
-		if (!Manager::getEntityMetaData($entityClass)->hasPrimaryKey())
-			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
 		if (!Manager::getEntityMetaData($entityClass)->hasColumn($column))
 			throw new \InvalidArgumentException("Column '".$column."' must be valid '".$entityClass."' column");
 

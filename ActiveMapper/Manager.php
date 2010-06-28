@@ -27,21 +27,22 @@ abstract class Manager extends \Nette\Object
 
 	/**
 	 * Get entity metadata
+	 * 
 	 * @param string $entity valid entity class
-	 * @return ActiveMapper\EntityMetadata
+	 * @return ActiveMapper\Metadata
 	 */
 	public static function getEntityMetaData($entity)
 	{
 		if (!isset(self::$metaData[$entity]))
 		{
-			$cache = ORM::getCache('EntityMetaData');
-			if (isset($cache[$entity]) && !ORM::$disableEntityMetaDataCache)
+			$cache = ORM::getCache('metaData');
+			if (isset($cache[$entity]) && !ORM::$metaDataCache)
 				self::$metaData[$entity] = $cache[$entity];
 			else
 			{
-				self::$metaData[$entity] = new EntityMetadata($entity);
+				self::$metaData[$entity] = new Metadata($entity);
 
-				if (!ORM::$disableEntityMetaDataCache)
+				if (!ORM::$metaDataCache)
 				{
 					$cache->save($entity, self::$metaData[$entity]->toCache(),array(
 						'files' => array(\Nette\Reflection\ClassReflection::from($entity)->getFileName()),

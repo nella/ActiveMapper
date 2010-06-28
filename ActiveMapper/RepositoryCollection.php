@@ -71,9 +71,6 @@ class RepositoryCollection extends Collection
 		if (isset($columns[0]) && is_array($columns[0]))
 			$columns = $columns[0];
 
-		if (!$this->getMetaData()->hasPrimaryKey())
-			throw new \NotImplementedException("Lazy load for entity without primary key not supported");
-
 		$selectColumns = array();
 		foreach($columns as $column)
 		{
@@ -260,7 +257,7 @@ class RepositoryCollection extends Collection
    	/**
    	 * Get metadata
    	 * 
-   	 * @return ActiveMapper\EntityMetaData
+   	 * @return ActiveMapper\MetaData
    	 */
    	private function getMetaData()
    	{

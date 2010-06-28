@@ -1,10 +1,9 @@
 <?php
 namespace ActiveMapperTests\DataTypes;
 
-use ActiveMapper\DataTypes\Int;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\DataTypes\Int;
 
 class IntTest extends \PHPUnit_Framework_TestCase
 {

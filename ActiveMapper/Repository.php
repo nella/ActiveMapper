@@ -32,6 +32,7 @@ class Repository extends \Nette\Object implements IRepository
 	 * Constructor
 	 * 
 	 * @param string $entityName
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct($entityClass)
 	{
@@ -58,9 +59,6 @@ class Repository extends \Nette\Object implements IRepository
 	 */
 	public function find($primaryKey)
 	{
-		if (!static::getMetaData()->hasPrimaryKey())
-			throw new \InvalidArgumentException("Entity [".$this->entityClass."] has not set PRIMARY KEY");
-
 		return dibi::select("*")->from(static::getMetaData()->tableName)
 				->where("[".Tools::underscore(static::getMetaData()->primaryKey)."] = "
 					.$this->getModificator(static::getMetaData()->primaryKey), $primaryKey)

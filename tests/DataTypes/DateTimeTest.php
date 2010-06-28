@@ -1,10 +1,9 @@
 <?php
 namespace ActiveMapperTests\DataTypes;
 
-use ActiveMapper\DataTypes\DateTime;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\DataTypes\DateTime;
 
 class DateTimeTest extends \PHPUnit_Framework_TestCase
 {

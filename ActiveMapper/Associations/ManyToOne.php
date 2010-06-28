@@ -56,9 +56,6 @@ class ManyToOne extends Base implements IAssociation
 		else
 			$this->name = $name;
 		
-		if (empty($targetEntity) && !$targetEntityMetaData->hasPrimaryKey())
-			throw new \InvalidArgumentException("Must specifi source column, because entity '".$targetEntity."' has not set PRIMARY KEY");
-		
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($targetEntityMetaData->primaryKey);
 		elseif ($targetEntityMetaData->hasColumn($targetColumn))

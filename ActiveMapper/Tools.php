@@ -24,7 +24,17 @@ use Nette\String;
  * @license    New BSD License
  * @package    ActiveMapper
  */
-abstract class Tools {
+class Tools
+{
+	/**
+	 * Static class - cannot be instantiated.
+	 * 
+	 * @throws LogicException
+	 */
+	final public function __construct()
+	{
+		throw new \LogicException("Cannot instantiate static class " . get_class($this));
+	}
 
 	/** @var array  of singular nouns as rule => replacement */
 	public static $singulars = array(
@@ -83,11 +93,11 @@ abstract class Tools {
 		'child' => 'children',
 		'sex' => 'sexes',
 		'move' => 'moves',
-		'cow' => 'kine',
+		'cow' => 'kine', 
 	);
 
 	/** @var array  of uncountable nouns */
-	public static $uncountable = array('equipment', 'information', 'rice', 'money', 'species', 'series', 'fish', 'sheep');
+	public static $uncountable = array('equipment', 'information', 'rice', 'money', 'species', 'series', 'fish', 'sheep', 'jeans');
 	
 	/**
 	 * The reverse of pluralize, returns the singular form of a word.
@@ -95,7 +105,8 @@ abstract class Tools {
 	 * @param string $word
 	 * @return string
 	 */
-	public static function singularize($word) {
+	public static function singularize($word)
+	{
 		$lower = String::lower($word);
 
 		if (self::isSingular($word))
@@ -104,17 +115,14 @@ abstract class Tools {
 		if (!self::isCountable($word))
 			return $word;
 
-		if (self::isIrregular($word))
-		{
-			foreach (self::$irregular as $single => $plural)
-			{
+		if (self::isIrregular($word)) {
+			foreach (self::$irregular as $single => $plural) {
 				if ($lower == $plural)
 					return $single;
 			}
 		}
 
-		foreach (self::$plurals as $rule => $replacement)
-		{
+		foreach (self::$plurals as $rule => $replacement) {
 			if (preg_match($rule, $word))
 				return preg_replace($rule, $replacement, $word);
 		}
@@ -141,8 +149,7 @@ abstract class Tools {
 		if (self::isIrregular($word))
 			return self::$irregular[$lower];
 
-		foreach (self::$singulars as $rule => $replacement)
-		{
+		foreach (self::$singulars as $rule => $replacement) {
 			if (preg_match($rule, $word))
 				return preg_replace($rule, $replacement, $word);
 		}
@@ -180,9 +187,10 @@ abstract class Tools {
 		if (self::isIrregular($word))
 			return in_array($lower, array_values(self::$irregular));
 
-		foreach (self::$plurals as $rule => $replacement) 
+		foreach (self::$plurals as $rule => $replacement) {
 			if (preg_match($rule, $word))
 				return TRUE;
+		}
 
 		return FALSE;
 	}
@@ -224,14 +232,14 @@ abstract class Tools {
 
 		if ($number % 100 >= 11 && $number % 100 <= 13)
 			return "{$number}th";
-		else
-			switch ($number % 10)
-			{
+		else {
+			switch ($number % 10) {
 				case 1: return "{$number}st";
 				case 2: return "{$number}nd";
 				case 3: return "{$number}rd";
 				default: return "{$number}th";
 			}
+		}
 	}
 
 	/**

@@ -56,9 +56,6 @@ class OneToMany extends Base implements IAssociation
 		else
 			$this->name = $name;
 		
-		if (empty($sourceColumn) && !$sourceEntityMetaData->hasPrimaryKey())
-			throw new \InvalidArgumentException("Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY");
-		
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
 		elseif ($sourceEntityMetaData->hasColumn($sourceColumn))

@@ -61,15 +61,7 @@ class OneToOne extends Base implements IAssociation
 		else
 			$this->name = $name;
 		
-		if ($this->mapped)
-		{
-			if (empty($sourceEntity) && !$sourceEntityMetaData->hasPrimaryKey())
-			{
-				throw new \InvalidArgumentException(
-					"Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY"
-				);
-			}
-			
+		if ($this->mapped) {
 			if (empty($sourceColumn))
 				$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
 			elseif ($sourceEntityMetaData->hasColumn($sourceColumn))
@@ -79,21 +71,10 @@ class OneToOne extends Base implements IAssociation
 			
 			
 			if (empty($targetColumn))
-			{
 				$this->targetColumn = Tools::underscore($sourceEntityMetaData->name.ucfirst($this->sourceColumn));
-			}
 			else
 				$this->targetColumn = $targetColumn;
-		}
-		else
-		{
-			if (empty($targetEntity) && !$targetEntityMetaData->hasPrimaryKey())
-			{
-				throw new \InvalidArgumentException(
-					"Must specifi source column, because entity '".$targetEntity."' has not set PRIMARY KEY"
-				);
-			}
-			
+		} else {
 			if (empty($targetColumn))
 				$this->targetColumn = Tools::underscore($targetEntityMetaData->primaryKey);
 			elseif ($targetEntityMetaData->hasColumn($targetColumn))
@@ -103,9 +84,7 @@ class OneToOne extends Base implements IAssociation
 			
 			
 			if (empty($sourceColumn))
-			{
 				$this->sourceColumn = Tools::underscore($targetEntityMetaData->name.ucfirst($this->targetColumn));
-			}
 			else
 				$this->sourceColumn = $sourceColumn;
 		}

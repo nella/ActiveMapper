@@ -77,26 +77,12 @@ class ManyToMany extends Base implements IAssociation
 			$this->name = $name;
 		
 		
-		if (empty($sourceEntity) && !$sourceEntityMetaData->hasPrimaryKey())
-		{
-			throw new \InvalidArgumentException(
-				"Must specifi source column, because entity '".$sourceEntity."' has not set PRIMARY KEY"
-			);
-		}
-		
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($sourceEntityMetaData->primaryKey);
 		elseif ($sourceEntityMetaData->hasColumn($sourceColumn))
 			$this->sourceColumn = $sourceColumn;
 		else
 			throw new \InvalidArgumentException("Source column '".$sourceColumn."' is not valid column '".$sourceEntity."' entity.");
-		
-		if (empty($targetColumn) && !$targetEntityMetaData->hasPrimaryKey())
-		{
-			throw new \InvalidArgumentException(
-				"Must specifi source column, because entity '".$targetEntity."' has not set PRIMARY KEY"
-			);
-		}
 		
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($targetEntityMetaData->primaryKey);
@@ -119,14 +105,11 @@ class ManyToMany extends Base implements IAssociation
 		
 		if (!empty($joinTable))
 			$this->joinTable = $joinTable;
-		elseif ($this->mapped)
-		{
+		elseif ($this->mapped) {
 			$this->joinTable = Tools::underscore(
 				Tools::pluralize($sourceEntityMetaData->name).ucfirst(Tools::pluralize($targetEntityMetaData->name))
 			);
-		}
-		else
-		{
+		} else {
 			$this->joinTable = Tools::underscore(
 				Tools::pluralize($targetEntityMetaData->name).ucfirst(Tools::pluralize($sourceEntityMetaData->name))
 			);

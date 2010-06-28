@@ -23,13 +23,13 @@ use Nette\Reflection\ClassReflection;
 abstract class Entity extends \Nette\Object implements IEntity
 {
 	/** @var array */
-	protected $data;
+	protected $_changedData;
 	/** @var array */
-	private $originalData;
+	protected $_originalData;
 	/** @var array */
-	private $assocData;
+	private $_assocData;
 	/** @var array */
-	private $assocKeys;
+	private $_assocKeys;
 
 	/**
 	 * Contstuctor
@@ -40,31 +40,54 @@ abstract class Entity extends \Nette\Object implements IEntity
 	{
 		$metaData = Manager::getEntityMetaData(get_called_class());
 
-		$this->data = $this->assocData = $this->assocKeys = array();
-		foreach ($metaData->columns as $column)
+		$this->_changedData = $this->_assocData = $this->_assocKeys = array();
+		if (count($data) >= 0)
 		{
-			if ($metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
+			if (!isset($data[$metaData->primaryKey]))
+				throw new \InvalidArgumentException("Data for entity '".$metaData->name."' must be load primary key");
+
+			foreach ($metaData->columns as $column)
 			{
-				if (isset($data[$column->name]))
-					$this->originalData[$column->name] = $column->sanitize($data[$column->name]);
+				$name = Tools::underscore($column->name);
+				if (array_key_exists($name, $data))
+					$this->_originalData[$column->name] = $column->sanitize($data[$name]);
 				else
 				{
-					$this->originalData[$column->name] = new LazyLoad(get_called_class(), $column->name, $data[$metaData->primaryKey]);
+					$this->_originalData[$column->name] = new LazyLoad(get_called_class(), $name,
+						Tools::underscore($data[$metaData->primaryKey]));
 				}
 			}
-			else
-				$this->originalData[$column->name] = $column->sanitize(isset($data[$column->name]) ? $data[$column->name] : NULL);
-		}
-		if (count($metaData->associationsKeys) > 0 )
-		{
-			foreach ($metaData->associationsKeys as $key)
+			if (count($metaData->associationsKeys) > 0 )
 			{
-				if (!isset($data[$key]) && $metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
-					throw \InvalidStateException("Association key '".$key."' must loaded for '".get_called_class ()."' entity.");
+				foreach ($metaData->associationsKeys as $key)
+				{
+					if (!isset($data[$key]) && $metaData->hasPrimaryKey() && isset($data[$metaData->primaryKey]))
+						throw \InvalidStateException("Association key '".$key."' must loaded for '".get_called_class ()."' entity.");
 
-				$this->assocKeys[$key] = $data[$key];
+					$this->_assocKeys[$key] = $data[$key];
+				}
 			}
 		}
+	}
+
+	/**
+	 * Get changed data
+	 *
+	 * @return array
+	 */
+	public function getChangedData()
+	{
+		return $this->_changedData;
+	}
+
+	/**
+	 * Get original data
+	 *
+	 * @return array
+	 */
+	public function getOriginalData()
+	{
+		return $this->_originalData;
 	}
 
 	/********************************************************** Columns ***************************************************************p*v*/
@@ -97,17 +120,17 @@ abstract class Entity extends \Nette\Object implements IEntity
 		$metaData = Manager::getEntityMetaData(get_called_class());
 		if ($metaData->hasColumn($name))
 		{
-			if (isset($this->data[$name]))
-				return $this->data[$name];
+			if (isset($this->_changedData[$name]))
+				return $this->_changedData[$name];
 			else
 			{
-				if ($this->originalData[$name] instanceof LazyLoad)
+				if ($this->_originalData[$name] instanceof LazyLoad)
 				{
-					$this->originalData[$name] = $metaData->getColumn($name)->sanitize($this->originalData[$name]->data);
-					return $this->originalData[$name];
+					$this->_originalData[$name] = $metaData->getColumn($name)->sanitize($this->_originalData[$name]->data);
+					return $this->_originalData[$name];
 				}
 				else
-					return $this->originalData[$name];
+					return $this->_originalData[$name];
 			}
 				
 		}
@@ -143,7 +166,7 @@ abstract class Entity extends \Nette\Object implements IEntity
 	private function universalSetValue($name, $value)
 	{
 		if (Manager::getEntityMetaData(get_called_class())->hasColumn($name))
-           	return $this->data[$name] = Manager::getEntityMetaData(get_called_class())->getColumn($name)->sanitize($value);
+           	return $this->_changedData[$name] = Manager::getEntityMetaData(get_called_class())->getColumn($name)->sanitize($value);
 		else
 			throw new \MemberAccessException("Cannot assign undeclared column " . get_called_class() . "::\$$name.");
 	}
@@ -179,10 +202,10 @@ abstract class Entity extends \Nette\Object implements IEntity
 	{
 		if (Manager::getEntityMetaData(get_called_class())->hasAssociation($name))
 		{
-			if (!isset($this->assocData[$name]))
+			if (!isset($this->_assocData[$name]))
 				$this->loadAssociationData($name);
 				
-			return $this->assocData[$name];
+			return $this->_assocData[$name];
 		}
 		else
 			throw new \MemberAccessException("Cannot read undeclared association " . get_called_class() . "::\$$name.");
@@ -200,9 +223,9 @@ abstract class Entity extends \Nette\Object implements IEntity
 		if (($assoc instanceof \ActiveMapper\Associations\OneToOne && 
 			!$assoc->isMapped()) || $assoc instanceof \ActiveMapper\Associations\ManyToOne
 		)
-			$this->assocData[$name] = $assoc->getData($this->assocKeys[$assoc->sourceColumn]);
+			$this->_assocData[$name] = $assoc->getData($this->_assocKeys[$assoc->sourceColumn]);
 		else
-			$this->assocData[$name] = $assoc->getData($this->originalData[$assoc->sourceColumn]);
+			$this->_assocData[$name] = $assoc->getData($this->_originalData[$assoc->sourceColumn]);
 	}
 	
 	/**

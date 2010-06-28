@@ -2,7 +2,6 @@
 namespace ActiveMapperTests\DataTypes;
 
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
 
 class MyBase extends \ActiveMapper\DataTypes\Base {}
 

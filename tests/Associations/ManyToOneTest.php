@@ -1,26 +1,25 @@
 <?php
 namespace ActiveMapperTests\Associations;
 
-use ActiveMapper\Associations\ManyToOne;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\Associations\ManyToOne;
 
 class ManyToOneTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapped1()
 	{
-		$object = new ManyToOne('App\Models\Article', 'App\Models\Author');
+		$object = new ManyToOne('App\Models\Application', 'App\Models\Author');
 		$this->assertEquals('author', $object->getName());
 		$this->assertEquals('author', $object->name);
 
-		$this->assertEquals('App\Models\Article', $object->getSourceEntity());
-		$this->assertEquals('App\Models\Article', $object->sourceEntity);
+		$this->assertEquals('App\Models\Application', $object->getSourceEntity());
+		$this->assertEquals('App\Models\Application', $object->sourceEntity);
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 		
-		$this->assertEquals('articles', $object->getSourceTable());
-		$this->assertEquals('articles', $object->sourceTable);
+		$this->assertEquals('applications', $object->getSourceTable());
+		$this->assertEquals('applications', $object->sourceTable);
 		$this->assertEquals('authors', $object->getTargetTable());
 		$this->assertEquals('authors', $object->targetTable);
 
@@ -32,17 +31,17 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'name', 'title');
+		$object = new ManyToOne('App\Models\Application', 'App\Models\Author', 'test', 'name', 'title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
-		$this->assertEquals('App\Models\Article', $object->getSourceEntity());
-		$this->assertEquals('App\Models\Article', $object->sourceEntity);
+		$this->assertEquals('App\Models\Application', $object->getSourceEntity());
+		$this->assertEquals('App\Models\Application', $object->sourceEntity);
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 		
-		$this->assertEquals('articles', $object->getSourceTable());
-		$this->assertEquals('articles', $object->sourceTable);
+		$this->assertEquals('applications', $object->getSourceTable());
+		$this->assertEquals('applications', $object->sourceTable);
 		$this->assertEquals('authors', $object->getTargetTable());
 		$this->assertEquals('authors', $object->targetTable);
 
@@ -55,12 +54,12 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 	public function testNotExistTargetColumnException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		new ManyToOne('App\Models\Article', 'App\Models\Author', 'test', 'exception', 'title');
+		new ManyToOne('App\Models\Application', 'App\Models\Author', 'test', 'exception', 'title');
 	}
 	
 	public function testGetData1()
 	{
-		$article = \ActiveMapper\Repository::factory('App\Models\Article')->find(3);
-		$this->assertEquals(new \App\Models\Author(array('id' => 2, 'name' => "John Doe")), $article->author());
+		$application = \ActiveMapper\Repository::factory('App\Models\Application')->find(6);
+		$this->assertEquals(new \App\Models\Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")), $application->author());
 	}
 }

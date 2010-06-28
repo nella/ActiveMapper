@@ -28,7 +28,7 @@ final class ORM
 	/**#@-*/
 
 	/** @var bool */
-	public static $disableEntityMetaDataCache = FALSE;
+	public static $metaDataCache = FALSE;
 
 	/**
 	 * Static class - cannot be instantiated.

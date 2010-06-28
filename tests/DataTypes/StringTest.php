@@ -1,10 +1,9 @@
 <?php
 namespace ActiveMapperTests\DataTypes;
 
-use ActiveMapper\DataTypes\String;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\DataTypes\String;
 
 class StringTest extends \PHPUnit_Framework_TestCase
 {

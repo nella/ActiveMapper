@@ -1,10 +1,9 @@
 <?php
 namespace ActiveMapperTests\DataTypes;
 
-use ActiveMapper\DataTypes\Float;
-
 require_once __DIR__ . "/../bootstrap.php";
-require_once "PHPUnit/Framework.php";
+
+use ActiveMapper\DataTypes\Float;
 
 class FloatTest extends \PHPUnit_Framework_TestCase
 {
