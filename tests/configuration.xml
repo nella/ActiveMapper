@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<phpunit bootstrap="D:/Workspace/ActiveMapperNew/tests/bootstrap.php" colors="false" stopOnFailure="true">
+<phpunit bootstrap="D:/Workspace/ActiveMapper/tests/bootstrap.php" colors="false" stopOnFailure="true">
 	<filter>
 		<blacklist>
-			<directory suffix=".php">D:/Workspace/ActiveMapperNew/libs</directory>
+			<directory suffix=".php">D:/Workspace/ActiveMapper/libs</directory>
 			<directory suffix=".php">C:/PHP/pear</directory>
 		</blacklist>
 	</filter>
