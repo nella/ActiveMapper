@@ -57,12 +57,19 @@ class Repository extends \Nette\Object implements IRepository
 	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
-	public function find($primaryKey)
+	public function &find($primaryKey)
 	{
-		return dibi::select("*")->from(static::getMetaData()->tableName)
-				->where("[".Tools::underscore(static::getMetaData()->primaryKey)."] = "
-					.$this->getModificator(static::getMetaData()->primaryKey), $primaryKey)
-				->execute()->setRowClass($this->entityClass)->fetch();
+		$metadata = Manager::getEntityMetaData($this->entityClass);
+		$identityMap = Manager::getIdentityMap($this->entityClass);
+		$data = $identityMap->find($primaryKey);
+		if (is_null($data)) {
+			return $identityMap->map(dibi::select("*")->from($metadata->tableName)
+					->where("[".Tools::underscore($metadata->primaryKey)."] = "
+							.$this->getModificator($metadata->primaryKey), $primaryKey)->execute()->fetch()
+			);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -88,9 +95,11 @@ class Repository extends \Nette\Object implements IRepository
 	{
 		if (strncmp($name, 'findBy', 6) === 0) {
 			$name = lcfirst(substr($name, 6));
-           	return \dibi::select("*")->from($this->getMetaData()->tableName)
+			$metadata = Manager::getEntityMetaData($this->entityClass);
+			$identityMap = Manager::getIdentityMap($this->entityClass);
+			return $identityMap->map(\dibi::select("*")->from($this->getMetaData()->tableName)
 				->where("[".Tools::underscore($name)."] = ".$this->getModificator($name), $args[0])
-				->execute()->setRowClass($this->entityClass)->fetch();
+				->execute()->fetch());
 		} else
 			return parent::__callStatic($name, $args);
 	}

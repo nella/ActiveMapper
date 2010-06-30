@@ -200,7 +200,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
 	public function testLazyLoad1()
 	{
-		$authors = \App\Models\Author::findAll()->select()->fetchAll();
+		$authors = \App\Models\Author::findAll()->fetchAll();
 		$this->assertEquals("Jakub Vrana", $authors[0]->name);
 	}
 }

@@ -20,10 +20,12 @@ namespace ActiveMapper;
  */
 abstract class Manager extends \Nette\Object
 {
-	/** @var array */
+	/** @var array<ActiveMapper\Metadata */
 	private static $metaData = array();
-	/** @var array */
+	/** @var array<ActiveMapper\IRepository */
 	private static $repositories = array();
+	/** @var array<ActiveMapper\IdentityMap>*/
+	private static $identityMap = array();
 
 	/**
 	 * Get entity metadata
@@ -74,6 +76,31 @@ abstract class Manager extends \Nette\Object
 	public static function setRepository($entityClass, IRepository $repository)
 	{
 		self::$repositories[$entityClass] = $repository;
+	}
+
+	/**
+	 * Get identity map
+	 *
+	 * @param string $entityClass
+	 * @return ActiveMapper\IdentityMap
+	 */
+	public static function getIdentityMap($entityClass)
+	{
+		if (!isset(self::$identityMap[$entityClass]))
+			self::$identityMap[$entityClass] = new IdentityMap($entityClass);
+
+		return self::$identityMap[$entityClass];
+	}
+
+	/**
+	 * Set identity map
+	 *
+	 * @param string $entityClass
+	 * @param ActiveMapper\IdentityMap $identityMap
+	 */
+	public static function setIndetityMap($entityClass, $identityMap)
+	{
+		self::$identityMap[$entityClass] = $identityMap;
 	}
 
 	/**

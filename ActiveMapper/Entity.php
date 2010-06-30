@@ -36,8 +36,11 @@ abstract class Entity extends \Nette\Object implements IEntity
 	 *
 	 * @param array $data
 	 */
-	public function __construct(array $data)
+	public function __construct($data)
 	{
+		if (!is_array($data) && !($data instanceof \ArrayAccess) && !is_null($data))
+			throw new \InvalidArgumentException("Data for entity must be array accesible.");
+
 		$metaData = Manager::getEntityMetaData(get_called_class());
 
 		$this->_changedData = $this->_assocData = $this->_assocKeys = array();

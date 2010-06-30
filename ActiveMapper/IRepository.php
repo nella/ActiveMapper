@@ -27,7 +27,7 @@ interface IRepository
 	 * @return ActiveMapper\IEntity
 	 * @throws InvalidArgumentException
 	 */
-	public function find($primaryKey);
+	public function &find($primaryKey);
 
 	/**
 	 * Find all entity

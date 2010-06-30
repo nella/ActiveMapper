@@ -167,7 +167,7 @@ class RepositoryCollection extends Collection
 	{
 		if (!$this->isFrozen()) {
 			$this->freeze();
-			$this->data = $this->fluent->execute()->setRowClass($this->entityClass)->fetchAll();
+			$this->data = Manager::getIdentityMap($this->entityClass)->map($this->fluent->execute()->fetchAll());
 		}
 
 		return count($this->data);
@@ -190,8 +190,7 @@ class RepositoryCollection extends Collection
 			if (!empty($limit))
 				$this->fluent->limit($limit);
 
-			$res = $this->fluent->execute();
-			$this->data = $res->setRowClass($this->entityClass)->fetchAll($offset, $limit);
+			$this->data = Manager::getIdentityMap($this->entityClass)->map($this->fluent->execute()->fetchAll($offset, $limit));
 			return $this;
 		} else
 			throw new \InvalidStateException("This collection already fetched data");
