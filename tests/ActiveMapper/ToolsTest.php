@@ -164,4 +164,10 @@ class ToolsTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('dibi', Tools::underscore('dibi'));
 		$this->assertEquals('dibi', Tools::underscore('Dibi'));
 	}
+
+	public function testInstanceException()
+	{
+		$this->setExpectedException('LogicException');
+		new Tools();
+	}
 }

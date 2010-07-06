@@ -24,7 +24,14 @@ class DibiRepositoryTest extends \PHPUnit_Framework_TestCase
 		$data = $this->object->find(1);
 		$this->assertEquals(author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
 		$this->assertType('App\Models\Author', $data);
+		$this->assertSame($data, $this->object->find(1));
    	}
+
+	public function testFind2()
+	{
+		$this->markTestSkipped();
+		//$this->assertNull($this->object->find(13));
+	}
 
 	public function testFindBy1()
 	{

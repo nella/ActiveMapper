@@ -119,6 +119,23 @@ class MyEntity5
 
 class MyEntity6 {}
 
+class MyEntity7
+{
+	/**
+	 * @primary
+	 */
+	private $test;
+}
+
+class MyEntity8
+{
+	/**
+	 * @column(Int)
+	 * @autoincrement
+	 */
+	private $test;
+}
+
 class MetadataTest extends \PHPUnit_Framework_TestCase
 {
 	public function testGetMetadata()
@@ -127,6 +144,13 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$tmp = Metadata::getMetadata('App\Models\Author');
 		$this->assertEquals($data, $tmp);
 		$this->assertSame($tmp, Metadata::getMetadata('App\Models\Author'));
+	}
+
+	public function testGetName()
+	{
+		$data = new Metadata('App\Models\Author');
+		$this->assertEquals("Author", $data->getName());
+		$this->assertEquals("Author", $data->name);
 	}
 
 	public function testBoolColumns()
@@ -248,10 +272,22 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		new Metadata('ActiveMapperTests\MetaData\MyEntity6');
 	}
 
+	public function testPrimaryKeyNonColumnException()
+	{
+		$this->setExpectedException('NotImplementedException');
+		new Metadata('ActiveMapperTests\Metadata\MyEntity7');
+	}
+
 	public function testPrimaryKeyMultipleException()
 	{
 		$this->setExpectedException('NotImplementedException');
 		new Metadata('ActiveMapperTests\MetaData\MyEntity5');
+	}
+
+	public function testAutoincrementNonPrimaryKeyException()
+	{
+		$this->setExpectedException('NotImplementedException');
+		new Metadata('ActiveMapperTests\Metadata\MyEntity8');
 	}
 
 	public function testTableName()

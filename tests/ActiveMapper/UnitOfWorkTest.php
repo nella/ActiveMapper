@@ -73,6 +73,15 @@ class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse(dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch());
 	}
 
+	public function testCommitException()
+	{
+		$author = author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$this->object->registerSave($author);
+		$this->object->registerSave($author);
+		$this->setExpectedException('InvalidStateException');
+		$this->object->commit();
+	}
+
 	public function testGetUnitOfWork()
 	{
 		$data = new UnitOfWork($this->manager);
