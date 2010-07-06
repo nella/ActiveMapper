@@ -1,42 +1,38 @@
-CREATE TABLE authors (
-	id int NOT NULL,
-	name varchar(30) NOT NULL,
-	web varchar(100) NOT NULL,
-	PRIMARY KEY (id)
+CREATE TABLE "authors" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	"name" VARCHAR(30) NOT NULL,
+	"web" VARCHAR(100) NOT NULL
 );
 
 
-CREATE TABLE tags (
-	id int NOT NULL,
-	name varchar(20) NOT NULL,
-	PRIMARY KEY (id)
+CREATE TABLE "tags" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	"name" VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE applications (
-	id int NOT NULL,
-	author_id int NOT NULL,
-	title varchar(50) NOT NULL,
-	web varchar(100) NOT NULL,
-	slogan varchar(100) NOT NULL,
-	PRIMARY KEY (id),
-	CONSTRAINT applications_ibfk_1 FOREIGN KEY (author_id) REFERENCES authors (id)
+CREATE TABLE "applications" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	"author_id" INTEGER NOT NULL,
+	"title" VARCHAR(50) NOT NULL,
+	"web" VARCHAR(100) NOT NULL,
+	"slogan" VARCHAR(100) NOT NULL,
+	CONSTRAINT "applications_ibfk_1" FOREIGN KEY ("author_id") REFERENCES "authors" ("id")
 );
 
-CREATE INDEX application_title ON applications (title);
+CREATE INDEX "application_title" ON "applications" ("title");
 
-CREATE TABLE applications_tags (
-	application_id int NOT NULL,
-	tag_id int NOT NULL,
-	PRIMARY KEY (application_id,tag_id),
-	CONSTRAINT applications_tags_ibfk_3 FOREIGN KEY (tag_id) REFERENCES tags (id),
-	CONSTRAINT applications_tags_ibfk_2 FOREIGN KEY (application_id) REFERENCES applications (id) ON DELETE CASCADE
+CREATE TABLE "applications_tags" (
+	"application_id" INTEGER NOT NULL,
+	"tag_id" INTEGER NOT NULL,
+	PRIMARY KEY ("application_id","tag_id"),
+	CONSTRAINT "applications_tags_ibfk_3" FOREIGN KEY ("tag_id") REFERENCES "tags" ("id"),
+	CONSTRAINT "applications_tags_ibfk_2" FOREIGN KEY ("application_id") REFERENCES "applications" ("id") ON DELETE CASCADE
 );
 
-CREATE TABLE blogs (
-	id int NOT NULL,
-	author_id int NOT NULL,
-	name varchar(50) NOT NULL,
-	url varchar(100) NOT NULL,
-	PRIMARY KEY (id),
-	CONSTRAINT blogs_ibfk_4 FOREIGN KEY (author_id) REFERENCES authors (id)
+CREATE TABLE "blogs" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	"author_id" INTEGER NOT NULL,
+	"name" VARCHAR(50) NOT NULL,
+	"url" VARCHAR(100) NOT NULL,
+	CONSTRAINT "blogs_ibfk_4" FOREIGN KEY ("author_id") REFERENCES "authors" ("id")
 );

@@ -24,12 +24,12 @@ namespace ActiveMapper\DataTypes;
 class Int extends Base implements IDataType
 {
 	/**
-	 * Validate value
+	 * Is valid value
 	 *
 	 * @param int|string $value
 	 * @return bool
 	 */
-	public function validate($value)
+	public function isValid($value)
 	{
 		if ($value === NULL && !$this->allowNull)
 			return FALSE;
@@ -45,17 +45,17 @@ class Int extends Base implements IDataType
 	}
 
 	/**
-	 * Sanitize value
+	 * Convert to native PHP value
 	 *
 	 * @param int|string $value
 	 * @return int
 	 * @throws InvalidArgumentException
 	 */
-	public function sanitize($value)
+	public function convertToPHPValue($value)
 	{
 		if ($value === NULL && !$this->allowNull)
 			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
-		elseif ($value !== NULL && !$this->validate($value))
+		elseif ($value !== NULL && !$this->isValid($value))
 			throw new \InvalidArgumentException("Only numeric value accepted for '".$this->name."' [".$value."]");
 
 		if ($value === NULL)

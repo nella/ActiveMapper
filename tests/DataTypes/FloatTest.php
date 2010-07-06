@@ -15,96 +15,96 @@ class FloatTest extends \PHPUnit_Framework_TestCase
 		$this->object = new Float('test');
 	}
 
-	public function testValidateString()
+	public function testIsValidString()
 	{
-		$this->assertFalse($this->object->validate("a"));
+		$this->assertFalse($this->object->isValid("a"));
 	}
 
-	public function testValidateBoolean()
+	public function testIsValidBoolean()
 	{
-		$this->assertFalse($this->object->validate(TRUE));
+		$this->assertFalse($this->object->isValid(TRUE));
 	}
 
-	public function testValidateNumber()
+	public function testIsValidNumber()
 	{
-		$this->assertTrue($this->object->validate(1));
+		$this->assertTrue($this->object->isValid(1));
 	}
 
-	public function testValidateNumberString()
+	public function testIsValidNumberString()
 	{
-		$this->assertTrue($this->object->validate("1"));
+		$this->assertTrue($this->object->isValid("1"));
 	}
 
-	public function testValidateDecimal()
+	public function testIsValidDecimal()
 	{
-		$this->assertTrue($this->object->validate(1.1));
+		$this->assertTrue($this->object->isValid(1.1));
 	}
 
-	public function testValidateDecimalString()
+	public function testIsValidDecimalString()
 	{
-		$this->assertTrue($this->object->validate("1.1"));
+		$this->assertTrue($this->object->isValid("1.1"));
 	}
 
-	public function testValidateNull1()
+	public function testIsValidNull1()
 	{
-		$this->assertFalse($this->object->validate(NULL));
+		$this->assertFalse($this->object->isValid(NULL));
 	}
 
-	public function testValidateNull2()
+	public function testIsValidNull2()
 	{
 		$object = new \ActiveMapper\DataTypes\Float('test', TRUE);
-		$this->assertTrue($object->validate(NULL));
+		$this->assertTrue($object->isValid(NULL));
 	}
 
-	public function testSanitizeNumber()
+	public function testConvertToPHPValueNumber()
 	{
-		$data = $this->object->sanitize(1);
+		$data = $this->object->convertToPHPValue(1);
 		$this->assertType('float', $data);
 		$this->assertEquals(1, $data);
 	}
 
-	public function testSanitizeDecimal()
+	public function testConvertToPHPValueDecimal()
 	{
-		$data = $this->object->sanitize(1.1);
+		$data = $this->object->convertToPHPValue(1.1);
 		$this->assertType('float', $data);
 		$this->assertEquals(1.1, $data);
 	}
 
-	public function testSanitizeStringNumber()
+	public function testConvertToPHPValueStringNumber()
 	{
-		$data = $this->object->sanitize("1");
+		$data = $this->object->convertToPHPValue("1");
 		$this->assertType('float', $data);
 		$this->assertEquals(1, $data);
 	}
 
-	public function testSanitizeStringDecimal()
+	public function testConvertToPHPValueStringDecimal()
 	{
-		$data = $this->object->sanitize("1.1");
+		$data = $this->object->convertToPHPValue("1.1");
 		$this->assertType('float', $data);
 		$this->assertEquals(1.1, $data);
 	}
 
-	public function testSanitizeStringException()
+	public function testConvertToPHPValueStringException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize("a");
+		$data = $this->object->convertToPHPValue("a");
 	}
 
-	public function testSanitizeBooleanException()
+	public function testConvertToPHPValueBooleanException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(TRUE);
+		$data = $this->object->convertToPHPValue(TRUE);
 	}
 
-	public function testSanitizeNull1()
+	public function testConvertToPHPValueNull1()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(NULL);
+		$data = $this->object->convertToPHPValue(NULL);
 	}
 
-	public function testSanitizeNull2()
+	public function testConvertToPHPValueNull2()
 	{
 		$object = new Float('test', TRUE);
-		$this->assertNull($object->sanitize(NULL));
+		$this->assertNull($object->convertToPHPValue(NULL));
 	}
 }

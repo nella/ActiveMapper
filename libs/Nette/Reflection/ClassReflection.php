@@ -37,7 +37,7 @@ class ClassReflection extends \ReflectionClass
 	 */
 	public static function from($class)
 	{
-		return new self($class);
+		return new static($class);
 	}
 
 
@@ -124,7 +124,7 @@ class ClassReflection extends \ReflectionClass
 	 */
 	public static function import(\ReflectionClass $ref)
 	{
-		return new self($ref->getName());
+		return new static($ref->getName());
 	}
 
 

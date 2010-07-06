@@ -5,7 +5,7 @@ namespace App\Models;
  * @ManyToOne(App\Models\Author)
  * @ManyToMany(App\Models\Tag)
  */
-class Application extends \ActiveMapper\ServiceEntity
+class Application
 {
 	/**
 	 * @column(Int)

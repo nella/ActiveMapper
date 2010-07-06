@@ -11,9 +11,6 @@
 
 namespace ActiveMapper;
 
-use dibi, 
-	Nette\Reflection\ClassReflection;
-
 /**
  * Identity map
  *
@@ -25,10 +22,12 @@ class IdentityMap extends \Nette\Object
 {
 	/** @var string */
 	protected $entity;
-	/** @var array<ActiveMapper\IEntity> */
+	/** @var array */
 	protected $data = array();
-	/** @var array<ActiveMapper\IEntity> */
+	/** @var array */
 	protected $idReference = array();
+	/** @var array */
+	protected $originalData = array();
 
 	/**
 	 * Construct
@@ -37,8 +36,7 @@ class IdentityMap extends \Nette\Object
 	 */
 	public function __construct($entity)
 	{
-		if (!class_exists($entity) || !ClassReflection::from($entity)->implementsInterface('ActiveMapper\IEntity'))
-			throw new \InvalidArgumentException("Entity [".$entity."] must implements 'ActiveMapper\\IEntity'");
+		// TODO: verify entity class
 
 		$this->entity = $entity;
 	}
@@ -46,10 +44,10 @@ class IdentityMap extends \Nette\Object
 	/**
 	 * Is entity mapped
 	 *
-	 * @param ActiveMapper\IEntity $entity
+	 * @param mixed $entity
 	 * @return bool
 	 */
-	public function isMapped(IEntity $entity)
+	public function isMapped(&$entity)
 	{
 		if ($this->entity != get_class($entity))
 			throw new \InvalidArgumentException("Entity [".get_class($entity)."] is not valid '{$this->entity}' for this identity map.");
@@ -61,7 +59,7 @@ class IdentityMap extends \Nette\Object
 	 * Find entity by primary key
 	 * 
 	 * @param mixed $primaryKey
-	 * @return NULL|ActiveMapper\IEntity
+	 * @return NULL|mixed
 	 */
 	public function find($primaryKey)
 	{
@@ -69,43 +67,90 @@ class IdentityMap extends \Nette\Object
 	}
 
 	/**
+	 * Get entity primary key value
+	 *
+	 * @param mixed $entity
+	 * @return mixed
+	 */
+	private function getEntityPrimaryKey(&$entity)
+	{
+		$ref = new \Nette\Reflection\PropertyReflection($this->entity, Metadata::getMetadata($this->entity)->primaryKey);
+		$ref->setAccessible(TRUE);
+		$pk = $ref->getValue($entity);
+		$ref->setAccessible(FALSE);
+		return $pk;
+	}
+
+	/**
 	 * Store entity
 	 *
-	 * @param ActiveMapper\IEntity $entity
+	 * @param mixed $entity
 	 */
-	public function store(IEntity &$entity)
+	public function store(&$entity)
 	{
 		if (!$this->isMapped($entity)) {
 			$this->data[spl_object_hash($entity)] = &$entity;
-			$this->idReference[$entity->{Manager::getEntityMetaData($this->entity)->primaryKey}] = &$entity;
+			$this->originalData[spl_object_hash($entity)] = Metadata::getMetadata(get_class($entity))->getValues($entity, FALSE);
+			if (($id = $this->getEntityPrimaryKey($entity)) !== NULL)
+				$this->idReference[$id] = &$entity;
 		}
 
 		return $entity;
 	}
 
 	/**
+	 * Detach entity
+	 *
+	 * @param mixed $entity
+	 */
+	public function detach(&$entity)
+	{
+		if ($this->isMapped($entity)) {
+			unset($this->idReference[$this->getEntityPrimaryKey($entity)]);
+			unset($this->data[spl_object_hash($entity)]);
+		}
+	}
+
+	/**
+	 * Remap entity
+	 *
+	 * @param mixed $entity
+	 */
+	public function remap(&$entity)
+	{
+		if ($this->isMapped($entity)) {
+			$metadata = Metadata::getMetadata(get_class($entity));
+			$this->originalData[spl_object_hash($entity)] = $metadata->getValues($entity, FALSE);
+			if (isset($this->originalData[spl_object_hash($entity)][$metadata->primaryKey]))
+				unset($this->originalData[spl_object_hash($entity)][$metadata->primaryKey]);
+		}
+	}
+
+	/**
 	 * Map entity or entities
 	 *
 	 * @param array $input
-	 * @return ActiveMapper\IEntity|array
+	 * @return mixed|array
 	 * @throws InvalidArgumentException
 	 */
-	public function &map($input)
+	public function map($input)
 	{
-		if ((is_array($input) || $input instanceof \ArrayAccess)
+		$metadata = Metadata::getMetadata($this->entity);
+		if (is_array($input)
 				&& count(array_filter($input, function ($item) { return is_array($item) || $item instanceof \ArrayAccess; }))) {
 			$output = array();
 			foreach ($input as $key => $row) {
-				if (!isset($row[Manager::getEntityMetaData($this->entity)->primaryKey]))
+				if (!isset($row[$metadata->primaryKey]))
 					throw new \InvalidArgumentException("Data for entity '".$this->entity."' must be load primary key");
-				if (isset($this->idReference[$row[Manager::getEntityMetaData($this->entity)->primaryKey]]))
-					$output[$key] = &$this->idReference[$row[Manager::getEntityMetaData($this->entity)->primaryKey]];
+				if (isset($this->idReference[$row[Metadata::getMetadata($this->entity)->primaryKey]]))
+					$output[$key] = &$this->idReference[$row[$metadata->primaryKey]];
 				else {
-					$tmp = ClassReflection::from($this->entity)->newInstance($row);
-					\Nette\Debug::dump($tmp);
-					\Nette\Debug::dump($row);
-					$this->idReference[$row[Manager::getEntityMetaData($this->entity)->primaryKey]] = &$tmp;
+					$tmp = $metadata->getInstance($row);
+					$this->idReference[$row[$metadata->primaryKey]] = &$tmp;
 					$this->data[spl_object_hash($tmp)] = &$tmp;
+					$this->originalData[spl_object_hash($tmp)] = (array)$row;
+					if (isset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]))
+						unset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]);
 					$output[$key] = &$tmp;
 					unset($tmp);
 				}
@@ -113,17 +158,36 @@ class IdentityMap extends \Nette\Object
 			
 			return $output;
 		} elseif (is_array($input) || $input instanceof \ArrayAccess) {
-			if (!isset($input[Manager::getEntityMetaData($this->entity)->primaryKey]))
+			if (!isset($input[$metadata->primaryKey]))
 				throw new \InvalidArgumentException("Data for entity '".$this->entity."' must be load primary key");
-			if (isset($this->idReference[$input[Manager::getEntityMetaData($this->entity)->primaryKey]]))
-				return $this->idReference[$input[Manager::getEntityMetaData($this->entity)->primaryKey]];
+			if (isset($this->idReference[$input[$metadata->primaryKey]]))
+				return $this->idReference[$input[$metadata->primaryKey]];
 			else {
-				$tmp = ClassReflection::from($this->entity)->newInstance($input);
-				$this->idReference[$input[Manager::getEntityMetaData($this->entity)->primaryKey]] = &$tmp;
+				$tmp = $metadata->getInstance($input);
+				$this->idReference[$input[$metadata->primaryKey]] = &$tmp;
 				$this->data[spl_object_hash($tmp)] = &$tmp;
+				$this->originalData[spl_object_hash($tmp)] = (array)$input;
+				if (isset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]))
+						unset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]);
 				return $tmp;
 			}
 		} else
 			throw new \InvalidArgumentException("Map accept only loaded data or loaded data array");
+	}
+
+	/**
+	 * Get saved values
+	 *
+	 * @param mixed $entity
+	 * @return array
+	 */
+	public function getSavedValues($entity)
+	{
+		$metadata = Metadata::getMetadata(get_class($entity));
+		if ($this->isMapped($entity)) {
+			$data = $metadata->getValues($entity, FALSE);
+			return array_diff($data, $this->originalData[spl_object_hash($entity)]);
+		} else
+			return $metadata->getValues($entity);
 	}
 }

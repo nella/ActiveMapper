@@ -33,84 +33,84 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		$this->object->setLength(2);
 	}
 
-	public function testValidateBoolean()
+	public function testIsValidBoolean()
 	{
-		$this->assertFalse($this->object->validate(TRUE));
+		$this->assertFalse($this->object->isValid(TRUE));
 	}
 
-	public function testValidateMaxLengthString()
+	public function testIsValidMaxLengthString()
 	{
-		$this->assertFalse($this->object->validate("Test test"));
+		$this->assertFalse($this->object->isValid("Test test"));
 	}
 
-	public function testValidateString()
+	public function testIsValidString()
 	{
-		$this->assertTrue($this->object->validate("Test"));
+		$this->assertTrue($this->object->isValid("Test"));
 	}
 
-	public function testValidateNumber()
+	public function testIsValidNumber()
 	{
-		$this->assertTrue($this->object->validate(1));
+		$this->assertTrue($this->object->isValid(1));
 	}
 
-	public function testValidateDecimal()
+	public function testIsValidDecimal()
 	{
-		$this->assertTrue($this->object->validate(1.1));
+		$this->assertTrue($this->object->isValid(1.1));
 	}
 
-	public function testValidateNull1()
+	public function testIsValidNull1()
 	{
-		$this->assertFalse($this->object->validate(NULL));
+		$this->assertFalse($this->object->isValid(NULL));
 	}
 
-	public function testValidateNull2()
+	public function testIsValidNull2()
 	{
 		$object = new String('test', TRUE, 4);
-		$this->assertTrue($object->validate(NULL));
+		$this->assertTrue($object->isValid(NULL));
 	}
 
-	public function testSanitizeString()
+	public function testConvertToPHPValueString()
 	{
-		$data = $this->object->sanitize("Test");
+		$data = $this->object->convertToPHPValue("Test");
 		$this->assertType('string', $data);
 		$this->assertEquals("Test", $data);
 	}
 
-	public function testSanitizeNumber()
+	public function testConvertToPHPValueNumber()
 	{
-		$data = $this->object->sanitize(1);
+		$data = $this->object->convertToPHPValue(1);
 		$this->assertType('string', $data);
 		$this->assertEquals("1", $data);
 	}
 
-	public function testSanitizeDecimal()
+	public function testConvertToPHPValueDecimal()
 	{
-		$data = $this->object->sanitize(1.1);
+		$data = $this->object->convertToPHPValue(1.1);
 		$this->assertType('string', $data);
 		$this->assertEquals("1.1", $data);
 	}
 
-	public function testSanitizeMaxLenghtStringException()
+	public function testConvertToPHPValueMaxLenghtStringException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize("Test test");
+		$data = $this->object->convertToPHPValue("Test test");
 	}
 
-	public function testSanitizeBooleanException()
+	public function testConvertToPHPValueBooleanException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(TRUE);
+		$data = $this->object->convertToPHPValue(TRUE);
 	}
 
-	public function testSanitizeNull1()
+	public function testConvertToPHPValueNull1()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(NULL);
+		$data = $this->object->convertToPHPValue(NULL);
 	}
 
-	public function testSanitizeNull2()
+	public function testConvertToPHPValueNull2()
 	{
 		$object = new String('test', TRUE, 4);
-		$this->assertNull($object->sanitize(NULL));
+		$this->assertNull($object->convertToPHPValue(NULL));
 	}
 }

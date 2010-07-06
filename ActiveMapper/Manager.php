@@ -11,138 +11,224 @@
 
 namespace ActiveMapper;
 
+use DibiConnection;
+
 /**
  * Entity manager
  *
  * @author     Patrik Votoček
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @package    ActiveMapper
+ *
+ * @property-read DibiConnection $connection
+ * @property-read ActiveMapper\UnitOfWork $unitOfWork
  */
-abstract class Manager extends \Nette\Object
+class Manager extends \Nette\Object
 {
-	/** @var array<ActiveMapper\Metadata */
-	private static $metaData = array();
-	/** @var array<ActiveMapper\IRepository */
-	private static $repositories = array();
-	/** @var array<ActiveMapper\IdentityMap>*/
-	private static $identityMap = array();
+	/** @var DibiConnection */
+	private $connection;
+	/** @var array<ActiveMapper\IRepository> */
+	private $repositories = array();
+	/** @var array<ActiveMapper\IPersister> */
+	private $persisters = array();
+	/** @var array<ActiveMapper\IdentityMap> */
+	private $identityMap = array();
+	/** @var ActiveMapper\UnitOfWork */
+	private $unitOfWork;
+
+	public function __construct(DibiConnection $connection)
+	{
+		$this->connection = $connection;
+	}
 
 	/**
-	 * Get entity metadata
-	 * 
-	 * @param string $entity valid entity class
-	 * @return ActiveMapper\Metadata
+	 * Get connection
+	 *
+	 * @return DibiConnection
 	 */
-	public static function getEntityMetaData($entity)
+	final public function getConnection()
 	{
-		if (!isset(self::$metaData[$entity])) {
-			$cache = ORM::getCache('metaData');
-			if (isset($cache[$entity]) && !ORM::$metaDataCache)
-				self::$metaData[$entity] = $cache[$entity];
-			else {
-				self::$metaData[$entity] = new Metadata($entity);
-
-				if (!ORM::$metaDataCache) {
-					$cache->save($entity, self::$metaData[$entity]->toCache(),array(
-						'files' => array(\Nette\Reflection\ClassReflection::from($entity)->getFileName()),
-					));
-				}
-			}
-		}
-
-		return self::$metaData[$entity];
+		return $this->connection;
 	}
 	
 	/**
 	 * Get repository
 	 * 
-	 * @param string $entityClass
-	 * @return IRepository
+	 * @param string $entity
+	 * @return ActiveMapper\IRepository
 	 */
-	public static function getRepository($entityClass)
+	public function getRepository($entity)
 	{
-		if (!isset(self::$repositories[$entityClass]))
-			self::$repositories[$entityClass] = new Repository($entityClass);
+		if (!isset($this->repositories[$entity]))
+			$this->repositories[$entity] = new DibiRepository($this, $entity);
 			
-		return self::$repositories[$entityClass];
+		return $this->repositories[$entity];
 	}
 	
 	/**
 	 * Set repository
 	 * 
-	 * @param string $entityClass
-	 * @param IRepository $repository
+	 * @param string $entity
+	 * @param ActiveMapper\IRepository $repository
+	 * @return ActiveMapper\Manager
 	 */
-	public static function setRepository($entityClass, IRepository $repository)
+	public function setRepository($entity, IRepository &$repository)
 	{
-		self::$repositories[$entityClass] = $repository;
+		$this->repositories[$entity] = &$repository;
+
+		return $this;
+	}
+
+	/**
+	 * Get persister
+	 *
+	 * @param string $entity
+	 * @return ActiveMapper\IPersister
+	 */
+	public function getPersister($entity)
+	{
+		if (!isset($this->persisters[$entity]))
+			$this->persisters[$entity] = new DibiPersister($this, $entity);
+
+		return $this->persisters[$entity];
+	}
+
+	/**
+	 * Set persister
+	 *
+	 * @param string $entity
+	 * @param ActiveMapper\IPersister $persister
+	 * @return ActiveMapper\Manager
+	 */
+	public function setPersister($entity, IPersister &$persister)
+	{
+		$this->persisters[$entity] = &$persister;
+
+		return $this;
 	}
 
 	/**
 	 * Get identity map
 	 *
-	 * @param string $entityClass
+	 * @param string $entity
 	 * @return ActiveMapper\IdentityMap
 	 */
-	public static function getIdentityMap($entityClass)
+	public function getIdentityMap($entity)
 	{
-		if (!isset(self::$identityMap[$entityClass]))
-			self::$identityMap[$entityClass] = new IdentityMap($entityClass);
+		if (!isset($this->identityMap[$entity]))
+			$this->identityMap[$entity] = new IdentityMap($entity);
 
-		return self::$identityMap[$entityClass];
+		return $this->identityMap[$entity];
 	}
 
 	/**
-	 * Set identity map
+	 * Get unit of work
 	 *
-	 * @param string $entityClass
-	 * @param ActiveMapper\IdentityMap $identityMap
+	 * @return ActiveMapper\UnitOfWork
 	 */
-	public static function setIndetityMap($entityClass, $identityMap)
+	public function getUnitOfWork()
 	{
-		self::$identityMap[$entityClass] = $identityMap;
+		if (!isset($this->unitOfWork))
+			$this->unitOfWork = UnitOfWork::getUnitOfWork($this);
+
+		return $this->unitOfWork;
 	}
 
 	/**
 	 * Find entity witch id (primary key) is ...
 	 *
-	 * @param string $entityCLass
+	 * @param string $entity
 	 * @param mixed $primaryKey
-	 * @return ActiveMapper\IEntity
+	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public static function find($entityClass, $primaryKey)
+	public function find($entity, $primaryKey)
 	{
-		return self::getRepository($entityClass)->find($primaryKey);
+		return $this->getRepository($entity)->find($primaryKey);
 	}
 
 	/**
 	 * Find all entity
 	 *
-	 * @param string $entityClass
+	 * @param string $entity
 	 * @return ActiveMapper\RepositoryCollection
 	 * @throws InvalidArgumentException
 	 */
-	public static function findAll($entityClass)
+	public function findAll($entity)
 	{
-		return self::getRepository($entityClass)->findAll();
+		// TODO: use FluentCollection
+		
+		return $this->getRepository($entity)->findAll();
    	}
 
 	/**
-	 * Static method overload for findBy...
+	 * Method overload for findBy...
 	 *
 	 * @param string $name
 	 * @param array $args
-	 * @return ActiveMapper\IEntity
+	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public static function __callStatic($name, $args)
+	public function __call($name, $args)
 	{
-		if (strncmp($name, 'findBy', 6) === 0) {
-			$entityClass = $args[0];
+		if (strncmp($name, 'findBy', 6) === 0 && strlen($name) > 6) {
+			$entity = $args[0];
 			unset($args[0]);
-			return callback(self::getRepository($entityClass), $name)->invokeArgs($args);
+			return callback($this->getRepository($entity), $name)->invokeArgs($args);
 		} else
-			return parent::__callStatic($name, $args);
+			return parent::__call($name, $args);
+	}
+
+	/**
+	 * Persist entity
+	 *
+	 * @param mixed $entity
+	 * @return ActiveMapper\Manager
+	 */
+	public function persist(&$entity)
+	{
+		$this->getUnitOfWork()->registerSave($entity);
+
+		return $this;
+	}
+
+	/**
+	 * Delete entity
+	 *
+	 * @param mixed $entity
+	 * @return ActiveMapper\Manager
+	 */
+	public function delete(&$entity)
+	{
+		$this->getUnitOfWork()->registerDelete($entity);
+
+		return $this;
+	}
+
+	/**
+	 * Flush all changes
+	 *
+	 * @return ActiveMapper\Manager
+	 */
+	public function flush()
+	{
+		if ($this->getUnitOfWork()->count >= 1)
+			$this->getUnitOfWork()->commit();
+
+		return $this;
+	}
+
+	/**
+	 * Entity manager factory
+	 *
+	 * @param DibiConnection $connection
+	 * @return ActiveMapper\Manager
+	 */
+	public static function getManager(DibiConnection $connection = NULL)
+	{
+		if ($connection == NULL)
+			$connection = \dibi::getConnection();
+
+		return new static($connection);
 	}
 }

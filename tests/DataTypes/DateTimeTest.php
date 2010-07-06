@@ -15,78 +15,78 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
 		$this->object = new DateTime('test');
 	}
 
-	public function testValidateString()
+	public function testIsValidString()
 	{
-		$this->assertFalse($this->object->validate("a"));
+		$this->assertFalse($this->object->isValid("a"));
 	}
 
-	public function testValidateNumber()
+	public function testIsValidNumber()
 	{
-		$this->assertFalse($this->object->validate(1));
+		$this->assertFalse($this->object->isValid(1));
 	}
 
-	public function testValidateBoolean()
+	public function testIsValidBoolean()
 	{
-		$this->assertFalse($this->object->validate(TRUE));
+		$this->assertFalse($this->object->isValid(TRUE));
 	}
 
-	public function testValidateDate()
+	public function testIsValidDate()
 	{
-		$this->assertTrue($this->object->validate("2012-12-21 08:32:12"));
+		$this->assertTrue($this->object->isValid("2012-12-21 08:32:12"));
 	}
 
-	public function testValidateNull1()
+	public function testIsValidNull1()
 	{
-		$this->assertFalse($this->object->validate(NULL));
+		$this->assertFalse($this->object->isValid(NULL));
 	}
 
-	public function testValidateNull2()
+	public function testIsValidNull2()
 	{
 		$object = new DateTime('test', TRUE);
-		$this->assertTrue($object->validate(NULL));
+		$this->assertTrue($object->isValid(NULL));
 	}
 
-	public function testSanitizeDate1()
+	public function testConvertToPHPValueDate1()
 	{
-		$data = $this->object->sanitize("2012-12-21 08:32:12");
+		$data = $this->object->convertToPHPValue("2012-12-21 08:32:12");
 		$this->assertType('DateTime', $data);
 		$this->assertEquals(new \DateTime("2012-12-21 08:32:12"), $data);
 	}
 
-	public function testSanitizeDate2()
+	public function testConvertToPHPValueDate2()
 	{
-		$data = $this->object->sanitize(new \DateTime("2012-12-21 08:32:12"));
+		$data = $this->object->convertToPHPValue(new \DateTime("2012-12-21 08:32:12"));
 		$this->assertType('DateTime', $data);
 		$this->assertEquals(new \DateTime("2012-12-21 08:32:12"), $data);
 	}
 
-	public function testSanitizeStringException()
+	public function testConvertToPHPValueStringException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize("a");
+		$data = $this->object->convertToPHPValue("a");
 	}
 
-	public function testSanitizeNumberException()
+	public function testConvertToPHPValueNumberException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(1);
+		$data = $this->object->convertToPHPValue(1);
 	}
 
-	public function testSanitizeBooleanException()
+	public function testConvertToPHPValueBooleanException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(TRUE);
+		$data = $this->object->convertToPHPValue(TRUE);
 	}
 
-	public function testSanitizeNull1()
+	public function testConvertToPHPValueNull1()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(NULL);
+		$data = $this->object->convertToPHPValue(NULL);
 	}
 
-	public function testSanitizeNull2()
+	public function testConvertToPHPValueNull2()
 	{
 		$object = new DateTime('test', TRUE);
-		$this->assertNull($object->sanitize(NULL));
+		$this->assertNull($object->convertToPHPValue(NULL));
 	}
 }

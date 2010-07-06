@@ -12,7 +12,7 @@
 namespace ActiveMapper;
 
 /**
- * IRepository interface
+ * Repository interface
  *
  * @author     Patrik Votoček
  * @copyright  Copyright (c) 2010 Patrik Votoček
@@ -24,10 +24,10 @@ interface IRepository
 	 * Find entity witch id (primary key) is ...
 	 *
 	 * @param mixed $primaryKey
-	 * @return ActiveMapper\IEntity
+	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public function &find($primaryKey);
+	public function find($primaryKey);
 
 	/**
 	 * Find all entity
@@ -42,27 +42,8 @@ interface IRepository
 	 *
 	 * @param string $name
 	 * @param array $args
-	 * @return ActiveMapper\IEntity
-	 * @throws InvalidArgumentException
-	 */
-	public function __call($name, $args);
-	
-	/**
-	 * Get modificator
-	 * 
-	 * @param string $column entity column name
-	 * @return string
-	 * @throws InvalidArgumentException
-	 */
-	public function getModificator($column);
-
-	/**
-	 * Lazy load column
-	 *
-	 * @param string $column valid entity column name
-	 * @param mixed $primaryKey
 	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public function lazyLoad($column, $primaryKey);
+	public function __call($name, $args);
 }

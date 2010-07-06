@@ -1,1 +1,2 @@
-Disallow: /dibi.minified
+Disallow: /drivers
+Disallow: /Nette

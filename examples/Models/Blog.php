@@ -4,7 +4,7 @@ namespace App\Models;
 /**
  * @OneToOne(App\Models\Author, mapped = FALSE)
  */
-class Blog extends \ActiveMapper\ServiceEntity
+class Blog
 {
 	/**
 	 * @column(Int)

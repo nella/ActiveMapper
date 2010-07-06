@@ -4,7 +4,7 @@ namespace App\Models;
 /**
  * @ManyToMany(App\Models\Application, mapped = FALSE)
  */
-class Tag extends \ActiveMapper\ServiceEntity
+class Tag
 {
 	/**
 	 * @column(Int)

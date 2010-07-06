@@ -36,19 +36,19 @@ interface IDataType
 	public function getAllowNull();
 
 	/**
-	 * Validate value
+	 * Is valid value
 	 *
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate($value);
+	public function isValid($value);
 
 	/**
-	 * Sanitize value
+	 * Convert to native PHP value
 	 *
 	 * @param mixed $value
 	 * @return mixed
 	 * @throws InvalidArgumentException
 	 */
-	public function sanitize($value);
+	public function convertToPHPValue($value);
 }

@@ -20,48 +20,31 @@
 
 
 /**
- * Check PHP configuration.
+ * Check and reset PHP configuration.
  */
-if (!defined('PHP_VERSION_ID')) {
-	$tmp = explode('.', PHP_VERSION);
-	define('PHP_VERSION_ID', ($tmp[0] * 10000 + $tmp[1] * 100 + $tmp[2]));
-}
-
+error_reporting(E_ALL | E_STRICT);
 @set_magic_quotes_runtime(FALSE); // intentionally @
+iconv_set_encoding('internal_encoding', 'UTF-8');
+extension_loaded('mbstring') && mb_internal_encoding('UTF-8');
+header('X-Powered-By: Nette Framework');
 
 
 
 /**
- * Nette\Callback factory.
- * @param  mixed   class, object, function, callback
- * @param  string  method
- * @return Nette\Callback
+ * Load and configure Nette Framework
  */
-function callback($callback, $m = NULL)
-{
-	return ($m === NULL && $callback instanceof Nette\Callback) ? $callback : new Nette\Callback($callback, $m);
-}
+define('NETTE', TRUE);
+define('NETTE_VERSION_ID', 10000); // v1.0.0
+define('NETTE_PACKAGE', '5.3');
 
 
 
-/**
- * Nette\Debug::dump shortcut.
- */
-if (!function_exists('dump')) {
-	function dump($var)
-	{
-		foreach (func_get_args() as $arg) Nette\Debug::dump($arg);
-		return $var;
-	}
-}
-
-
-
-require_once __DIR__ . '/exceptions.php';
-require_once __DIR__ . '/Framework.php';
-require_once __DIR__ . '/Object.php';
-require_once __DIR__ . '/ObjectMixin.php';
-require_once __DIR__ . '/Callback.php';
+require_once __DIR__ . '/Utils/shortcuts.php';
+require_once __DIR__ . '/Utils/exceptions.php';
+require_once __DIR__ . '/Utils/Framework.php';
+require_once __DIR__ . '/Utils/Object.php';
+require_once __DIR__ . '/Utils/ObjectMixin.php';
+require_once __DIR__ . '/Utils/Callback.php';
 require_once __DIR__ . '/Loaders/LimitedScope.php';
 require_once __DIR__ . '/Loaders/AutoLoader.php';
 require_once __DIR__ . '/Loaders/NetteLoader.php';

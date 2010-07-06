@@ -1,15 +1,11 @@
 <?php
-namespace ActiveMapperTests\MetaData;
+namespace ActiveMapperTests\Metadata;
 
 require_once __DIR__ . "/../bootstrap.php";
 
-use ActiveMapper\Entity,
-	ActiveMapper\MetaData,
-	ActiveMapper\Associations,
-	ActiveMapper\Associations\OneToOne,
-	ActiveMapper\Associations\ManyToMany;
+use ActiveMapper\Metadata;
 
-class MyEntity extends Entity
+class MyEntity
 {
 	/**
 	 * @column(Bool)
@@ -77,7 +73,7 @@ class MyEntity extends Entity
 	private $testText2;
 }
 
-class MyEntity2 extends Entity
+class MyEntity2
 {
 	/**
 	 * @column(exception)
@@ -85,7 +81,7 @@ class MyEntity2 extends Entity
 	private $test;
 }
 
-class MyEntity3 extends Entity
+class MyEntity3
 {
 	/**
 	 * @column(Text)
@@ -97,7 +93,7 @@ class MyEntity3 extends Entity
 /**
  * @tableName test
  */
-class MyEntity4 extends Entity
+class MyEntity4
 {
 	/**
 	 * @column(Int)
@@ -107,7 +103,7 @@ class MyEntity4 extends Entity
 	private $testAutoincrementPrimary;
 }
 
-class MyEntity5 extends Entity
+class MyEntity5
 {
 	/**
 	 * @column(Int)
@@ -121,19 +117,27 @@ class MyEntity5 extends Entity
 	private $testMultiplePrimary2;
 }
 
-class MyEntity6 extends Entity {}
+class MyEntity6 {}
 
 class MetadataTest extends \PHPUnit_Framework_TestCase
 {
+	public function testGetMetadata()
+	{
+		$data = new Metadata('App\Models\Author');
+		$tmp = Metadata::getMetadata('App\Models\Author');
+		$this->assertEquals($data, $tmp);
+		$this->assertSame($tmp, Metadata::getMetadata('App\Models\Author'));
+	}
+
 	public function testBoolColumns()
 	{
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\Bool', $object->columns['testBool1']);
-		$this->assertEquals('testBool1', $object->columns['testBool1']->getName());
+		$this->assertEquals('testBool1', $object->columns['testBool1']->name);
 		$this->assertFalse($object->columns['testBool1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\Bool', $object->columns['testBool2']);
-		$this->assertEquals('testBool2', $object->columns['testBool2']->getName());
+		$this->assertEquals('testBool2', $object->columns['testBool2']->name);
 		$this->assertTrue($object->columns['testBool2']->allowNull);
 	}
 
@@ -142,10 +146,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\Date', $object->columns['testDate1']);
-		$this->assertEquals('testDate1', $object->columns['testDate1']->getName());
+		$this->assertEquals('testDate1', $object->columns['testDate1']->name);
 		$this->assertFalse($object->columns['testDate1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\Date', $object->columns['testDate2']);
-		$this->assertEquals('testDate2', $object->columns['testDate2']->getName());
+		$this->assertEquals('testDate2', $object->columns['testDate2']->name);
 		$this->assertTrue($object->columns['testDate2']->allowNull);
 	}
 
@@ -154,10 +158,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\DateTime', $object->columns['testDateTime1']);
-		$this->assertEquals('testDateTime1', $object->columns['testDateTime1']->getName());
+		$this->assertEquals('testDateTime1', $object->columns['testDateTime1']->name);
 		$this->assertFalse($object->columns['testDateTime1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\DateTime', $object->columns['testDateTime2']);
-		$this->assertEquals('testDateTime2', $object->columns['testDateTime2']->getName());
+		$this->assertEquals('testDateTime2', $object->columns['testDateTime2']->name);
 		$this->assertTrue($object->columns['testDateTime2']->allowNull);
 	}
 
@@ -166,10 +170,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\Float', $object->columns['testFloat1']);
-		$this->assertEquals('testFloat1', $object->columns['testFloat1']->getName());
+		$this->assertEquals('testFloat1', $object->columns['testFloat1']->name);
 		$this->assertFalse($object->columns['testFloat1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\Float', $object->columns['testFloat2']);
-		$this->assertEquals('testFloat2', $object->columns['testFloat2']->getName());
+		$this->assertEquals('testFloat2', $object->columns['testFloat2']->name);
 		$this->assertTrue($object->columns['testFloat2']->allowNull);
 	}
 
@@ -178,10 +182,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\Int', $object->columns['testInt1']);
-		$this->assertEquals('testInt1', $object->columns['testInt1']->getName());
+		$this->assertEquals('testInt1', $object->columns['testInt1']->name);
 		$this->assertFalse($object->columns['testInt1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\Int', $object->columns['testInt2']);
-		$this->assertEquals('testInt2', $object->columns['testInt2']->getName());
+		$this->assertEquals('testInt2', $object->columns['testInt2']->name);
 		$this->assertTrue($object->columns['testInt2']->allowNull);
 	}
 
@@ -190,11 +194,11 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\String', $object->columns['testString1']);
-		$this->assertEquals('testString1', $object->columns['testString1']->getName());
+		$this->assertEquals('testString1', $object->columns['testString1']->name);
 		$this->assertFalse($object->columns['testString1']->allowNull);
 		$this->assertEquals(128, $object->columns['testString1']->length);
 		$this->assertType('ActiveMapper\DataTypes\String', $object->columns['testString2']);
-		$this->assertEquals('testString2', $object->columns['testString2']->getName());
+		$this->assertEquals('testString2', $object->columns['testString2']->name);
 		$this->assertTrue($object->columns['testString2']->allowNull);
 		$this->assertEquals(250, $object->columns['testString2']->length);
 	}
@@ -204,10 +208,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 
 		$this->assertType('ActiveMapper\DataTypes\Text', $object->columns['testText1']);
-		$this->assertEquals('testText1', $object->columns['testText1']->getName());
+		$this->assertEquals('testText1', $object->columns['testText1']->name);
 		$this->assertFalse($object->columns['testText1']->allowNull);
 		$this->assertType('ActiveMapper\DataTypes\Text', $object->columns['testText2']);
-		$this->assertEquals('testText2', $object->columns['testText2']->getName());
+		$this->assertEquals('testText2', $object->columns['testText2']->name);
 		$this->assertTrue($object->columns['testText2']->allowNull);
 	}
 
@@ -227,8 +231,15 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 	{
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity4');
 		$this->assertEquals('testAutoincrementPrimary', $object->getPrimaryKey());
+		$this->assertEquals('testAutoincrementPrimary', $object->primaryKey);
+		$this->assertTrue($object->isPrimaryKeyAutoincrement());
+		$this->assertTrue($object->getPrimaryKeyAutoincrement());
+		$this->assertTrue($object->primaryKeyAutoincrement);
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
-		$this->assertEquals('testInt1', $object->getPrimaryKey());
+		$this->assertEquals('testInt1', $object->primaryKey);
+		$this->assertFalse($object->isPrimaryKeyAutoincrement());
+		$this->assertFalse($object->getPrimaryKeyAutoincrement());
+		$this->assertFalse($object->primaryKeyAutoincrement);
 	}
 
 	public function testWithoutPrimaryKeyException()
@@ -247,8 +258,10 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 	{
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 		$this->assertEquals('my_entities', $object->getTableName());
+		$this->assertEquals('my_entities', $object->tableName);
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity4');
 		$this->assertEquals('test', $object->getTableName());
+		$this->assertEquals('test', $object->tableName);
 	}
 
 	public function testHasColumn()
@@ -263,7 +276,7 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
 		$column = $object->getColumn('testBool1');
 		$this->assertType('ActiveMapper\DataTypes\Bool', $column);
-		$this->assertEquals('testBool1', $column->getName());
+		$this->assertEquals('testBool1', $column->name);
 		$this->assertFalse($column->allowNull);
 	}
 
@@ -274,59 +287,37 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object->getColumn('exception');
 	}
 
-	/************************************************************ Associations ********************************************************p*v*/
-
-	public function testOneToOneAssociation1()
+	public function testGetInstance()
 	{
-		$metadata = new Metadata('App\Models\Author');
-		$object = new OneToOne('App\Models\Author', 'App\Models\Blog');
-		$this->assertTrue(isset($metadata->associations['blog']));
-		$this->assertEquals($object, $metadata->associations['blog']);
-
-		$metadata = new Metadata('App\Models\Blog');
-		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
-		$this->assertTrue(isset($metadata->associations['author']));
-		$this->assertEquals($object, $metadata->associations['author']);
-		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
+		$data = array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
+		$author = \ActiveMapperTests\author($data);
+		$this->assertEquals($author, Metadata::getMetadata('App\Models\Author')->getInstance($data));
 	}
 
-	public function testOneToManyAssociation1()
+	public function testGetValues1()
 	{
-		$metadata = new Metadata('App\Models\Author');
-		$object = new Associations\OneToMany('App\Models\Author', 'App\Models\Application');
-		$this->assertTrue(isset($metadata->associations['applications']));
-		$this->assertEquals($object, $metadata->associations['applications']);
+		$data = array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
+		$author = \ActiveMapperTests\author($data);
+		$this->assertEquals($data, Metadata::getMetadata('App\Models\Author')->getValues($author));
 	}
 
-	public function testManyToOneAssociation1()
+	public function testGetValues2()
 	{
-		$metadata = new Metadata('App\Models\Application');
-		$object = new Associations\ManyToOne('App\Models\Application', 'App\Models\Author');
-		$this->assertTrue(isset($metadata->associations['author']));
-		$this->assertEquals($object, $metadata->associations['author']);
-		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
+		$author = \ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$data = array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
+		$this->assertEquals($data, Metadata::getMetadata('App\Models\Author')->getValues($author, FALSE));
 	}
 
-	public function testManyToManyAssociation1()
+	public function testGetPrimaryKeyValue()
 	{
-		$metadata = new Metadata('App\Models\Application');
-		$object = new ManyToMany('App\Models\Application', 'App\Models\Tag');
-		$this->assertTrue(isset($metadata->associations['tags']));
-		$this->assertEquals($object, $metadata->associations['tags']);
-
-		$metadata = new Metadata('App\Models\Tag');
-		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE);
-		$this->assertTrue(isset($metadata->associations['applications']));
-		$this->assertEquals($object, $metadata->associations['applications']);
+		$author = \ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$this->assertEquals(1, Metadata::getMetadata('App\Models\Author')->getPrimaryKeyValue($author));
 	}
 
-	public function testAssociationsKeys()
+	public function testSetPrimaryKeyValue()
 	{
-		$metadata = new Metadata('App\Models\Application');
-		$this->assertEquals(array('author_id'), $metadata->getAssociationsKeys());
-		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
-		$metadata = new Metadata('App\Models\Blog');
-		$this->assertEquals(array('author_id'), $metadata->getAssociationsKeys());
-		$this->assertEquals(array('author_id'), $metadata->associationsKeys);
+		$author = \ActiveMapperTests\author(array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		Metadata::getMetadata('App\Models\Author')->setPrimaryKeyValue($author, 1);
+		$this->assertEquals(\ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $author);
 	}
 }

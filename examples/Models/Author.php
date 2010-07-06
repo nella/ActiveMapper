@@ -5,7 +5,7 @@ namespace App\Models;
  * @OneToMany(App\Models\Application)
  * @OneToOne(App\Models\Blog)
  */
-class Author extends \ActiveMapper\ServiceEntity
+class Author
 {
 	/**
 	 * @column(Int)

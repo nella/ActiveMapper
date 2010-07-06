@@ -15,179 +15,179 @@ class BoolTest extends \PHPUnit_Framework_TestCase
 		$this->object = new Bool('test');
 	}
 
-	public function testValidateString()
+	public function testIsValidString()
 	{
-		$this->assertFalse($this->object->validate("a"));
+		$this->assertFalse($this->object->isValid("a"));
 	}
 
-	public function testValidateBigNumber()
+	public function testIsValidBigNumber()
 	{
-		$this->assertFalse($this->object->validate(2));
+		$this->assertFalse($this->object->isValid(2));
 	}
 
-	public function testValidateDecimal()
+	public function testIsValidDecimal()
 	{
-		$this->assertFalse($this->object->validate(1.1));
+		$this->assertFalse($this->object->isValid(1.1));
 	}
 
-	public function testValidateTrue1()
+	public function testIsValidTrue1()
 	{
-		$this->assertTrue($this->object->validate(TRUE));
+		$this->assertTrue($this->object->isValid(TRUE));
 	}
 
-	public function testValidateTrue2()
+	public function testIsValidTrue2()
 	{
-		$this->assertTrue($this->object->validate(1));
+		$this->assertTrue($this->object->isValid(1));
 	}
 
-	public function testValidateTrue3()
+	public function testIsValidTrue3()
 	{
-		$this->assertTrue($this->object->validate("1"));
+		$this->assertTrue($this->object->isValid("1"));
 	}
 
-	public function testValidateTrue4()
+	public function testIsValidTrue4()
 	{
-		$this->assertTrue($this->object->validate("Y"));
+		$this->assertTrue($this->object->isValid("Y"));
 	}
 
-	public function testValidateTrue5()
+	public function testIsValidTrue5()
 	{
-		$this->assertTrue($this->object->validate("TRUE"));
+		$this->assertTrue($this->object->isValid("TRUE"));
 	}
 
-	public function testValidateFalse1()
+	public function testIsValidFalse1()
 	{
-		$this->assertTrue($this->object->validate(FALSE));
+		$this->assertTrue($this->object->isValid(FALSE));
 	}
 
-	public function testValidateFalse2()
+	public function testIsValidFalse2()
 	{
-		$this->assertTrue($this->object->validate(0));
+		$this->assertTrue($this->object->isValid(0));
 	}
 
-	public function testValidateFalse3()
+	public function testIsValidFalse3()
 	{
-		$this->assertTrue($this->object->validate("0"));
+		$this->assertTrue($this->object->isValid("0"));
 	}
 
-	public function testValidateFalse4()
+	public function testIsValidFalse4()
 	{
-		$this->assertTrue($this->object->validate("N"));
+		$this->assertTrue($this->object->isValid("N"));
 	}
 
-	public function testValidateFalse5()
+	public function testIsValidFalse5()
 	{
-		$this->assertTrue($this->object->validate("FALSE"));
+		$this->assertTrue($this->object->isValid("FALSE"));
 	}
 
-	public function testValidateNull1()
+	public function testIsValidNull1()
 	{
-		$this->assertFalse($this->object->validate(NULL));
+		$this->assertFalse($this->object->isValid(NULL));
 	}
 
-	public function testValidateNull2()
+	public function testIsValidNull2()
 	{
 		$object = new Bool('test', TRUE);
-		$this->assertTrue($object->validate(NULL));
+		$this->assertTrue($object->isValid(NULL));
 	}
 
-	public function testSanitizeTrue1()
+	public function testConvertToPHPValueTrue1()
 	{
-		$data = $this->object->sanitize(TRUE);
+		$data = $this->object->convertToPHPValue(TRUE);
 		$this->assertType('bool', $data);
 		$this->assertTrue($data);
 	}
 
-	public function testSanitizeTrue2()
+	public function testConvertToPHPValueTrue2()
 	{
-		$data = $this->object->sanitize(1);
+		$data = $this->object->convertToPHPValue(1);
 		$this->assertType('bool', $data);
 		$this->assertTrue($data);
 	}
 
-	public function testSanitizeTrue3()
+	public function testConvertToPHPValueTrue3()
 	{
-		$data = $this->object->sanitize("1");
+		$data = $this->object->convertToPHPValue("1");
 		$this->assertType('bool', $data);
 		$this->assertTrue($data);
 	}
 
-	public function testSanitizeTrue4()
+	public function testConvertToPHPValueTrue4()
 	{
-		$data = $this->object->sanitize("Y");
+		$data = $this->object->convertToPHPValue("Y");
 		$this->assertType('bool', $data);
 		$this->assertTrue($data);
 	}
 
-	public function testSanitizeTrue5()
+	public function testConvertToPHPValueTrue5()
 	{
-		$data = $this->object->sanitize("TRUE");
+		$data = $this->object->convertToPHPValue("TRUE");
 		$this->assertType('bool', $data);
 		$this->assertTrue($data);
 	}
 
-	public function testSanitizeFalse1()
+	public function testConvertToPHPValueFalse1()
 	{
-		$data = $this->object->sanitize(FALSE);
+		$data = $this->object->convertToPHPValue(FALSE);
 		$this->assertType('bool', $data);
 		$this->assertFalse($data);
 	}
 
-	public function testSanitizeFalse2()
+	public function testConvertToPHPValueFalse2()
 	{
-		$data = $this->object->sanitize(0);
+		$data = $this->object->convertToPHPValue(0);
 		$this->assertType('bool', $data);
 		$this->assertFalse($data);
 	}
 
-	public function testSanitizeFalse3()
+	public function testConvertToPHPValueFalse3()
 	{
-		$data = $this->object->sanitize("0");
+		$data = $this->object->convertToPHPValue("0");
 		$this->assertType('bool', $data);
 		$this->assertFalse($data);
 	}
 
-	public function testSanitizeFalse4()
+	public function testConvertToPHPValueFalse4()
 	{
-		$data = $this->object->sanitize("N");
+		$data = $this->object->convertToPHPValue("N");
 		$this->assertType('bool', $data);
 		$this->assertFalse($data);
 	}
 
-	public function testSanitizeFalse5()
+	public function testConvertToPHPValueFalse5()
 	{
-		$data = $this->object->sanitize("FALSE");
+		$data = $this->object->convertToPHPValue("FALSE");
 		$this->assertType('bool', $data);
 		$this->assertFalse($data);
 	}
 
-	public function testSanitizeStringException()
+	public function testConvertToPHPValueStringException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize("a");
+		$data = $this->object->convertToPHPValue("a");
 	}
 
-	public function testSanitizeBigNumberException()
+	public function testConvertToPHPValueBigNumberException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(2);
+		$data = $this->object->convertToPHPValue(2);
 	}
 
-	public function testSanitizeDecimalException()
+	public function testConvertToPHPValueDecimalException()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(1.1);
+		$data = $this->object->convertToPHPValue(1.1);
 	}
 
-	public function testSanitizeNull1()
+	public function testConvertToPHPValueNull1()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$data = $this->object->sanitize(NULL);
+		$data = $this->object->convertToPHPValue(NULL);
 	}
 
-	public function testSanitizeNull2()
+	public function testConvertToPHPValueNull2()
 	{
 		$object = new Bool('test', TRUE);
-		$this->assertNull($object->sanitize(NULL));
+		$this->assertNull($object->convertToPHPValue(NULL));
 	}
 }

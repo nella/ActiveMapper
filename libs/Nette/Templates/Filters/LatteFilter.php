@@ -184,7 +184,7 @@ class LatteFilter extends Nette\Object
 
 		} elseif (!empty($matches['comment'])) { // <!--
 			$this->context = self::CONTEXT_COMMENT;
-			$this->escape = 'TemplateHelpers::escapeHtmlComment';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtmlComment';
 
 		} elseif (empty($matches['closing'])) { // <tag
 			$tag = $this->tags[] = (object) NULL;
@@ -194,7 +194,7 @@ class LatteFilter extends Nette\Object
 			$tag->attrs = array();
 			$tag->pos = strlen($this->output);
 			$this->context = self::CONTEXT_TAG;
-			$this->escape = 'TemplateHelpers::escapeHtml';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 
 		} else { // </tag
 			do {
@@ -210,7 +210,7 @@ class LatteFilter extends Nette\Object
 			$tag->closing = TRUE;
 			$tag->pos = strlen($this->output);
 			$this->context = self::CONTEXT_TAG;
-			$this->escape = 'TemplateHelpers::escapeHtml';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 		}
 		return $matches;
 	}
@@ -232,7 +232,7 @@ class LatteFilter extends Nette\Object
 			$tag->closing = TRUE;
 			$tag->pos = strlen($this->output);
 			$this->context = self::CONTEXT_TAG;
-			$this->escape = 'TemplateHelpers::escapeHtml';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 		}
 		return $matches;
 	}
@@ -245,7 +245,7 @@ class LatteFilter extends Nette\Object
 	private function contextTag()
 	{
 		$matches = $this->match('~
-			(?P<end>/?>)(?P<tagnewline>[\ \t]*(?=\r|\n))?|  ##  end of HTML tag
+			(?P<end>\ ?/?>)(?P<tagnewline>[\ \t]*(?=\r|\n))?|  ##  end of HTML tag
 			'.$this->macroRe.'|          ##  curly tag
 			\s*(?P<attr>[^\s/>={]+)(?:\s*=\s*(?P<value>["\']|[^\s/>{]+))? ## begin of HTML attribute
 		~xsi');
@@ -254,7 +254,11 @@ class LatteFilter extends Nette\Object
 
 		} elseif (!empty($matches['end'])) { // end of HTML tag />
 			$tag = end($this->tags);
-			$isEmpty = !$tag->closing && ($matches['end'][0] === '/' || isset(Nette\Web\Html::$emptyElements[strtolower($tag->name)]));
+			$isEmpty = !$tag->closing && (strpos($matches['end'], '/') !== FALSE || isset(Nette\Web\Html::$emptyElements[strtolower($tag->name)]));
+
+			if ($isEmpty) {
+				$matches[0] = (Nette\Web\Html::$xhtml ? ' />' : '>') . (isset($matches['tagnewline']) ? $matches['tagnewline'] : '');
+			}
 
 			if ($tag->isMacro || !empty($tag->attrs)) {
 				if ($tag->isMacro) {
@@ -285,10 +289,10 @@ class LatteFilter extends Nette\Object
 
 			if (!$tag->closing && (strcasecmp($tag->name, 'script') === 0 || strcasecmp($tag->name, 'style') === 0)) {
 				$this->context = self::CONTEXT_CDATA;
-				$this->escape = strcasecmp($tag->name, 'style') ? 'TemplateHelpers::escapeJs' : 'TemplateHelpers::escapeCss';
+				$this->escape = strcasecmp($tag->name, 'style') ? 'Nette\Templates\TemplateHelpers::escapeJs' : 'Nette\Templates\TemplateHelpers::escapeCss';
 			} else {
 				$this->context = self::CONTEXT_TEXT;
-				$this->escape = 'TemplateHelpers::escapeHtml';
+				$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 				if ($tag->closing) array_pop($this->tags);
 			}
 
@@ -314,8 +318,8 @@ class LatteFilter extends Nette\Object
 				$this->context = self::CONTEXT_ATTRIBUTE;
 				$this->quote = $value;
 				$this->escape = strncasecmp($name, 'on', 2)
-					? (strcasecmp($name, 'style') ? 'TemplateHelpers::escapeHtml' : 'TemplateHelpers::escapeHtmlCss')
-					: 'TemplateHelpers::escapeHtmlJs';
+					? (strcasecmp($name, 'style') ? 'Nette\Templates\TemplateHelpers::escapeHtml' : 'Nette\Templates\TemplateHelpers::escapeHtmlCss')
+					: 'Nette\Templates\TemplateHelpers::escapeHtmlJs';
 			}
 		}
 		return $matches;
@@ -335,7 +339,7 @@ class LatteFilter extends Nette\Object
 
 		if ($matches && empty($matches['macro'])) { // (attribute end) '"
 			$this->context = self::CONTEXT_TAG;
-			$this->escape = 'TemplateHelpers::escapeHtml';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 		}
 		return $matches;
 	}
@@ -354,7 +358,7 @@ class LatteFilter extends Nette\Object
 
 		if ($matches && empty($matches['macro'])) { // --\s*>
 			$this->context = self::CONTEXT_TEXT;
-			$this->escape = 'TemplateHelpers::escapeHtml';
+			$this->escape = 'Nette\Templates\TemplateHelpers::escapeHtml';
 		}
 		return $matches;
 	}
