@@ -3,7 +3,9 @@ namespace App;
 
 require_once __DIR__ . "/bootstrap.php";
 
-use Nette\Debug;
+use Nette\Debug,
+	Nette\Framework,
+	dibi;
 
 Debug::timer('benchmark');
 $memory = memory_get_peak_usage();
@@ -29,6 +31,8 @@ Debug::dump($author);
 
 /********************************************************************************************************************************/
 // Benchmark data
+Debug::barDump(Framework::NAME." ".Framework::VERSION." ".Framework::REVISION);
+Debug::barDump("dibi ".dibi::VERSION." ".dibi::REVISION);
 Debug::barDump($mappingTime = number_format(Debug::timer('benchmark')*1000, 1, '.', ' ')."ms", "Mapping Time");
 Debug::barDump($mappingMemory = number_format((memory_get_peak_usage() - $memory) / 1000, 1, '.', ' ')."kB", "Mapping Memory");
 
