@@ -109,7 +109,7 @@ class UnitOfWork extends \Nette\Object
 			$this->em->connection->commit();
 			$this->insertEntities = $this->updateEntities = $this->deleteEntities = array();
 			$this->count = 0;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->em->connection->rollback();
 			throw new \InvalidStateException("When saving changes has error occurred.", NULL, $e);
 		}
