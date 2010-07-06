@@ -21,9 +21,9 @@ use Nette\Reflection\ClassReflection,
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @package    ActiveMapper
  * @property-read string $tableName entity table name
- * @property-read array $columns entity columns array
- * @property-read string $primaryKey entity primary key name
+ * @property-read array<ActiveMapper\DataTypes\IDataType> $columns entity columns array
  * @property-read string $name entity name (class without namespace)
+ * @property-read string $primaryKey entity primary key name
  * @property-read bool $primaryKeyAutoincrement is entity primary key autoincrement
  */
 class Metadata extends \Nette\Object
@@ -43,6 +43,11 @@ class Metadata extends \Nette\Object
 	/** @var string */
 	private $name;
 
+	/**
+	 * Construct
+	 *
+	 * @param string $entity entity class name
+	 */
 	public function __construct($entity)
 	{
 
@@ -105,7 +110,7 @@ class Metadata extends \Nette\Object
 	/**
 	 * Get columns DataType objects
 	 *
-	 * @return array
+	 * @return array<ActiveMapper\DataTypes\IDataType>
 	 */
 	public function getColumns()
 	{
@@ -140,7 +145,7 @@ class Metadata extends \Nette\Object
 	/**
 	 * Get primary key name
 	 * 
-	 * @return string|null
+	 * @return string|NULL
 	 */
 	public function getPrimaryKey()
 	{
