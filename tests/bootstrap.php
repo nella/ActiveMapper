@@ -19,7 +19,6 @@ $loader->register();
 	'lazy' => TRUE,
 	'profiler' => TRUE
 ));
-//dibi::getProfiler()->setFile('log.sql');
 
 /**
  * Author entity test factory
