@@ -32,6 +32,9 @@ Debug::dump($author);
 Debug::barDump($mappingTime = number_format(Debug::timer('benchmark')*1000, 1, '.', ' ')."ms", "Mapping Time");
 Debug::barDump($mappingMemory = number_format((memory_get_peak_usage() - $memory) / 1000, 1, '.', ' ')."kB", "Mapping Memory");
 
+echo '<p><a href="http://github.com/Vrtak-CZ/ActiveMapper/blob/master/examples/index.php" target="_blank">'
+		.'Show code on GitHub</a> - <a href="http://am.vrtak-cz.net/coverage">Show coverage</a></p>';
+
 $benchMarkData = "mapping time: $mappingTime mapping memory: $mappingMemory "
 		."total time: ".number_format((microtime(TRUE)-Debug::$time)*1000, 1, '.', ' ')."ms "
 		."total memory: ".number_format(memory_get_peak_usage() / 1000, 1, '.', ' ')."kB";
