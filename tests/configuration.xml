@@ -3,6 +3,8 @@
 	<filter>
 		<blacklist>
 			<directory suffix=".php">D:/Workspace/ActiveMapper/libs</directory>
+			<directory suffix=".php">D:/Workspace/ActiveMapper/examples</directory>
+			<directory suffix=".php">D:/Workspace/ActiveMapper/tests</directory>
 			<directory suffix=".php">C:/PHP/pear</directory>
 		</blacklist>
 	</filter>
