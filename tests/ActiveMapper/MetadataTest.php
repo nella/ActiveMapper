@@ -3,7 +3,10 @@ namespace ActiveMapperTests\Metadata;
 
 require_once __DIR__ . "/../bootstrap.php";
 
-use ActiveMapper\Metadata;
+use ActiveMapper\Metadata,
+	ActiveMapper\Proxy,
+	App\Models\Author,
+	Nette\Reflection\PropertyReflection;
 
 class MyEntity
 {
@@ -136,6 +139,20 @@ class MyEntity8
 	private $test;
 }
 
+class FooEntity
+{
+	/**
+	 * @column(Int)
+	 * @primary
+	 * @autoincrement
+	 */
+	protected $id;
+	/**
+	 * @column(Text)
+	 */
+	protected $text;
+}
+
 class MetadataTest extends \PHPUnit_Framework_TestCase
 {
 	public function testGetMetadata()
@@ -151,6 +168,18 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$data = new Metadata('App\Models\Author');
 		$this->assertEquals("Author", $data->getName());
 		$this->assertEquals("Author", $data->name);
+	}
+
+	public function testHasProxy()
+	{
+		$object = new Metadata('App\Models\Author');
+		$this->assertTrue($object->hasProxy());
+		$this->assertTrue($object->getProxy());
+		$this->assertTrue($object->proxy);
+		$object = new Metadata('ActiveMapperTests\MetaData\MyEntity');
+		$this->assertFalse($object->hasProxy());
+		$this->assertFalse($object->getProxy());
+		$this->assertFalse($object->proxy);
 	}
 
 	public function testBoolColumns()
@@ -323,37 +352,50 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$object->getColumn('exception');
 	}
 
-	public function testGetInstance()
+	public function testGetInstance1()
 	{
 		$data = array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
-		$author = \ActiveMapperTests\author($data);
+		$author = new Author($data);
 		$this->assertEquals($author, Metadata::getMetadata('App\Models\Author')->getInstance($data));
+	}
+
+	public function testGetInstance2()
+	{
+		$data = new FooEntity();
+		$propRef = new PropertyReflection('ActiveMapperTests\MetaData\FooEntity', 'text');
+		$propRef->setAccessible(TRUE);
+		$propRef->setValue($data, "Test text");
+		$propRef->setAccessible(FALSE);
+		$this->assertEquals(
+			$data,
+			Metadata::getMetadata('ActiveMapperTests\MetaData\FooEntity')->getInstance(array('text' => "Test text"))
+		);
 	}
 
 	public function testGetValues1()
 	{
 		$data = array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
-		$author = \ActiveMapperTests\author($data);
+		$author = new Author($data);
 		$this->assertEquals($data, Metadata::getMetadata('App\Models\Author')->getValues($author));
 	}
 
 	public function testGetValues2()
 	{
-		$author = \ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$author = new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		$data = array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
 		$this->assertEquals($data, Metadata::getMetadata('App\Models\Author')->getValues($author, FALSE));
 	}
 
 	public function testGetPrimaryKeyValue()
 	{
-		$author = \ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$author = new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		$this->assertEquals(1, Metadata::getMetadata('App\Models\Author')->getPrimaryKeyValue($author));
 	}
 
 	public function testSetPrimaryKeyValue()
 	{
-		$author = \ActiveMapperTests\author(array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$author = new Author(array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		Metadata::getMetadata('App\Models\Author')->setPrimaryKeyValue($author, 1);
-		$this->assertEquals(\ActiveMapperTests\author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $author);
+		$this->assertEquals(new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $author);
 	}
 }

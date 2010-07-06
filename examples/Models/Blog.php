@@ -4,20 +4,20 @@ namespace App\Models;
 /**
  * @OneToOne(App\Models\Author, mapped = FALSE)
  */
-class Blog
+class Blog extends \ActiveMapper\Proxy
 {
 	/**
 	 * @column(Int)
 	 * @autoincrement
 	 * @primary
 	 */
-	private $id;
+	protected $id;
 	/**
 	 * @column(String, 50)
 	 */
-	private $name;
+	protected $name;
 	/**
 	 * @column(String, 100)
 	 */
-	private $url;
+	protected $url;
 }

@@ -5,6 +5,7 @@ require_once __DIR__ . "/../bootstrap.php";
 
 use ActiveMapper\DibiPersister,
 	ActiveMapper\Manager,
+	App\Models\Author,
 	dibi;
 
 class DibiPersisterTest extends \PHPUnit_Framework_TestCase
@@ -23,14 +24,14 @@ class DibiPersisterTest extends \PHPUnit_Framework_TestCase
 	// HOW TO SPLIT TESTS
 	public function testTotal()
 	{
-		$this->object->insert(author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/")));
+		$this->object->insert(new Author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/")));
 		$id = dibi::getInsertId();
 		$this->assertEquals(
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch(),
 			array('id' => $id, 'name' => "Franta Skočdopole", 'web' => "http://example.com/")
 		);
 		$this->assertEquals($id, $this->object->lastPrimaryKey());
-		$author = author(array('id' => $id, 'name' => "Franta Vomáčka", 'web' => "http://example.com/"));
+		$author = new Author(array('id' => $id, 'name' => "Franta Vomáčka", 'web' => "http://example.com/"));
 		$this->object->update($author);
 		$this->assertEquals(
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch(),

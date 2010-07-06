@@ -4,16 +4,16 @@ namespace App\Models;
 /**
  * @ManyToMany(App\Models\Application, mapped = FALSE)
  */
-class Tag
+class Tag extends \ActiveMapper\Proxy
 {
 	/**
 	 * @column(Int)
 	 * @autoincrement
 	 * @primary
 	 */
-	private $id;
+	protected $id;
 	/**
 	 * @column(String, 20)
 	 */
-	private $name;
+	protected $name;
 }

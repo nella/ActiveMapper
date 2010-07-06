@@ -5,7 +5,7 @@ namespace App\Models;
  * @OneToMany(App\Models\Application)
  * @OneToOne(App\Models\Blog)
  */
-class Author
+class Author extends \ActiveMapper\Proxy
 {
 	/**
 	 * @column(Int)

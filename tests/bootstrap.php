@@ -20,36 +20,5 @@ $loader->register();
 	'profiler' => TRUE
 ));
 
-/**
- * Author entity test factory
- *
- * @param array $data
- * @return App\Models\Author
- */
-function author(array $data)
-{
-	$author = new \App\Models\Author;
-	$ref = \Nette\Reflection\ClassReflection::from('App\Models\Author');
-	if (isset($data['id'])) {
-		$prop = $ref->getProperty('id');
-		$prop->setAccessible(TRUE);
-		$prop->setValue($author, $data['id']);
-		$prop->setAccessible(FALSE);
-	}
-	if (isset($data['name'])) {
-		$prop = $ref->getProperty('name');
-		$prop->setAccessible(TRUE);
-		$prop->setValue($author, $data['name']);
-		$prop->setAccessible(FALSE);
-	}
-	if (isset($data['web'])) {
-		$prop = $ref->getProperty('web');
-		$prop->setAccessible(TRUE);
-		$prop->setValue($author, $data['web']);
-		$prop->setAccessible(FALSE);
-	}
-	return $author;
-}
-
 \dibi::loadFile(__DIR__ . "/db.structure.sql");
 \dibi::loadFile(__DIR__ . "/db.data.sql");

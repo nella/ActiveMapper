@@ -3,7 +3,8 @@ namespace ActiveMapperTests;
 
 require_once __DIR__ . "/../bootstrap.php";
 
-use ActiveMapper\IdentityMap;
+use ActiveMapper\IdentityMap,
+	App\Models\Author;
 
 class IdentityMapTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,13 +20,13 @@ class IdentityMapTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->object->map(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/"));
 		$data = $this->object->find(2);
-		$this->assertEquals(author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")), $data);
+		$this->assertEquals(new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")), $data);
 		$this->assertNull($this->object->find(9999999));
 	}
 
 	public function testStore_and_Detach_and_IsMapped()
 	{
-		$author = author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/"));
+		$author = new Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/"));
 		$this->assertFalse($this->object->isMapped($author));
 		$this->object->store($author);
 		$this->assertTrue($this->object->isMapped($author));
@@ -38,7 +39,7 @@ class IdentityMapTest extends \PHPUnit_Framework_TestCase
 	public function testMap()
 	{
 		$data = $this->object->map(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
-		$this->assertEquals(author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
+		$this->assertEquals(new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
 	}
 
 	public function testMapException1()

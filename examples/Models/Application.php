@@ -5,24 +5,24 @@ namespace App\Models;
  * @ManyToOne(App\Models\Author)
  * @ManyToMany(App\Models\Tag)
  */
-class Application
+class Application extends \ActiveMapper\Proxy
 {
 	/**
 	 * @column(Int)
 	 * @autoincrement
 	 * @primary
 	 */
-	private $id;
+	protected $id;
 	/**
 	 * @column(String, 50)
 	 */
-	private $title;
+	protected $title;
 	/**
 	 * @column(String, 100)
 	 */
-	private $web;
+	protected $web;
 	/**
 	 * @column(String, 100)
 	 */
-	private $slogan;
+	protected $slogan;
 }

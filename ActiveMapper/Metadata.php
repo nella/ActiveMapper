@@ -20,6 +20,7 @@ use Nette\Reflection\ClassReflection,
  * @author     Patrik Votoček
  * @copyright  Copyright (c) 2010 Patrik Votoček
  * @package    ActiveMapper
+ * @property-read bool $proxy is entity implements proxy?
  * @property-read string $tableName entity table name
  * @property-read array<ActiveMapper\DataTypes\IDataType> $columns entity columns array
  * @property-read string $name entity name (class without namespace)
@@ -105,6 +106,26 @@ class Metadata extends \Nette\Object
 			$this->tableName = $ref->getAnnotation('tableName');
 		else
 			$this->tableName = Tools::underscore(Tools::pluralize($this->name));
+	}
+
+	/**
+	 * Has entity proxy object
+	 *
+	 * @return bool
+	 */
+	public function hasProxy()
+	{
+		return  is_subclass_of($this->entity, 'ActiveMapper\Proxy');
+	}
+
+	/**
+	 * Has entity proxy object
+	 *
+	 * @return bool
+	 */
+	public function getProxy()
+	{
+		return $this->hasProxy();
 	}
 
 	/**
@@ -221,14 +242,18 @@ class Metadata extends \Nette\Object
 			throw new \InvalidArgumentException("Get instance data must be array or implement ArrayAccess.");
 
 		$ref = ClassReflection::from($this->entity);
-		$instance = $ref->newInstance();
-		foreach ($this->columns as $column) {
-			$tmpName = Tools::underscore($column->name);
-			if (isset($data[$tmpName])) {
-				$prop = $ref->getProperty($column->name);
-				$prop->setAccessible(TRUE);
-				$prop->setValue($instance, $column->convertToPHPValue($data[$tmpName]));
-				$prop->setAccessible(FALSE);
+		if ($this->hasProxy())
+			$instance = $ref->newInstance($data);
+		else {
+			$instance = $ref->newInstance();
+			foreach ($this->columns as $column) {
+				$tmpName = Tools::underscore($column->name);
+				if (isset($data[$tmpName])) {
+					$prop = $ref->getProperty($column->name);
+					$prop->setAccessible(TRUE);
+					$prop->setValue($instance, $column->convertToPHPValue($data[$tmpName]));
+					$prop->setAccessible(FALSE);
+				}
 			}
 		}
 		

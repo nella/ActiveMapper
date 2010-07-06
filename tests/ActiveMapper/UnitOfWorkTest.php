@@ -5,8 +5,8 @@ require_once __DIR__ . "/../bootstrap.php";
 
 use ActiveMapper\Manager,
 	ActiveMapper\UnitOfWork,
-	dibi,
-	\Nette\Reflection\PropertyReflection;
+	App\Models\Author,
+	dibi;
 
 class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 	// HOW TO SPLIT TESTS
 	public function testTotal()
 	{
-		$author = author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/"));
+		$author = new Author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/"));
 		// TEST INSERT
 		$this->object->registerSave($author);
 		$this->assertEquals(1, $this->object->count());
@@ -34,19 +34,14 @@ class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(0, $this->object->count());
 		$this->assertEquals(0, $this->object->count);
 		$this->assertEquals(0, $this->object->getCount());
-		$idRef = new PropertyReflection('App\Models\Author', 'id');
-		$idRef->setAccessible(TRUE);
 		$id = dibi::getInsertId();
-		$this->assertEquals($id, $idRef->getValue($author));
+		$this->assertEquals($id, $author->id);
 		$this->assertEquals(
 			array('id' => $id, 'name' => "Franta Skočdopole", 'web' => "http://example.com/"),
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch()
 		);
 		// TEST UPDATE
-		$nameRef = new PropertyReflection('App\Models\Author', 'name');
-		$nameRef->setAccessible(TRUE);
-		$nameRef->setValue($author, "Franta Vomáčka");
-		$nameRef->setAccessible(FALSE);
+		$author->name = "Franta Vomáčka";
 		$this->object->registerSave($author);
 		$this->assertEquals(1, $this->object->count());
 		$this->assertEquals(1, $this->object->count);
@@ -55,12 +50,11 @@ class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(0, $this->object->count());
 		$this->assertEquals(0, $this->object->count);
 		$this->assertEquals(0, $this->object->getCount());
-		$this->assertEquals($id, $idRef->getValue($author));
+		$this->assertEquals($id, $author->id);
 		$this->assertEquals(
 			array('id' => $id, 'name' => "Franta Vomáčka", 'web' => "http://example.com/"),
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch()
 		);
-		$idRef->setAccessible(FALSE);
 		// TEST DELETE
 		$this->object->registerDelete($author);
 		$this->assertEquals(1, $this->object->count());
@@ -75,7 +69,7 @@ class UnitOfWorkTest extends \PHPUnit_Framework_TestCase
 
 	public function testCommitException()
 	{
-		$author = author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
+		$author = new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		$this->object->registerSave($author);
 		$this->object->registerSave($author);
 		$this->setExpectedException('InvalidStateException');

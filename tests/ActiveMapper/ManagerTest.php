@@ -7,7 +7,6 @@ use ActiveMapper\Manager,
 	ActiveMapper\DibiRepository,
 	ActiveMapper\DibiPersister,
 	App\Models\Author,
-	Nette\Reflection\PropertyReflection,
 	dibi;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase
@@ -60,21 +59,21 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 	public function testFind1()
 	{
 		$data = $this->object->find('App\Models\Author', 1);
-		$this->assertEquals(author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
+		$this->assertEquals(new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
 		$this->assertType('App\Models\Author', $data);
    	}
 
 	public function testFindBy1()
 	{
 		$data = $this->object->findByName('App\Models\Author', 'Patrik Votoček');
-		$this->assertEquals(author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")), $data);
+		$this->assertEquals(new Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")), $data);
 		$this->assertType('App\Models\Author', $data);
 	}
 
 	public function testFindBy2()
 	{
 		$data = $this->object->findById('App\Models\Author', 2);
-		$this->assertEquals(author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")), $data);
+		$this->assertEquals(new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")), $data);
 		$this->assertType('App\Models\Author', $data);
 	}
 
@@ -86,9 +85,9 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 		//$this->assertType('ActiveMapper\FluentCollection', $rows);
 
 		$data = array(
-			author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")),
-			author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")),
-			author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")),
+			new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")),
+			new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")),
+			new Author(array('id' => 3, 'name' => "Patrik Votoček", 'web' => "http://patrik.votocek.cz/")),
 		);
 		$this->assertEquals(3, count($rows));
 		$this->assertType('App\Models\Author', $rows[0]);
@@ -100,31 +99,25 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 	// HOW TO SPLIT TESTS
 	public function testPersistingTotal()
 	{
-		$author = author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/"));
+		$author = new Author(array('name' => "Franta Skočdopole", 'web' => "http://example.com/"));
 		// TEST INSERT
 		$this->object->persist($author);
 		$this->object->flush();
-		$idRef = new PropertyReflection('App\Models\Author', 'id');
-		$idRef->setAccessible(TRUE);
 		$id = dibi::getInsertId();
-		$this->assertEquals($id, $idRef->getValue($author));
+		$this->assertEquals($id, $author->id);
 		$this->assertEquals(
 			array('id' => $id, 'name' => "Franta Skočdopole", 'web' => "http://example.com/"),
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch()
 		);
 		// TEST UPDATE
-		$nameRef = new PropertyReflection('App\Models\Author', 'name');
-		$nameRef->setAccessible(TRUE);
-		$nameRef->setValue($author, "Franta Vomáčka");
-		$nameRef->setAccessible(FALSE);
+		$author->name = "Franta Vomáčka";
 		$this->object->persist($author);
 		$this->object->flush();
-		$this->assertEquals($id, $idRef->getValue($author));
+		$this->assertEquals($id, $author->id);
 		$this->assertEquals(
 			array('id' => $id, 'name' => "Franta Vomáčka", 'web' => "http://example.com/"),
 			(array)dibi::select("*")->from("authors")->where("[id] = %i", $id)->execute()->fetch()
 		);
-		$idRef->setAccessible(FALSE);
 		// TEST DELETE
 		$this->object->delete($author);
 		$this->object->flush();
