@@ -22,6 +22,9 @@ use Nette\String;
  */
 abstract class Proxy extends \Nette\Object
 {
+	/** @var array */
+	protected $_associations = array();
+
 	/**
 	 * Contstuctor
 	 *
@@ -36,7 +39,7 @@ abstract class Proxy extends \Nette\Object
 
 
 		$metadata = Metadata::getMetadata(get_called_class());
-
+		
 		if (count($data) > 0) {
 			foreach ($metadata->columns as $column) {
 				$name = Tools::underscore($column->name);
@@ -131,10 +134,27 @@ abstract class Proxy extends \Nette\Object
 			} elseif (strncmp($name, 'set', 3) === 0 && $metadata->hasColumn(lcfirst(substr($name, 3)))) {
 				return $this->universalSetValue(lcfirst(substr($name, 3)), isset($attr[0]) ? $attr[0] : NULL);
 			} else
-				return parent::__call($name, $attr);
+				return $this->universalGetAssociation($name);
 		} catch (\MemberAccessException $e) {
 			return parent::__call($name, $attr);
 		}
 	}
-	
+
+	/**
+	 * Universal association getter
+	 *
+	 * @param string $name associtation name
+	 * @return mixed
+	 * @throws MemberAccessException
+	 */
+	private function &universalGetAssociation($name)
+	{
+		if (isset($this->_associations[$name])) {
+			if ($this->_associations[$name] instanceof Associations\LazyLoad)
+				$this->_associations[$name] = $this->_associations[$name]->getData();
+
+			return $this->_associations[$name];
+		} else
+			throw new \MemberAccessException("Cannot read undeclared association " . get_called_class() . "::$name.");
+	}
 }

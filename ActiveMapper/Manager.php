@@ -116,7 +116,7 @@ class Manager extends \Nette\Object
 	public function getIdentityMap($entity)
 	{
 		if (!isset($this->identityMap[$entity]))
-			$this->identityMap[$entity] = new IdentityMap($entity);
+			$this->identityMap[$entity] = new IdentityMap($this, $entity);
 
 		return $this->identityMap[$entity];
 	}

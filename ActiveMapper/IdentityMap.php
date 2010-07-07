@@ -20,6 +20,8 @@ namespace ActiveMapper;
  */
 class IdentityMap extends \Nette\Object
 {
+	/** @var ActiveMapper\Manager */
+	protected $em;
 	/** @var string */
 	protected $entity;
 	/** @var array */
@@ -31,13 +33,15 @@ class IdentityMap extends \Nette\Object
 
 	/**
 	 * Construct
-	 * 
+	 *
+	 * @param ActiveMapper\Manager $em
 	 * @param string $entity full entity class name (with namespace)
 	 */
-	public function __construct($entity)
+	public function __construct(Manager $em, $entity)
 	{
 		// TODO: verify entity class
 
+		$this->em = $em;
 		$this->entity = $entity;
 	}
 
@@ -145,7 +149,7 @@ class IdentityMap extends \Nette\Object
 				if (isset($this->idReference[$row[Metadata::getMetadata($this->entity)->primaryKey]]))
 					$output[$key] = &$this->idReference[$row[$metadata->primaryKey]];
 				else {
-					$tmp = $metadata->getInstance($row);
+					$tmp = $metadata->getInstance($this->em, $row);
 					$this->idReference[$row[$metadata->primaryKey]] = &$tmp;
 					$this->data[spl_object_hash($tmp)] = &$tmp;
 					$this->originalData[spl_object_hash($tmp)] = (array)$row;
@@ -163,7 +167,7 @@ class IdentityMap extends \Nette\Object
 			if (isset($this->idReference[$input[$metadata->primaryKey]]))
 				return $this->idReference[$input[$metadata->primaryKey]];
 			else {
-				$tmp = $metadata->getInstance($input);
+				$tmp = $metadata->getInstance($this->em, $input);
 				$this->idReference[$input[$metadata->primaryKey]] = &$tmp;
 				$this->data[spl_object_hash($tmp)] = &$tmp;
 				$this->originalData[spl_object_hash($tmp)] = (array)$input;

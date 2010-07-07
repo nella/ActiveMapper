@@ -5,6 +5,9 @@ require_once __DIR__ . "/../bootstrap.php";
 
 use ActiveMapper\Metadata,
 	ActiveMapper\Proxy,
+	ActiveMapper\Associations,
+	ActiveMapper\Associations\OneToOne,
+	ActiveMapper\Associations\ManyToMany,
 	App\Models\Author,
 	Nette\Reflection\PropertyReflection;
 
@@ -158,7 +161,9 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 	public function testGetMetadata()
 	{
 		$data = new Metadata('App\Models\Author');
+		$data->getAssociations();
 		$tmp = Metadata::getMetadata('App\Models\Author');
+		$tmp->getAssociations();
 		$this->assertEquals($data, $tmp);
 		$this->assertSame($tmp, Metadata::getMetadata('App\Models\Author'));
 	}
@@ -355,8 +360,8 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 	public function testGetInstance1()
 	{
 		$data = array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/");
-		$author = new Author($data);
-		$this->assertEquals($author, Metadata::getMetadata('App\Models\Author')->getInstance($data));
+		$this->assertEquals(1, Metadata::getMetadata('App\Models\Author')
+			->getInstance(\ActiveMapper\Manager::getManager(), $data)->id);
 	}
 
 	public function testGetInstance2()
@@ -368,7 +373,8 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$propRef->setAccessible(FALSE);
 		$this->assertEquals(
 			$data,
-			Metadata::getMetadata('ActiveMapperTests\MetaData\FooEntity')->getInstance(array('text' => "Test text"))
+			Metadata::getMetadata('ActiveMapperTests\MetaData\FooEntity')
+				->getInstance(\ActiveMapper\Manager::getManager(), array('text' => "Test text"))
 		);
 	}
 
@@ -397,5 +403,47 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$author = new Author(array('name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
 		Metadata::getMetadata('App\Models\Author')->setPrimaryKeyValue($author, 1);
 		$this->assertEquals(new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $author);
+	}
+
+	public function testOneToOneAssociation1()
+	{
+		$metadata = new Metadata('App\Models\Author');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog');
+		$this->assertTrue(isset($metadata->associations['blog']));
+		$this->assertEquals($object, $metadata->associations['blog']);
+
+		$metadata = new Metadata('App\Models\Blog');
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
+		$this->assertTrue(isset($metadata->associations['author']));
+		$this->assertEquals($object, $metadata->associations['author']);
+	}
+
+	public function testOneToManyAssociation1()
+	{
+		$metadata = new Metadata('App\Models\Author');
+		$object = new Associations\OneToMany('App\Models\Author', 'App\Models\Application');
+		$this->assertTrue(isset($metadata->associations['applications']));
+		$this->assertEquals($object, $metadata->associations['applications']);
+	}
+
+	public function testManyToOneAssociation1()
+	{
+		$metadata = new Metadata('App\Models\Application');
+		$object = new Associations\ManyToOne('App\Models\Application', 'App\Models\Author');
+		$this->assertTrue(isset($metadata->associations['author']));
+		$this->assertEquals($object, $metadata->associations['author']);
+	}
+
+	public function testManyToManyAssociation1()
+	{
+		$metadata = new Metadata('App\Models\Application');
+		$object = new ManyToMany('App\Models\Application', 'App\Models\Tag');
+		$this->assertTrue(isset($metadata->associations['tags']));
+		$this->assertEquals($object, $metadata->associations['tags']);
+
+		$metadata = new Metadata('App\Models\Tag');
+		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE);
+		$this->assertTrue(isset($metadata->associations['applications']));
+		$this->assertEquals($object, $metadata->associations['applications']);
 	}
 }

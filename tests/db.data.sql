@@ -1,8 +1,6 @@
 INSERT INTO authors (id, name, web) VALUES (1, 'Jakub Vrana', 'http://www.vrana.cz/');
 INSERT INTO authors (id, name, web) VALUES (2, 'David Grudl', 'http://davidgrudl.com/');
 INSERT INTO authors (id, name, web) VALUES (3, 'Patrik Votoček', 'http://patrik.votocek.cz/');
-INSERT INTO authors (id, name, web) VALUES (4, 'Jan Novák', 'http://example.com/');
-INSERT INTO authors (id, name, web) VALUES (5, 'Tomáš Marný', 'http://example.com/');
 
 INSERT INTO tags (id, name) VALUES (1, 'PHP');
 INSERT INTO tags (id, name) VALUES (2, 'MySQL');

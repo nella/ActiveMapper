@@ -23,10 +23,13 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
 {
 	/** @var ActiveMapperTests\FooEntity */
 	private $object;
+	/** @var ActiveMapper\Manager */
+	private $manager;
 
 	public function setUp()
 	{
 		$this->object = new FooEntity(array('id' => 1, 'text' => "Test text"));
+		$this->manager = \ActiveMapper\Manager::getManager();
 	}
 
 	public function testGetValue()
@@ -79,5 +82,44 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->setExpectedException('MemberAccessException');
 		$this->object->exception();
+	}
+
+	public function testOneToOneData1()
+	{
+		$author = $this->manager->find('App\Models\Author', 3);
+		$this->assertEquals(3, $author->blog()->id);
+	}
+
+	public function testOneToOneData2()
+	{
+		$blog = $this->manager->find('App\Models\Blog', 3);
+		$this->assertEquals(3, $blog->author()->id);
+	}
+
+	public function testOneToManyData()
+	{
+		$author = $this->manager->find('App\Models\Author', 3);
+		$data = $author->applications();
+		$this->assertEquals(5, $data[0]->id);
+	}
+
+	public function testManyToOneData()
+	{
+		$application = $this->manager->find('App\Models\Application', 6);
+		$this->assertEquals(3, $application->author()->id);
+	}
+
+	public function testManyToManyData1()
+	{
+		$application = $this->manager->find('App\Models\Application', 2);
+		$data = $application->tags();
+		$this->assertEquals(4, $data[0]->id);
+	}
+
+	public function testManyToManyData2()
+	{
+		$tag = $this->manager->find('App\Models\Tag', 4);
+		$data = $tag->applications();
+		$this->assertEquals(2, $data[0]->id);
 	}
 }

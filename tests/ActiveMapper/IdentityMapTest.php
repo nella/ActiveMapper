@@ -13,14 +13,14 @@ class IdentityMapTest extends \PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->object = new IdentityMap('App\Models\Author');
+		$this->object = new IdentityMap(\ActiveMapper\Manager::getManager(), 'App\Models\Author');
 	}
 
 	public function testFind()
 	{
 		$this->object->map(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/"));
 		$data = $this->object->find(2);
-		$this->assertEquals(new Author(array('id' => 2, 'name' => "David Grudl", 'web' => "http://davidgrudl.com/")), $data);
+		$this->assertEquals(2, $data->id);
 		$this->assertNull($this->object->find(9999999));
 	}
 
@@ -39,7 +39,7 @@ class IdentityMapTest extends \PHPUnit_Framework_TestCase
 	public function testMap()
 	{
 		$data = $this->object->map(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/"));
-		$this->assertEquals(new Author(array('id' => 1, 'name' => "Jakub Vrana", 'web' => "http://www.vrana.cz/")), $data);
+		$this->assertEquals(1, $data->id);
 	}
 
 	public function testMapException1()
