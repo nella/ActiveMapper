@@ -34,7 +34,7 @@ class OneToMany extends Base implements IAssociation
 	protected $targetColumn;
 	/** @var string */
 	protected $sourceColumn;
-	
+
 	/**
 	 * Costructor
 	 *
@@ -50,17 +50,17 @@ class OneToMany extends Base implements IAssociation
 		parent::__construct($sourceEntity, $targetEntity);
 		$targetMetadata = Metadata::getMetadata($targetEntity);
 		$sourceMetadata = Metadata::getMetadata($sourceEntity);
-		
+
 		if (empty($name))
 			$this->name = lcfirst(Tools::pluralize($targetMetadata->name));
 		else
 			$this->name = $name;
-		
+
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($sourceMetadata->primaryKey);
 		else
 			$this->sourceColumn = $sourceColumn;
-		
+
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($sourceMetadata->name.ucfirst($this->sourceColumn));
 		else

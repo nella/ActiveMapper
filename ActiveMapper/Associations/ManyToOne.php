@@ -34,7 +34,7 @@ class ManyToOne extends Base implements IAssociation
 	protected $targetColumn;
 	/** @var string */
 	protected $sourceColumn;
-	
+
 	/**
 	 * Costructor
 	 *
@@ -50,17 +50,17 @@ class ManyToOne extends Base implements IAssociation
 		parent::__construct($sourceEntity, $targetEntity);
 		$targetMetadata = Metadata::getMetadata($targetEntity);
 		$sourceMetadata = Metadata::getMetadata($sourceEntity);
-		
+
 		if (empty($name))
 			$this->name = lcfirst($targetMetadata->name);
 		else
 			$this->name = $name;
-		
+
 		if (empty($targetColumn))
 			$this->targetColumn = Tools::underscore($targetMetadata->primaryKey);
 		else
 			$this->targetColumn = $targetColumn;
-		
+
 		if (empty($sourceColumn))
 			$this->sourceColumn = Tools::underscore($targetMetadata->name.ucfirst($this->targetColumn));
 		else

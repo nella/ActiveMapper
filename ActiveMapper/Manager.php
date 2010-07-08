@@ -50,7 +50,7 @@ class Manager extends \Nette\Object
 	{
 		return $this->connection;
 	}
-	
+
 	/**
 	 * Get repository
 	 * 
@@ -61,10 +61,10 @@ class Manager extends \Nette\Object
 	{
 		if (!isset($this->repositories[$entity]))
 			$this->repositories[$entity] = new DibiRepository($this, $entity);
-			
+
 		return $this->repositories[$entity];
 	}
-	
+
 	/**
 	 * Set repository
 	 * 
@@ -157,9 +157,9 @@ class Manager extends \Nette\Object
 	public function findAll($entity)
 	{
 		// TODO: use FluentCollection
-		
+
 		return $this->getRepository($entity)->findAll();
-   	}
+	}
 
 	/**
 	 * Method overload for findBy...

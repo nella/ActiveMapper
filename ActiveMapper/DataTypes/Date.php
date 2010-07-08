@@ -36,7 +36,7 @@ class Date extends Base implements IDataType
 		elseif ($value === NULL)
 			return TRUE;
 
-		if (($value instanceof \DateTime) || (bool)preg_match('/^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])$/', $value))
+		if (($value instanceof \DateTime) || (bool) preg_match('/^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])$/', $value))
 			return TRUE;
 		else
 			return FALSE;
@@ -52,10 +52,10 @@ class Date extends Base implements IDataType
 	public function convertToPHPValue($value)
 	{
 		if ($value === NULL && !$this->allowNull)
-			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
+			throw new \InvalidArgumentException("Null is not allowed value for '{$this->name}'");
 		elseif ($value !== NULL && !$this->isValid($value))
-			throw new \InvalidArgumentException("Only date value / DateTime object accepted for '".$this->name."' [".$value."]");
-		
+			throw new \InvalidArgumentException("Only date value / DateTime object accepted for '{$this->name}' [$value]");
+
 		if ($value instanceof \DateTime)
 			return $value;
 		elseif ($value === NULL)

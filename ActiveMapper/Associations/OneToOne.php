@@ -37,7 +37,7 @@ class OneToOne extends Base implements IAssociation
 	protected $targetColumn;
 	/** @var string */
 	protected $sourceColumn;
-	
+
 	/**
 	 * Costructor
 	 *
@@ -54,20 +54,20 @@ class OneToOne extends Base implements IAssociation
 		parent::__construct($sourceEntity, $targetEntity);
 		$targetMetadata = Metadata::getMetadata($targetEntity);
 		$sourceMetadata = Metadata::getMetadata($sourceEntity);
-		
+
 		$this->mapped = $mapped;
-		
+
 		if (empty($name))
 			$this->name = lcfirst($targetMetadata->name);
 		else
 			$this->name = $name;
-		
+
 		if ($this->mapped) {
 			if (empty($sourceColumn))
 				$this->sourceColumn = Tools::underscore($sourceMetadata->primaryKey);
 			else
 				$this->sourceColumn = $sourceColumn;
-			
+
 			if (empty($targetColumn))
 				$this->targetColumn = Tools::underscore($sourceMetadata->name.ucfirst($this->sourceColumn));
 			else
@@ -77,14 +77,14 @@ class OneToOne extends Base implements IAssociation
 				$this->targetColumn = Tools::underscore($targetMetadata->primaryKey);
 			else
 				$this->targetColumn = $targetColumn;
-			
+
 			if (empty($sourceColumn))
 				$this->sourceColumn = Tools::underscore($targetMetadata->name.ucfirst($this->targetColumn));
 			else
 				$this->sourceColumn = $sourceColumn;
 		}
 	}
-	
+
 	/**
 	 * Is association mapped
 	 * - FALSE inverset

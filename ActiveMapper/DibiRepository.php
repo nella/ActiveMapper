@@ -38,7 +38,7 @@ class DibiRepository extends \Nette\Object implements IRepository
 	private $entity;
 	/** @var DibiConnection */
 	private $connection;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -57,7 +57,7 @@ class DibiRepository extends \Nette\Object implements IRepository
 		if ($connectio == NULL)
 			$this->connection = $this->em->connection;
 	}
-	
+
 	/**
 	 * Find entity witch id (primary key) is ...
 	 *
@@ -72,8 +72,8 @@ class DibiRepository extends \Nette\Object implements IRepository
 		$data = $identityMap->find($primaryKey);
 		if ($data === NULL) {
 			return $identityMap->map($this->em->connection->select("*")->from($metadata->tableName)
-					->where("[".Tools::underscore($metadata->primaryKey)."] = "
-							.$this->getModificator($metadata->primaryKey), $primaryKey)->execute()->fetch()
+				->where("[".Tools::underscore($metadata->primaryKey)."] = "
+						.$this->getModificator($metadata->primaryKey), $primaryKey)->execute()->fetch()
 			);
 		}
 
@@ -91,7 +91,7 @@ class DibiRepository extends \Nette\Object implements IRepository
 		$metadata = Metadata::getMetadata($this->entity);
 		$identityMap = $this->em->getIdentityMap($this->entity);
 		return $identityMap->map($this->em->connection->select("*")->from($metadata->tableName)->execute()->fetchAll());
-   	}
+	}
 
 	/**
 	 * Method overload for findBy...
@@ -113,7 +113,7 @@ class DibiRepository extends \Nette\Object implements IRepository
 		} else
 			return parent::__call($name, $args);
 	}
-	
+
 	/**
 	 * Get modificator
 	 * 
@@ -125,15 +125,15 @@ class DibiRepository extends \Nette\Object implements IRepository
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		if (!$metadata->hasColumn($column))
-			throw new \InvalidArgumentException("Entity [".$this->entity."] has not '".$column."' column");
+			throw new \InvalidArgumentException("Entity '{$this->entity}' has not '$column' column");
 
 		$class = $metadata->getColumn($column)->reflection->name;
 		if (!in_array($class, array_keys(self::$modificators)))
-			throw new \NotImplementedException("Datatype '$class' support not implemented in '".get_called_class()."' repository");
+			throw new \NotImplementedException("Support for '$class' datatype not implemented in '".get_called_class()."'");
 
 		return self::$modificators[$class];
 	}
-	
+
 	/**
 	 * Dibi repository factory
 	 *

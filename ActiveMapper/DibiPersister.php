@@ -38,7 +38,7 @@ class DibiPersister extends \Nette\Object implements IPersister
 	private $entity;
 	/** @var DibiConnection */
 	private $connection;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -89,8 +89,8 @@ class DibiPersister extends \Nette\Object implements IPersister
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		return $this->connection->update($metadata->tableName, $this->getValues($entity))
-			->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey),
-					$metadata->getPrimaryKeyValue($entity))->execute();
+				->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey),
+						$metadata->getPrimaryKeyValue($entity))->execute();
 	}
 
 	/**
@@ -102,8 +102,8 @@ class DibiPersister extends \Nette\Object implements IPersister
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		return $this->connection->delete($metadata->tableName)
-			->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey), 
-					$metadata->getPrimaryKeyValue($entity))->execute();
+				->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey),
+						$metadata->getPrimaryKeyValue($entity))->execute();
 	}
 
 	/**
@@ -128,15 +128,15 @@ class DibiPersister extends \Nette\Object implements IPersister
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		if (!$metadata->hasColumn($column))
-			throw new \InvalidArgumentException("Entity [".$this->entity."] has not '".$column."' column");
+			throw new \InvalidArgumentException("Entity '{$this->entity}' has not '$column' column");
 
 		$class = $metadata->getColumn($column)->reflection->name;
 		if (!in_array($class, array_keys(self::$modificators)))
-			throw new \NotImplementedException("Datatype '$class' support not implemented in '".get_called_class()."' repository");
+			throw new \NotImplementedException("Support for '$class' datatype not implemented in '".get_called_class()."'");
 
 		return self::$modificators[$class];
 	}
-	
+
 	/**
 	 * Dibi persister factory
 	 *

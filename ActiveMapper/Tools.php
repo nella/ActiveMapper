@@ -26,16 +26,6 @@ use Nette\String;
  */
 class Tools
 {
-	/**
-	 * Static class - cannot be instantiated.
-	 * 
-	 * @throws LogicException
-	 */
-	final public function __construct()
-	{
-		throw new \LogicException("Cannot instantiate static class " . get_class($this));
-	}
-
 	/** @var array  of singular nouns as rule => replacement */
 	public static $singulars = array(
 		'/(quiz)$/i' => '\1zes',
@@ -56,7 +46,6 @@ class Tools
 		'/s$/i' => 's',
 		'/$/' => 's',
 	);
-
 	/** @var array  of plural nouns as rule => replacement */
 	public static $plurals = array(
 		'/(database)s$/i' => '\1',
@@ -85,7 +74,6 @@ class Tools
 		'/(n)ews$/i' => '\1ews',
 		'/s$/i' => '',
 	);
-
 	/** @var array  of irregular nouns */
 	public static $irregular = array(
 		'person' => 'people',
@@ -93,12 +81,21 @@ class Tools
 		'child' => 'children',
 		'sex' => 'sexes',
 		'move' => 'moves',
-		'cow' => 'kine', 
+		'cow' => 'kine',
 	);
-
 	/** @var array  of uncountable nouns */
 	public static $uncountable = array('equipment', 'information', 'rice', 'money', 'species', 'series', 'fish', 'sheep', 'jeans');
-	
+
+	/**
+	 * Static class - cannot be instantiated.
+	 *
+	 * @throws LogicException
+	 */
+	final public function __construct()
+	{
+		throw new \LogicException("Cannot instantiate static class '".get_called_class()."'");
+	}
+
 	/**
 	 * The reverse of pluralize, returns the singular form of a word.
 	 *
@@ -254,7 +251,7 @@ class Tools
 	 */
 	public static function camelize($s, $firstUpper = FALSE)
 	{
-		$s = preg_replace_callback('~_([a-z])~', function($m) {return strtoupper($m[1]);}, $s);
+		$s = preg_replace_callback('~_([a-z])~', function($m) { return strtoupper($m[1]); }, $s);
 		return $firstUpper ? ucfirst($s) : lcfirst($s);
 	}
 
@@ -268,6 +265,6 @@ class Tools
 	 */
 	public static function underscore($s)
 	{
-		return preg_replace_callback('~([A-Z])~', function($m) {return '_' . strtolower($m[1]);}, lcfirst($s));
+		return preg_replace_callback('~([A-Z])~', function($m) { return '_'.strtolower($m[1]); }, lcfirst($s));
 	}
 }

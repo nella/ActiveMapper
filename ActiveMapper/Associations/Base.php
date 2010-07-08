@@ -42,7 +42,7 @@ abstract class Base extends \Nette\Object
 	public function __construct($sourceEntity, $targetEntity)
 	{
 		// TODO: verify entity class
-		
+
 		$this->sourceEntity = $sourceEntity;
 		$this->targetEntity = $targetEntity;
 	}

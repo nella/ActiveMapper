@@ -33,13 +33,13 @@ abstract class Proxy extends \Nette\Object
 	public function __construct($data = NULL)
 	{
 		if ($data instanceof \ArrayAccess)
-			$data = (array)$data;
+			$data = (array) $data;
 		elseif (!is_array($data) && $data != NULL)
 			throw new \InvalidArgumentException("Data for entity must be array accesible.");
 
 
 		$metadata = Metadata::getMetadata(get_called_class());
-		
+
 		if (count($data) > 0) {
 			foreach ($metadata->columns as $column) {
 				$name = Tools::underscore($column->name);
@@ -77,7 +77,7 @@ abstract class Proxy extends \Nette\Object
 		if (Metadata::getMetadata(get_called_class())->hasColumn($name)) {
 			return $this->$name;
 		} else
-			throw new \MemberAccessException("Cannot read to undeclared column " . get_called_class() . "::\$$name.");
+			throw new \MemberAccessException("Cannot read to undeclared column ".get_called_class()."::\$$name.");
 	}
 
 	/**
@@ -110,11 +110,11 @@ abstract class Proxy extends \Nette\Object
 		$metadata = Metadata::getMetadata(get_called_class());
 		if ($metadata->hasColumn($name)) {
 			if ($metadata->primaryKey == $name)
-				throw new \MemberAccessException("Primary key is read-only " . get_called_class() . "::\$$name.");
+				throw new \MemberAccessException("Primary key is read-only ".get_called_class()."::\$$name.");
 			else
 				return $this->$name = Metadata::getMetadata(get_called_class())->getColumn($name)->convertToPHPValue($value);
 		} else
-			throw new \MemberAccessException("Cannot assign undeclared column " . get_called_class() . "::\$$name.");
+			throw new \MemberAccessException("Cannot assign undeclared column ".get_called_class()."::\$$name.");
 	}
 
 	/**
@@ -155,6 +155,6 @@ abstract class Proxy extends \Nette\Object
 
 			return $this->_associations[$name];
 		} else
-			throw new \MemberAccessException("Cannot read undeclared association " . get_called_class() . "::$name.");
+			throw new \MemberAccessException("Cannot read undeclared association ".get_called_class()."::$name.");
 	}
 }

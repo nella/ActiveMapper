@@ -38,7 +38,7 @@ class Float extends Base implements IDataType
 
 		if (is_bool($value))
 			return FALSE;
-		elseif ((bool)preg_match('/^-?[0-9]*[.,]?[0-9]+$/', $value))
+		elseif ((bool) preg_match('/^-?[0-9]*[.,]?[0-9]+$/', $value))
 			return TRUE;
 		else
 			return FALSE;
@@ -54,13 +54,13 @@ class Float extends Base implements IDataType
 	public function convertToPHPValue($value)
 	{
 		if ($value === NULL && !$this->allowNull)
-			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
+			throw new \InvalidArgumentException("Null is not allowed value for '{$this->name}'");
 		elseif ($value !== NULL && !$this->isValid($value))
-			throw new \InvalidArgumentException("Only float value accepted for '".$this->name."' [".$value."]");
+			throw new \InvalidArgumentException("Only float value accepted for '{$this->name}' [$value]");
 
 		if ($value === NULL)
 			return NULL;
 		else
-			return (float)$value;
+			return (float) $value;
 	}
 }

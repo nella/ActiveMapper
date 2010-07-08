@@ -75,8 +75,8 @@ class LazyLoad extends \Nette\Object
 		if ($assoc instanceof OneToOne && $assoc->mapped) {
 			return $this->em->getIdentityMap($assoc->targetEntity)->map(
 				$this->em->connection->select("*")->from(Metadata::getMetadata($assoc->targetEntity)->tableName)
-					->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
-					->execute()->fetch()
+				->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
+				->execute()->fetch()
 			);
 		} elseif ($assoc instanceof OneToOne && !$assoc->mapped) {
 			return $this->em->find($assoc->targetEntity, $this->associationKey);
@@ -84,17 +84,17 @@ class LazyLoad extends \Nette\Object
 			$targetTable = Metadata::getMetadata($assoc->targetEntity)->tableName;
 			return $this->em->getIdentityMap($assoc->targetEntity)->map(
 				$this->em->connection->select("[$targetTable].*")->from($targetTable)
-					->innerJoin($assoc->joinTable)->on("[{$assoc->joinTable}].[{$assoc->joinSourceColumn}] = "
+				->innerJoin($assoc->joinTable)->on("[{$assoc->joinTable}].[{$assoc->joinSourceColumn}] = "
 						.$this->getModificator($assoc->sourceColumn), $this->associationKey)
-					->and("[{$assoc->joinTable}].[{$assoc->joinTargetColumn}] = ["
+				->and("[{$assoc->joinTable}].[{$assoc->joinTargetColumn}] = ["
 						.Metadata::getMetadata($assoc->targetEntity)->tableName."].[{$assoc->targetColumn}]")
-					->execute()->fetchAll()
+				->execute()->fetchAll()
 			);
 		} elseif ($assoc instanceof OneToMany) {
 			return $this->em->getIdentityMap($assoc->targetEntity)->map(
 				$this->em->connection->select("*")->from(Metadata::getMetadata($assoc->targetEntity)->tableName)
-					->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
-					->execute()->fetchAll()
+				->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
+				->execute()->fetchAll()
 			);
 		} else {
 			return $this->em->find($assoc->targetEntity, $this->associationKey);
@@ -112,11 +112,11 @@ class LazyLoad extends \Nette\Object
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		if (!$metadata->hasColumn($column))
-			throw new \InvalidArgumentException("Entity [".$this->entity."] has not '".$column."' column");
+			throw new \InvalidArgumentException("Entity '{$this->entity}' has not '$column' column");
 
 		$class = $metadata->getColumn($column)->reflection->name;
 		if (!in_array($class, array_keys(self::$modificators)))
-			throw new \NotImplementedException("Datatype '$class' support not implemented in '".get_called_class()."' repository");
+			throw new \NotImplementedException("Support for '$class' datatype not implemented in '".get_called_class()."'");
 
 		return self::$modificators[$class];
 	}

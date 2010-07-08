@@ -33,7 +33,7 @@ interface IAssociation
 	 * @return string
 	 */
 	public function getTargetEntity();
-	
+
 	/**
 	 * Get name
 	 *

@@ -63,7 +63,7 @@ class String extends Base implements IDataType
 		elseif ($value === NULL)
 			return TRUE;
 
-		if (\is_bool($value))
+		if (is_bool($value))
 			return FALSE;
 		elseif (iconv_strlen($value, 'UTF-8') <= $this->length)
 			return TRUE;
@@ -81,13 +81,13 @@ class String extends Base implements IDataType
 	public function convertToPHPValue($value)
 	{
 		if ($value === NULL && !$this->allowNull)
-			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
+			throw new \InvalidArgumentException("Null is not allowed value for '{$this->name}'");
 		elseif ($value !== NULL && !$this->isValid($value))
-			throw new \InvalidArgumentException("Only ".$this->length." string length accepted for '".$this->name."' [".$value."]");
+			throw new \InvalidArgumentException("Only {$this->length} chars accepted for '{$this->name}' [$value]");
 
 		if ($value === NULL)
 			return NULL;
 		else
-			return (string)$value;
+			return (string) $value;
 	}
 }

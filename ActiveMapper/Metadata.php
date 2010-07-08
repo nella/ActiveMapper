@@ -66,13 +66,13 @@ class Metadata extends \Nette\Object
 
 		foreach ($ref->getProperties() as $property) {
 			if ($property->hasAnnotation('column')) {
-				$annotation = (array)$property->getAnnotation('column');
+				$annotation = (array) $property->getAnnotation('column');
 				$datatype = 'ActiveMapper\DataTypes\\'.$annotation[0];
 				unset($annotation[0]);
 				$params = array_merge(array($property->name, $property->hasAnnotation('null')), $annotation);
 
 				if (!\class_exists($datatype))
-					throw new \ActiveMapper\InvalidDataTypeException("Data type '" . $datatype . "' not exist");
+					throw new \ActiveMapper\InvalidDataTypeException("Data type '$datatype' not exist");
 
 				$this->columns[$property->name] = callback(ClassReflection::from($datatype), 'newInstance')->invokeArgs($params);
 			}
@@ -82,15 +82,15 @@ class Metadata extends \Nette\Object
 					if (empty($this->primaryKey))
 						$this->primaryKey = $property->name;
 					else
-						throw new \NotImplementedException("Multiple column primary key not implemented [".$entity."]");
+						throw new \NotImplementedException("Multiple column primary key not implemented '$entity'");
 				} else
-					throw new \NotImplementedException("Primary key must be column [".$entity."::".$property->name."]");
+					throw new \NotImplementedException("Primary key must be column $entity::\${$property->name}");
 			}
 
-			if ($property->hasAnnotation('autoincrement'))  {
+			if ($property->hasAnnotation('autoincrement')) {
 				if (!($this->columns[$property->name] instanceof \ActiveMapper\DataTypes\Int)) {
 					throw new \ActiveMapper\InvalidDataTypeException(
-						"Autoincrement avaiable only for Int data type column [".$property->name."]"
+							"Autoincrement avaiable only for Int data type column $entity::\${$property->name}"
 					);
 				} elseif ($property->name == $this->primaryKey)
 					$this->primaryKeyAutoincrement = TRUE;
@@ -126,7 +126,7 @@ class Metadata extends \Nette\Object
 		$annotations = ClassReflection::from($this->entity)->getAnnotations();
 		if (isset($annotations['OneToOne']) && count($annotations['OneToOne']) > 0) {
 			foreach ($annotations['OneToOne'] as $data) {
-				$data = (array)$data;
+				$data = (array) $data;
 				$assoc = new Associations\OneToOne($this->entity, $data[0],
 					isset($data['mapped']) ? $data['mapped'] : TRUE,
 					isset($data['name']) ? $data['name'] : NULL,
@@ -138,18 +138,18 @@ class Metadata extends \Nette\Object
 		}
 		if (isset($annotations['OneToMany']) && count($annotations['OneToMany']) > 0) {
 			foreach ($annotations['OneToMany'] as $data) {
-				$data = (array)$data;
+				$data = (array) $data;
 				$assoc = new Associations\OneToMany($this->entity, $data[0],
-					isset($data['name']) ? $data['name'] : NULL,
-					isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
-					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
+						isset($data['name']) ? $data['name'] : NULL,
+						isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
+						isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
 			}
 		}
 		if (isset($annotations['ManyToOne']) && count($annotations['ManyToOne']) > 0) {
 			foreach ($annotations['ManyToOne'] as $data) {
-				$data = (array)$data;
+				$data = (array) $data;
 				$assoc = new Associations\ManyToOne($this->entity, $data[0],
 					isset($data['name']) ? $data['name'] : NULL,
 					isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
@@ -160,7 +160,7 @@ class Metadata extends \Nette\Object
 		}
 		if (isset($annotations['ManyToMany']) && count($annotations['ManyToMany']) > 0) {
 			foreach ($annotations['ManyToMany'] as $data) {
-				$data = (array)$data;
+				$data = (array) $data;
 				$assoc = new Associations\ManyToMany($this->entity, $data[0],
 					isset($data['mapped']) ? $data['mapped'] : TRUE,
 					isset($data['name']) ? $data['name'] : NULL,
@@ -197,7 +197,7 @@ class Metadata extends \Nette\Object
 	 */
 	public function hasProxy()
 	{
-		return  is_subclass_of($this->entity, 'ActiveMapper\Proxy');
+		return is_subclass_of($this->entity, 'ActiveMapper\Proxy');
 	}
 
 	/**
@@ -240,11 +240,11 @@ class Metadata extends \Nette\Object
 	public function getColumn($name)
 	{
 		if (!$this->hasColumn($name))
-			throw new \InvalidArgumentException("Column '".$name."' not exist in '".$this->entity."' entity");
+			throw new \InvalidArgumentException("Column '$name' not exist in '{$this->entity}' entity");
 
 		return $this->columns[$name];
 	}
-	
+
 	/**
 	 * Get primary key name
 	 * 
@@ -350,7 +350,7 @@ class Metadata extends \Nette\Object
 			$propRef->setValue($instance, $associations);
 			$propRef->setAccessible(FALSE);
 		}
-		
+
 		return $instance;
 	}
 
@@ -396,7 +396,7 @@ class Metadata extends \Nette\Object
 		foreach ($this->columns as $column) {
 			if ($column->name == $this->primaryKey && !$withPrimaryKey)
 				continue;
-			
+
 			$ref = new PropertyReflection($this->entity, $column->name);
 			$ref->setAccessible(TRUE);
 			$data[$column->name] = $ref->getValue($entity);

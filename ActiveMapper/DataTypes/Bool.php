@@ -40,8 +40,8 @@ class Bool extends Base implements IDataType
 			return TRUE;
 		elseif (is_string($value) && ($value == "1" || $value == "0"))
 			return TRUE;
-		elseif (is_string($value) &&
-				(strtolower($value) == "y" || strtolower($value) == "n" || strtolower($value) == "false" || strtolower($value) == "true"))
+		elseif (is_string($value) && (strtolower($value) == "y" || strtolower($value) == "n" || strtolower($value) == "false"
+				|| strtolower($value) == "true"))
 			return TRUE;
 		else
 			return FALSE;
@@ -57,10 +57,10 @@ class Bool extends Base implements IDataType
 	public function convertToPHPValue($value)
 	{
 		if ($value === NULL && !$this->allowNull)
-			throw new \InvalidArgumentException("Null is not allowed value for ".$this->name);
+			throw new \InvalidArgumentException("Null is not allowed value for '{$this->name}'");
 		elseif ($value !== NULL && !$this->isValid($value)) {
 			throw new \InvalidArgumentException(
-				"Only boolean or 0/1 or 'y'/'n' or 'true'/'false' value accepted for '".$this->name."' [".$value."]"
+				"Only boolean or 0/1 or 'y'/'n' or 'true'/'false' value accepted for '{$this->name}' [$value]"
 			);
 		}
 

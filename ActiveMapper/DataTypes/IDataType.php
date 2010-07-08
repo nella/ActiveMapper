@@ -20,7 +20,6 @@ namespace ActiveMapper\DataTypes;
  */
 interface IDataType
 {
-
 	/**
 	 * Get name
 	 *

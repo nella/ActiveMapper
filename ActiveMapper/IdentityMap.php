@@ -141,38 +141,40 @@ class IdentityMap extends \Nette\Object
 	{
 		$metadata = Metadata::getMetadata($this->entity);
 		if (is_array($input)
-				&& count(array_filter($input, function ($item) { return is_array($item) || $item instanceof \ArrayAccess; }))) {
+				&& count(array_filter($input, function ($item) {
+									return is_array($item) || $item instanceof \ArrayAccess;
+								}))) {
 			$output = array();
 			foreach ($input as $key => $row) {
 				if (!isset($row[$metadata->primaryKey]))
-					throw new \InvalidArgumentException("Data for entity '".$this->entity."' must be load primary key");
+					throw new \InvalidArgumentException("Data for entity '{$this->entity}' must load primary key");
 				if (isset($this->idReference[$row[Metadata::getMetadata($this->entity)->primaryKey]]))
 					$output[$key] = &$this->idReference[$row[$metadata->primaryKey]];
 				else {
 					$tmp = $metadata->getInstance($this->em, $row);
 					$this->idReference[$row[$metadata->primaryKey]] = &$tmp;
 					$this->data[spl_object_hash($tmp)] = &$tmp;
-					$this->originalData[spl_object_hash($tmp)] = (array)$row;
+					$this->originalData[spl_object_hash($tmp)] = (array) $row;
 					if (isset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]))
 						unset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]);
 					$output[$key] = &$tmp;
 					unset($tmp);
 				}
 			}
-			
+
 			return $output;
 		} elseif (is_array($input) || $input instanceof \ArrayAccess) {
 			if (!isset($input[$metadata->primaryKey]))
-				throw new \InvalidArgumentException("Data for entity '".$this->entity."' must be load primary key");
+				throw new \InvalidArgumentException("Data for entity '{$this->entity}' must load primary key");
 			if (isset($this->idReference[$input[$metadata->primaryKey]]))
 				return $this->idReference[$input[$metadata->primaryKey]];
 			else {
 				$tmp = $metadata->getInstance($this->em, $input);
 				$this->idReference[$input[$metadata->primaryKey]] = &$tmp;
 				$this->data[spl_object_hash($tmp)] = &$tmp;
-				$this->originalData[spl_object_hash($tmp)] = (array)$input;
+				$this->originalData[spl_object_hash($tmp)] = (array) $input;
 				if (isset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]))
-						unset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]);
+					unset($this->originalData[spl_object_hash($tmp)][$metadata->primaryKey]);
 				return $tmp;
 			}
 		} else

@@ -20,7 +20,6 @@ namespace ActiveMapper;
  */
 interface IPersister
 {
-
 	/**
 	 * Get last generated primary key (autoincrement)
 	 *
