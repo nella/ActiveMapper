@@ -23,13 +23,13 @@ use dibi,
  * @package    ActiveMapper\Associations
  * @property-read string $sourceEntity source entity class
  * @property-read string $targetEntity target entity class
- * @property-read bool $mapped
+ * @property-read string $mapped mapped target association name
  * @property-read string $sourceColumn source column name
  * @property-read string $targetColumn target column name
  */
 final class OneToOne extends Base implements IAssociation
 {
-	/** @var bool */
+	/** @var string */
 	protected $mapped;
 	/** @var string */
 	protected $name;
@@ -41,12 +41,12 @@ final class OneToOne extends Base implements IAssociation
 	 *
 	 * @param string $sourceEntity valid source entity class
 	 * @param string $targetEntity valid target entity class
-	 * @param bool $mapped is this association mapped/inversed
+	 * @param string $mapped mapped target association name
 	 * @param string $name
 	 * @param string $column target/source column name
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $column = NULL)
+	public function __construct($sourceEntity, $targetEntity, $mapped = NULL, $name = NULL, $column = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
 
@@ -59,7 +59,7 @@ final class OneToOne extends Base implements IAssociation
 			$this->name = $name;
 
 		if (empty($column)) {
-			if ($this->mapped) {
+			if (!empty($mapped)) {
 				$metadata = Metadata::getMetadata($sourceEntity);
 				$this->column = Tools::underscore($metadata->name.ucfirst($metadata->primaryKey));
 			} else
@@ -75,7 +75,7 @@ final class OneToOne extends Base implements IAssociation
 	 */
 	public function getSourceColumn()
 	{
-		if ($this->mapped)
+		if (!empty($this->mapped))
 			return Metadata::getMetadata($this->sourceEntity)->primaryKey;
 		else
 			return $this->column;
@@ -88,31 +88,19 @@ final class OneToOne extends Base implements IAssociation
 	 */
 	public function getTargetColumn()
 	{
-		if ($this->mapped)
-			return $this->column;
-		else
+		if (empty($this->mapped))
 			return Metadata::getMetadata($this->targetEntity)->primaryKey;
+		else
+			return $this->column;
 	}
 
 	/**
-	 * Is association mapped
-	 * - FALSE inverset
-	 * 
-	 * @return bool
-	 */
-	public function isMapped()
-	{
-		return $this->mapped;
-	}
-
-	/**
-	 * Is association mapped
-	 * - FALSE inverset
+	 * Target entity association name
 	 *
-	 * @return bool
+	 * @return string|NULL
 	 */
 	public function getMapped()
 	{
-		return $this->isMapped();
+		return $this->mapped;
 	}
 }

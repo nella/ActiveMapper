@@ -12,7 +12,7 @@ CREATE TABLE "tags" (
 
 CREATE TABLE "applications" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	"author_id" INTEGER NOT NULL,
+	"author_id" INTEGER NULL,
 	"title" VARCHAR(50) NOT NULL,
 	"web" VARCHAR(100) NOT NULL,
 	"slogan" VARCHAR(100) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE "applications_tags" (
 
 CREATE TABLE "blogs" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	"author_id" INTEGER NOT NULL,
+	"author_id" INTEGER NULL,
 	"name" VARCHAR(50) NOT NULL,
 	"url" VARCHAR(100) NOT NULL,
 	CONSTRAINT "blogs_ibfk_4" FOREIGN KEY ("author_id") REFERENCES "authors" ("id")

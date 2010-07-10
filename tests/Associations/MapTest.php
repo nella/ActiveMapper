@@ -29,4 +29,59 @@ class MapTest extends \PHPUnit_Framework_TestCase
 		$this->object->map('App\Models\Author', 'blog', 1, NULL);
 		$this->assertFalse($this->object->isMapped('App\Models\Author', 'blog', 1));
 	}
+
+	public function testKeysOneToOne1()
+	{
+		$this->assertNull($this->object->find('App\Models\Author', 'blog', 1));
+		$this->object->map('App\Models\Author', 'blog', 1, 1);
+		$this->assertEquals(1, $this->object->find('App\Models\Author', 'blog', 1));
+		$this->object->map('App\Models\Author', 'blog', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Author', 'blog', 1));
+	}
+
+	public function testKeysOneToOne2()
+	{
+		$this->assertNull($this->object->find('App\Models\Blog', 'author', 1));
+		$this->object->map('App\Models\Blog', 'author', 1, 1);
+		$this->assertEquals(1, $this->object->find('App\Models\Blog', 'author', 1));
+		$this->object->map('App\Models\Blog', 'author', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Blog', 'author', 1));
+	}
+
+	public function testKeysOneToMany()
+	{
+		$this->assertNull($this->object->find('App\Models\Author', 'applications', 1));
+		$this->object->map('App\Models\Author', 'applications', 1, array(1));
+		$this->assertEquals(array(1), $this->object->find('App\Models\Author', 'applications', 1));
+		$this->assertEquals(1, $this->object->find('App\Models\Application', 'author', 1));
+		$this->object->map('App\Models\Author', 'applications', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Author', 'applications', 1));
+	}
+
+	public function testKeysManyToOne()
+	{
+		$this->assertNull($this->object->find('App\Models\Application', 'author', 1));
+		$this->object->map('App\Models\Application', 'author', 1, 1);
+		$this->assertEquals(1, $this->object->find('App\Models\Application', 'author', 1));
+		$this->object->map('App\Models\Application', 'author', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Application', 'author', 1));
+	}
+
+	public function testKeysManyToMany1()
+	{
+		$this->assertNull($this->object->find('App\Models\Tag', 'applications', 1));
+		$this->object->map('App\Models\Tag', 'applications', 1, array(1));
+		$this->assertEquals(array(1), $this->object->find('App\Models\Tag', 'applications', 1));
+		$this->object->map('App\Models\Tag', 'applications', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Tag', 'applications', 1));
+	}
+
+	public function testKeysManyToMany2()
+	{
+		$this->assertNull($this->object->find('App\Models\Application', 'tags', 1));
+		$this->object->map('App\Models\Application', 'tags', 1, array(1));
+		$this->assertEquals(array(1), $this->object->find('App\Models\Application', 'tags', 1));
+		$this->object->map('App\Models\Application', 'tags', 1, NULL);
+		$this->assertNull($this->object->find('App\Models\Application', 'tags', 1));
+	}
 }

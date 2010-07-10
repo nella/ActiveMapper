@@ -7,9 +7,9 @@ use ActiveMapper\Associations\OneToOne;
 
 class OneToOneTest extends \PHPUnit_Framework_TestCase
 {
-	public function testMapped1()
+	public function testInversed1()
 	{
-		$object = new OneToOne('App\Models\Author', 'App\Models\Blog');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', 'author');
 		$this->assertEquals('blog', $object->getName());
 		$this->assertEquals('blog', $object->name);
 
@@ -23,14 +23,13 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('author_id', $object->getTargetColumn());
 		$this->assertEquals('author_id', $object->targetColumn);
 
-		$this->assertTrue($object->isMapped());
-		$this->assertTrue($object->getMapped());
-		$this->assertTrue($object->mapped);
+		$this->assertEquals('author', $object->getMapped());
+		$this->assertEquals('author', $object->mapped);
 	}
 	
-	public function testMapped2()
+	public function testInversed2()
 	{
-		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', TRUE, 'test', 'url');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', 'author', 'test', 'url');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -44,14 +43,13 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('url', $object->getTargetColumn());
 		$this->assertEquals('url', $object->targetColumn);
 
-		$this->assertTrue($object->isMapped());
-		$this->assertTrue($object->getMapped());
-		$this->assertTrue($object->mapped);
+		$this->assertEquals('author', $object->getMapped());
+		$this->assertEquals('author', $object->mapped);
 	}
 	
-	public function testInversed3()
+	public function testMapped1()
 	{
-		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author');
 		$this->assertEquals('author', $object->getName());
 		$this->assertEquals('author', $object->name);
 
@@ -65,14 +63,13 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('id', $object->getTargetColumn());
 		$this->assertEquals('id', $object->targetColumn);
 
-		$this->assertFalse($object->isMapped());
-		$this->assertFalse($object->getMapped());
-		$this->assertFalse($object->mapped);
+		$this->assertNull($object->getMapped());
+		$this->assertNull($object->mapped);
 	}
 	
-	public function testInversed4()
+	public function testMapped2()
 	{
-		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE, 'test', 'name');
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', NULL, 'test', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -86,8 +83,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('id', $object->getTargetColumn());
 		$this->assertEquals('id', $object->targetColumn);
 
-		$this->assertFalse($object->isMapped());
-		$this->assertFalse($object->getMapped());
-		$this->assertFalse($object->mapped);
+		$this->assertNull($object->getMapped());
+		$this->assertNull($object->mapped);
 	}
 }

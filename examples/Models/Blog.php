@@ -2,7 +2,7 @@
 namespace App\Models;
 
 /**
- * @OneToOne(App\Models\Author, mapped = FALSE)
+ * @OneToOne(App\Models\Author)
  */
 class Blog extends \ActiveMapper\Proxy
 {

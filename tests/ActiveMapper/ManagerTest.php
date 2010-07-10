@@ -143,4 +143,112 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($data, Manager::getManager());
 		$this->assertEquals($data, Manager::getManager(dibi::getConnection()));
 	}
+
+	public function testPersistAssociationsOneToOne1()
+	{
+		$author = $this->object->find('App\Models\Author', 1);
+		$blog = $author->blog;
+		$this->assertEquals(1, $author->blog->id);
+		$author->blog = NULL;
+		$this->object->persist($author);
+		$this->object->flush();
+		$this->assertFalse(dibi::select("[id]")->from("blogs")->where("[author_id] = %i", 1)->execute()->fetchSingle());
+		$this->assertNull($author->blog);
+		$author->blog = $blog;
+		$this->object->persist($author);
+		$this->object->flush();
+		$this->assertEquals(1, dibi::select("[id]")->from("blogs")->where("[author_id] = %i", 1)->execute()->fetchSingle());
+		$this->assertEquals(1, $author->blog->id);
+	}
+
+	public function testPersistAssociationsOneToOne2()
+	{
+		$blog = $this->object->find('App\Models\Blog', 1);
+		$author = $blog->author;
+		$this->assertEquals(1, $blog->author->id);
+		$blog->author = NULL;
+		$this->object->persist($blog);
+		$this->object->flush();
+		$this->assertNull(dibi::select("[author_id]")->from("blogs")->where("[id] = %i", 1)->execute()->fetchSingle());
+		$this->assertNull($blog->author);
+		$blog->author = $author;
+		$this->object->persist($blog);
+		$this->object->flush();
+		$this->assertEquals(1, dibi::select("[author_id]")->from("blogs")->where("[id] = %i", 1)->execute()->fetchSingle());
+		$this->assertEquals(1, $blog->author->id);
+	}
+
+	public function testPersistAssociationsOneToMany()
+	{
+		$author = $this->object->find('App\Models\Author', 3);
+		$applications = $author->applications;
+		$this->assertEquals(2, count($author->applications));
+		$this->assertEquals(array(5, 6), array_keys($author->applications));
+		$author->applications = NULL;
+		$this->object->persist($author);
+		$this->object->flush();
+		$this->assertFalse(dibi::select("[id]")->from("applications")->where("[author_id] = %i", 3)->execute()->fetchSingle());
+		$this->assertNull($author->applications);
+		$author->applications = $applications;
+		$this->object->persist($author);
+		$this->object->flush();
+		$this->assertEquals(5, dibi::select("[id]")->from("applications")->where("[author_id] = %i", 3)->execute()->fetchSingle());
+		$this->assertEquals(2, count($author->applications));
+		$this->assertEquals(array(5, 6), array_keys($author->applications));
+	}
+
+	public function testPersistAssociationsManyToOne()
+	{
+		$application = $this->object->find('App\Models\Application', 1);
+		$author = $application->author;
+		$this->assertEquals(1, $application->author->id);
+		$application->author = NULL;
+		$this->object->persist($application);
+		$this->object->flush();
+		$this->assertNull(dibi::select("[author_id]")->from("applications")->where("[id] = %i", 1)->execute()->fetchSingle());
+		$this->assertNull($application->author);
+		$application->author = $author;
+		$this->object->persist($application);
+		$this->object->flush();
+		$this->assertEquals(1, dibi::select("[author_id]")->from("applications")->where("[id] = %i", 1)->execute()->fetchSingle());
+		$this->assertEquals(1, $application->author->id);
+	}
+
+	public function testPersistAssociationsManyToMany1()
+	{
+		$appliation = $this->object->find('App\Models\Application', 6);
+		$tags = $appliation->tags;
+		$this->assertEquals(3, count($appliation->tags));
+		$this->assertEquals(array(1, 2, 3), array_keys($appliation->tags));
+		$appliation->tags = NULL;
+		$this->object->persist($appliation);
+		$this->object->flush();
+		$this->assertFalse(dibi::select("[tag_id]")->from("applications_tags")->where("[application_id] = %i", 6)->execute()->fetchSingle());
+		$this->assertNull($appliation->tags);
+		$appliation->tags = $tags;
+		$this->object->persist($appliation);
+		$this->object->flush();
+		$this->assertEquals(1, dibi::select("[tag_id]")->from("applications_tags")->where("[application_id] = %i", 6)->execute()->fetchSingle());
+		$this->assertEquals(3, count($appliation->tags));
+		$this->assertEquals(array(1, 2, 3), array_keys($appliation->tags));
+	}
+	
+	public function testPersistAssociationsManyToMany2()
+	{
+		$tag = $this->object->find('App\Models\Tag', 4);
+		$applications = $tag->applications;
+		$this->assertEquals(2, count($tag->applications));
+		$this->assertEquals(array(2, 5), array_keys($tag->applications));
+		$tag->applications = NULL;
+		$this->object->persist($tag);
+		$this->object->flush();
+		$this->assertFalse(dibi::select("[application_id]")->from("applications_tags")->where("[tag_id] = %i", 4)->execute()->fetchSingle());
+		$this->assertNull($tag->applications);
+		$tag->applications = $applications;
+		$this->object->persist($tag);
+		$this->object->flush();
+		$this->assertEquals(2, dibi::select("[application_id]")->from("applications_tags")->where("[tag_id] = %i", 4)->execute()->fetchSingle());
+		$this->assertEquals(2, count($tag->applications));
+		$this->assertEquals(array(2, 5), array_keys($tag->applications));
+	}
 }

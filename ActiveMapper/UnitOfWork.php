@@ -52,9 +52,9 @@ class UnitOfWork extends \Nette\Object
 	public function registerSave(&$entity)
 	{
 		if ($this->em->getIdentityMap(get_class($entity))->isMapped($entity))
-			$this->updateEntities[] = &$entity;
+			$this->updateEntities[spl_object_hash($entity)] = &$entity;
 		else
-			$this->insertEntities[] = &$entity;
+			$this->insertEntities[spl_object_hash($entity)] = &$entity;
 
 		$this->count++;
 
@@ -92,12 +92,14 @@ class UnitOfWork extends \Nette\Object
 			}
 			if (count($this->updateEntities) >= 1) {
 				foreach ($this->updateEntities as $entity) {
+					$this->persistAssociations($entity);
 					$this->em->getPersister(get_class($entity))->update($entity);
 					$this->em->getIdentityMap(get_class($entity))->remap($entity);
 				}
 			}
 			if (count($this->insertEntities) >= 1) {
 				foreach ($this->insertEntities as $entity) {
+					$this->persistAssociations($entity);
 					$persister = $this->em->getPersister(get_class($entity));
 					$persister->insert($entity);
 					$metadata = Metadata::getMetadata(get_class($entity));
@@ -109,9 +111,96 @@ class UnitOfWork extends \Nette\Object
 			$this->em->connection->commit();
 			$this->insertEntities = $this->updateEntities = $this->deleteEntities = array();
 			$this->count = 0;
-		} catch (\Exception $e) {
+		} catch (\DibiDriverException $e) {
 			$this->em->connection->rollback();
-			throw new \InvalidStateException("When saving changes has error occurred.", NULL, $e);
+			throw new \InvalidStateException("When saving changes has error occurred. [".$e->getMessage()."] [".\dibi::$sql."]", NULL, $e);
+		}
+	}
+
+	/**
+	 * Save associations
+	 *
+	 * @param mixed $entity
+	 */
+	protected function persistAssociations(&$entity)
+	{
+		$metadata = Metadata::getMetadata(get_class($entity));
+		$data = $metadata->getAssociationsValues($entity);
+		foreach (array_merge($metadata->oneToOne, $metadata->oneToMany, $metadata->manyToMany) as $association) {
+			if (!array_key_exists($association->name, $data))
+				continue;
+			
+			if ($association instanceof Associations\OneToOne) {
+				if (empty($association->mapped))
+					continue;
+
+				$original = $this->em->associationsMap->find(get_class($entity), $association->name,
+						$metadata->getPrimaryKeyValue($entity));
+				if (empty($data[$association->name]) && !empty($original)) {
+					$targetMetadata = Metadata::getMetadata($association->targetEntity);
+					$this->em->getPersister($association->targetEntity)->persistInversedOneToOneAssociation(
+						$association, $original, NULL
+					);
+				} elseif (!empty($data[$association->name]) && empty($original)) {
+					$this->em->getPersister($association->targetEntity)->persistInversedOneToOneAssociation(
+						$association, $data[$association->name], $metadata->getPrimaryKeyValue($entity)
+					);
+				} elseif (!empty($original) && !empty($data[$association->name]) &&
+						$this->em->find($association->targetEntity, $original) != $data[$association->name]) {
+					$persister = $this->em->getPersister($association->targetEntity);
+					$persister->persistInversedOneToOneAssociation($association, $original, NULL);
+					$persister->persistInversedOneToOneAssociation(
+						$association, $data[$association->name], $metadata->getPrimaryKeyValue($entity)
+					);
+				}
+			}
+
+			if ($association instanceof Associations\OneToMany) {
+				$original = $this->em->associationsMap->find(get_class($entity), $association->name,
+						$metadata->getPrimaryKeyValue($entity));
+				if (empty($data[$association->name]) && !empty($original)) {
+					$this->em->getPersister($association->targetEntity)->persistOneToManyAssociation(
+						$association, $original, NULL
+					);
+				} elseif (!empty($data[$association->name]) && empty($original)) {
+					$this->em->getPersister($association->targetEntity)->persistOneToManyAssociation(
+						$association, $data[$association->name], $metadata->getPrimaryKeyValue($entity)
+					);
+				} elseif (!empty($original) && !empty($data[$association->name]) &&
+						$this->em->find($association->targetEntity, $original) != $data[$association->name]) {
+
+					$persister = $this->em->getPersister($association->targetEntity);
+					$persister->persistOneToManyAssociation($association, array_diff($original, $data[$association->name]), NULL);
+					$persister->persistOneToManyAssociation(
+						$association, array_diff($data[$association->name], $original), $metadata->getPrimaryKeyValue($entity)
+					);
+				}
+			}
+
+			if ($association instanceof Associations\ManyToMany) {
+				$original = $this->em->associationsMap->find(get_class($entity), $association->name,
+						$metadata->getPrimaryKeyValue($entity));
+				if (empty($data[$association->name]) && !empty($original)) {
+					$this->em->getPersister($association->sourceEntity)->persistManyToManyAssociation(
+						$association, $metadata->getPrimaryKeyValue($entity), NULL
+					);
+				} elseif (!empty($data[$association->name]) && empty($original)) {
+					$this->em->getPersister($association->sourceEntity)->persistManyToManyAssociation(
+						$association, $metadata->getPrimaryKeyValue($entity), $data[$association->name]
+					);
+				} elseif (!empty($original) && !empty($data[$association->name]) &&
+						$this->em->find($association->sourceEntity, $original) != $data[$association->name]) {
+
+					$persister = $this->em->getPersister($association->sourceEntity);
+					$persister->persistManyToManyAssociation(
+						$association, $metadata->getPrimaryKeyValue($entity),
+						array_diff($original, $data[$association->name]), TRUE
+					);
+					$persister->persistManyToManyAssociation(
+						$association, $metadata->getPrimaryKeyValue($entity), array_diff($data[$association->name], $original)
+					);
+				}
+			}
 		}
 	}
 

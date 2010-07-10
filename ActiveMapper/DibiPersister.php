@@ -66,7 +66,7 @@ class DibiPersister extends \Nette\Object implements IPersister
 	 */
 	protected function getValues(&$entity)
 	{
-		return $this->em->getIdentityMap(get_class($entity))->getSavedValues($entity);
+		return $this->em->getIdentityMap($this->entity)->getSavedValues($entity);
 	}
 
 	/**
@@ -76,8 +76,13 @@ class DibiPersister extends \Nette\Object implements IPersister
 	 */
 	public function insert($entity)
 	{
+		$values = $this->getValues($entity);
+		if (empty($values))
+			return NULL;
+
 		$metadata = Metadata::getMetadata($this->entity);
-		return $this->connection->insert($metadata->tableName, $this->getValues($entity))->execute();
+		$res = $this->connection->insert($metadata->tableName, $values)->execute();
+		return $res;
 	}
 
 	/**
@@ -87,10 +92,15 @@ class DibiPersister extends \Nette\Object implements IPersister
 	 */
 	public function update($entity)
 	{
+		$values = $this->getValues($entity);
+		if (empty($values))
+			return NULL;
+
 		$metadata = Metadata::getMetadata($this->entity);
-		return $this->connection->update($metadata->tableName, $this->getValues($entity))
+		$res = $this->connection->update($metadata->tableName, $values)
 				->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey),
 						$metadata->getPrimaryKeyValue($entity))->execute();
+		return $res;
 	}
 
 	/**
@@ -104,6 +114,61 @@ class DibiPersister extends \Nette\Object implements IPersister
 		return $this->connection->delete($metadata->tableName)
 				->where("[".$metadata->primaryKey."] = ".$this->getModificator($metadata->primaryKey),
 						$metadata->getPrimaryKeyValue($entity))->execute();
+	}
+
+	/**
+	 * Update inversed one to one association keys
+	 *
+	 * @param ActiveMapper\Associations\OneToOne $association
+	 * @param mixed $primaryKey
+	 * @param mixed $key
+	 */
+	public function persistInversedOneToOneAssociation(Associations\OneToOne $association, $primaryKey, $key)
+	{
+		$metadata = Metadata::getMetadata($this->entity);
+		$this->connection->update($metadata->tableName, array($association->targetColumn => $key))
+			->where("[{$metadata->primaryKey}] = ".$this->getModificator($metadata->primaryKey), $primaryKey)->execute();
+	}
+
+	/**
+	 * Update one to many association keys
+	 *
+	 * @param ActiveMapper\Associations\OneToMany $association
+	 * @param mixed $primaryKeys
+	 * @param mixed $key
+	 */
+	public function persistOneToManyAssociation(Associations\OneToMany $association, $primaryKeys, $key)
+	{
+		$metadata = Metadata::getMetadata($this->entity);
+		$this->connection->update($metadata->tableName, array($association->targetColumn => $key))
+			->where("[{$metadata->primaryKey}] IN %in", $primaryKeys)->execute();
+	}
+
+	/**
+	 * Persist many to many associations
+	 *
+	 * @param Associations\ManyToMany $association
+	 * @param mixed $primaryKey
+	 * @param array|NULL $keys
+	 * @param bool $delete
+	 */
+	public function persistManyToManyAssociation(Associations\ManyToMany $association, $primaryKey, $keys, $delete = FALSE)
+	{
+		$metadata = Metadata::getMetadata($this->entity);
+
+		if (empty($keys)) {
+			$this->connection->delete($association->joinTable)->where("[{$association->joinSourceColumn}] = "
+					.$this->getModificator($metadata->primaryKey), $primaryKey)->execute();
+		} elseif ($delete) {
+			$this->connection->delete($association->joinTable)->where("[{$association->joinSourceColumn}] = "
+					.$this->getModificator($metadata->primaryKey)." AND [{$association->joinTargetColumn}] IN %in",
+				$primaryKey, $keys)->execute();
+		}else {
+			foreach ($keys as $key) {
+				$this->connection->insert($association->joinTable, array($association->joinSourceColumn => $primaryKey,
+					$association->joinTargetColumn => $key))->execute();
+			}
+		}
 	}
 
 	/**

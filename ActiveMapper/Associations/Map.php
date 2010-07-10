@@ -48,7 +48,7 @@ class Map extends \Nette\Object
 	public function isMapped($entity, $name, $key)
 	{
 		$association = Metadata::getMetadata($entity)->associations[$name];
-		if ($association instanceof OneToOne && !$association->mapped) {
+		if ($association instanceof OneToOne && empty($association->mapped)) {
 			if (!isset($this->data[$association->targetEntity]))
 				return FALSE;
 			if (!isset($this->data[$association->targetEntity][$entity]))
@@ -79,7 +79,7 @@ class Map extends \Nette\Object
 			return NULL;
 
 		$association = Metadata::getMetadata($entity)->associations[$name];
-		if ($association instanceof OneToOne && !$association->mapped) {
+		if ($association instanceof OneToOne && empty($association->mapped)) {
 			if (!isset($this->data[$association->targetEntity]))
 				return NULL;
 			if (!isset($this->data[$association->targetEntity][$entity]))
@@ -115,7 +115,7 @@ class Map extends \Nette\Object
 		if ($association instanceof ManyToMany && !is_array($targetPK) && !($targetPK instanceof \ArrayAccess) && $targetPK != NULL)
 			throw new \InvalidArgumentException("For association '$name' of '$entity' entity targetKey must be array because is ManyToMany");
 
-		if ($association instanceof OneToOne && !$association->mapped) {
+		if ($association instanceof OneToOne && empty($association->mapped)) {
 			if (!isset($this->data[$association->targetEntity]))
 				$this->data[$association->targetEntity] = array();
 			if (!isset($this->data[$association->targetEntity][$entity]))

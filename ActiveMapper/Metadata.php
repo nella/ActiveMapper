@@ -27,27 +27,39 @@ use Nette\Reflection\ClassReflection,
  * @property-read string $primaryKey entity primary key name
  * @property-read bool $primaryKeyAutoincrement is entity primary key autoincrement
  * @property-read array<ActiveMapper\Associations\IAssociation> $associations
+ * @property-read array<ActiveMapper\Associations\OneToOne> $oneToOne
+ * @property-read array<ActiveMapper\Associations\OneToMany> $oneToMany
+ * @property-read array<ActiveMapper\Associations\ManyToOne> $manyToOne
+ * @property-read array<ActiveMapper\Associations\ManyToMany> $manyToMany
  */
 class Metadata extends \Nette\Object
 {
 	/** @var array<ActiveMapper\Metadata> */
 	private static $metadata = array();
 	/** @var string */
-	private $tableName;
+	private $tableName = NULL;
 	/** @var array<ActiveMapper\DataTypes\IDataType> */
-	private $columns;
+	private $columns = array();
 	/** @var string */
-	private $primaryKey;
+	private $primaryKey = NULL;
 	/** @var bool */
-	private $primaryKeyAutoincrement;
+	private $primaryKeyAutoincrement = FALSE;
 	/** @var string */
 	private $entity;
 	/** @var string */
 	private $name;
 	/** @var array<ActiveMapper\Associations\IAssociation> */
-	private $associations;
+	private $associations = array();
+	/** @var array<ActiveMapper\Associations\OneToOne> */
+	private $oneToOne = array();
+	/** @var array<ActiveMapper\Associations\OneToMany> */
+	private $oneToMany = array();
+	/** @var array<ActiveMapper\Associations\ManyToOne> */
+	private $manyToOne = array();
+	/** @var array<ActiveMapper\Associations\ManyToMany> */
+	private $manyToMany = array();
 	/** @var bool */
-	private $associationsLoaded;
+	private $associationsLoaded = FALSE;
 
 	/**
 	 * Construct
@@ -56,13 +68,17 @@ class Metadata extends \Nette\Object
 	 */
 	public function __construct($entity)
 	{
-
 		$ref = new ClassReflection($entity);
 		// TODO: verify entity class
 
 		$this->entity = $entity;
-		$this->tableName = $this->primaryKey = NULL;
-		$this->associationsLoaded = $this->primaryKeyAutoincrement = FALSE;
+		if ($pos = strrpos($entity, '\\'))
+			$pos++;
+		$this->name = substr($entity, $pos);
+		if ($ref->hasAnnotation('tableName'))
+			$this->tableName = $ref->getAnnotation('tableName');
+		else
+			$this->tableName = Tools::underscore(Tools::pluralize($this->name));
 
 		foreach ($ref->getProperties() as $property) {
 			if ($property->hasAnnotation('column')) {
@@ -100,16 +116,7 @@ class Metadata extends \Nette\Object
 		}
 
 		if (!$this->primaryKey)
-			throw new \LogicException("Entity without primary key not supported");
-
-		if ($pos = strrpos($entity, '\\'))
-			$pos++;
-		$this->name = substr($entity, $pos);
-
-		if ($ref->hasAnnotation('tableName'))
-			$this->tableName = $ref->getAnnotation('tableName');
-		else
-			$this->tableName = Tools::underscore(Tools::pluralize($this->name));
+			throw new \LogicException("Entity without primary key not supported '{$this->entity}'");
 
 		if (!$this->hasProxy() && ($ref->hasAnnotation('OneToOne') ||
 				$ref->hasAnnotation('OneToOne') || $ref->hasAnnotation('OneToOne') || $ref->hasAnnotation('OneToOne')))
@@ -128,11 +135,11 @@ class Metadata extends \Nette\Object
 			foreach ($annotations['OneToOne'] as $data) {
 				$data = (array) $data;
 				$assoc = new Associations\OneToOne($this->entity, $data[0],
-					isset($data['mapped']) ? $data['mapped'] : TRUE,
+					isset($data['mapped']) ? $data['mapped'] : NULL,
 					isset($data['name']) ? $data['name'] : NULL,
 					isset($data['column']) ? $data['column'] : NULL
 				);
-				$this->associations[$assoc->name] = $assoc;
+				$this->oneToOne[$assoc->name] = $this->associations[$assoc->name] = $assoc;
 			}
 		}
 		if (isset($annotations['OneToMany']) && count($annotations['OneToMany']) > 0) {
@@ -142,7 +149,7 @@ class Metadata extends \Nette\Object
 						isset($data['name']) ? $data['name'] : NULL,
 						isset($data['column']) ? $data['column'] : NULL
 				);
-				$this->associations[$assoc->name] = $assoc;
+				$this->oneToMany[$assoc->name] = $this->associations[$assoc->name] = $assoc;
 			}
 		}
 		if (isset($annotations['ManyToOne']) && count($annotations['ManyToOne']) > 0) {
@@ -152,7 +159,7 @@ class Metadata extends \Nette\Object
 					isset($data['name']) ? $data['name'] : NULL,
 					isset($data['column']) ? $data['column'] : NULL
 				);
-				$this->associations[$assoc->name] = $assoc;
+				$this->manyToOne[$assoc->name] = $this->associations[$assoc->name] = $assoc;
 			}
 		}
 		if (isset($annotations['ManyToMany']) && count($annotations['ManyToMany']) > 0) {
@@ -165,7 +172,7 @@ class Metadata extends \Nette\Object
 					isset($data['joinTargetColumn']) ? $data['joinTargetColumn'] : NULL,
 					isset($data['joinSourceColumn']) ? $data['joinSourceColumn'] : NULL
 				);
-				$this->associations[$assoc->name] = $assoc;
+				$this->manyToMany[$assoc->name] = $this->associations[$assoc->name] = $assoc;
 			}
 		}
 
@@ -183,6 +190,58 @@ class Metadata extends \Nette\Object
 			$this->loadAssociations();
 
 		return $this->associations;
+	}
+
+	/**
+	 * Get one to one associations
+	 *
+	 * @return array<ActiveMapper\Associations\OneToOne>
+	 */
+	public function getOneToOne()
+	{
+		if (!$this->associationsLoaded)
+			$this->loadAssociations();
+
+		return $this->oneToOne;
+	}
+
+	/**
+	 * Get one to many associations
+	 *
+	 * @return array<ActiveMapper\Associations\OneToMany>
+	 */
+	public function getOneToMany()
+	{
+		if (!$this->associationsLoaded)
+			$this->loadAssociations();
+
+		return $this->oneToMany;
+	}
+
+	/**
+	 * Get many to one associations
+	 *
+	 * @return array<ActiveMapper\Associations\ManyToOne>
+	 */
+	public function getManyToOne()
+	{
+		if (!$this->associationsLoaded)
+			$this->loadAssociations();
+
+		return $this->manyToOne;
+	}
+
+	/**
+	 * Get many to many associations
+	 *
+	 * @return array<ActiveMapper\Associations\ManyToMany>
+	 */
+	public function getManyToMany()
+	{
+		if (!$this->associationsLoaded)
+			$this->loadAssociations();
+
+		return $this->manyToMany;
 	}
 
 	/**
@@ -396,6 +455,57 @@ class Metadata extends \Nette\Object
 			$ref->setAccessible(TRUE);
 			$data[$column->name] = $ref->getValue($entity);
 			$ref->setAccessible(FALSE);
+		}
+
+		$ref = new PropertyReflection($this->entity, '_associations');
+		$ref->setAccessible(TRUE);
+		$associations = $ref->getValue($entity);
+		$ref->setAccessible(FALSE);
+		foreach (array_merge($this->oneToOne, $this->manyToOne) as $association) {
+			if (!array_key_exists($association->name, $associations) ||
+					$associations[$association->name] instanceof Associations\LazyLoad ||
+					($association instanceof Associations\OneToOne && !empty($association->mapped))) {
+				continue;
+			}
+
+			if (empty($associations[$association->name]))
+				$data[$association->sourceColumn] = NULL;
+			else {
+				$metadata = Metadata::getMetadata($association->targetEntity);
+				$data[$association->sourceColumn] = $metadata->getPrimaryKeyValue($associations[$association->name]);
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get entity associations values
+	 *
+	 * @param mixed $entity
+	 * @return array
+	 */
+	public function getAssociationsValues(&$entity)
+	{
+		$ref = new PropertyReflection($this->entity, '_associations');
+		$ref->setAccessible(TRUE);
+		$associations = $ref->getValue($entity);
+		$ref->setAccessible(FALSE);
+		$data = array();
+		foreach ($this->associations as $association) {
+			if (!array_key_exists($association->name, $associations) || 
+					$associations[$association->name] instanceof Associations\LazyLoad) {
+				continue;
+			}
+
+			if (is_array($associations[$association->name]) || $associations[$association->name] instanceof \ArrayAccess)
+				$data[$association->name] = array_keys($associations[$association->name]);
+			elseif (empty($associations[$association->name]))
+				$data[$association->name] = NULL;
+			else {
+				$data[$association->name] = Metadata::getMetadata(get_class($associations[$association->name]))
+					->getPrimaryKeyValue($associations[$association->name]);
+			}
 		}
 
 		return $data;

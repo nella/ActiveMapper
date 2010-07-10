@@ -408,14 +408,18 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 	public function testOneToOneAssociation1()
 	{
 		$metadata = new Metadata('App\Models\Author');
-		$object = new OneToOne('App\Models\Author', 'App\Models\Blog');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', 'author');
 		$this->assertTrue(isset($metadata->associations['blog']));
+		$this->assertTrue(isset($metadata->oneToOne['blog']));
 		$this->assertEquals($object, $metadata->associations['blog']);
+		$this->assertEquals($object, $metadata->oneToOne['blog']);
 
 		$metadata = new Metadata('App\Models\Blog');
-		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author');
 		$this->assertTrue(isset($metadata->associations['author']));
+		$this->assertTrue(isset($metadata->oneToOne['author']));
 		$this->assertEquals($object, $metadata->associations['author']);
+		$this->assertEquals($object, $metadata->oneToOne['author']);
 	}
 
 	public function testOneToManyAssociation1()
@@ -423,7 +427,9 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$metadata = new Metadata('App\Models\Author');
 		$object = new Associations\OneToMany('App\Models\Author', 'App\Models\Application');
 		$this->assertTrue(isset($metadata->associations['applications']));
+		$this->assertTrue(isset($metadata->oneToMany['applications']));
 		$this->assertEquals($object, $metadata->associations['applications']);
+		$this->assertEquals($object, $metadata->oneToMany['applications']);
 	}
 
 	public function testManyToOneAssociation1()
@@ -431,7 +437,9 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$metadata = new Metadata('App\Models\Application');
 		$object = new Associations\ManyToOne('App\Models\Application', 'App\Models\Author');
 		$this->assertTrue(isset($metadata->associations['author']));
+		$this->assertTrue(isset($metadata->manyToOne['author']));
 		$this->assertEquals($object, $metadata->associations['author']);
+		$this->assertEquals($object, $metadata->manyToOne['author']);
 	}
 
 	public function testManyToManyAssociation1()
@@ -439,11 +447,15 @@ class MetadataTest extends \PHPUnit_Framework_TestCase
 		$metadata = new Metadata('App\Models\Application');
 		$object = new ManyToMany('App\Models\Application', 'App\Models\Tag');
 		$this->assertTrue(isset($metadata->associations['tags']));
+		$this->assertTrue(isset($metadata->manyToMany['tags']));
 		$this->assertEquals($object, $metadata->associations['tags']);
+		$this->assertEquals($object, $metadata->manyToMany['tags']);
 
 		$metadata = new Metadata('App\Models\Tag');
 		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE);
 		$this->assertTrue(isset($metadata->associations['applications']));
+		$this->assertTrue(isset($metadata->manyToMany['applications']));
 		$this->assertEquals($object, $metadata->associations['applications']);
+		$this->assertEquals($object, $metadata->manyToMany['applications']);
 	}
 }

@@ -76,7 +76,7 @@ abstract class Proxy extends \Nette\Object
 	{
 		if (Metadata::getMetadata(get_called_class())->hasColumn($name)) {
 			return $this->$name;
-		} elseif (isset($this->_associations[$name])) {
+		} elseif (array_key_exists($name, $this->_associations)) {
 			if ($this->_associations[$name] instanceof Associations\LazyLoad)
 				$this->_associations[$name] = $this->_associations[$name]->getData();
 
@@ -118,6 +118,11 @@ abstract class Proxy extends \Nette\Object
 				throw new \MemberAccessException("Primary key is read-only ".get_called_class()."::\$$name.");
 			else
 				return $this->$name = Metadata::getMetadata(get_called_class())->getColumn($name)->convertToPHPValue($value);
+		} elseif (array_key_exists($name, $this->_associations)) {
+			if ($this->_associations[$name] instanceof Associations\LazyLoad)
+				$this->_associations[$name] = $this->_associations[$name]->getData();
+
+			return $this->_associations[$name] = $value;
 		} else
 			throw new \MemberAccessException("Cannot assign undeclared column ".get_called_class()."::\$$name.");
 	}

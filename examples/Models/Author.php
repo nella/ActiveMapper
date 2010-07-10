@@ -3,7 +3,7 @@ namespace App\Models;
 
 /**
  * @OneToMany(App\Models\Application)
- * @OneToOne(App\Models\Blog)
+ * @OneToOne(App\Models\Blog, mapped="author")
  */
 class Author extends \ActiveMapper\Proxy
 {

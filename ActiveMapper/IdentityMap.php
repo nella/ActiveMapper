@@ -127,6 +127,9 @@ class IdentityMap extends \Nette\Object
 			$this->originalData[spl_object_hash($entity)] = $metadata->getValues($entity, FALSE);
 			if (isset($this->originalData[spl_object_hash($entity)][$metadata->primaryKey]))
 				unset($this->originalData[spl_object_hash($entity)][$metadata->primaryKey]);
+			foreach ($metadata->getAssociationsValues($entity) as $name => $association) {
+				$this->em->associationsMap->map(get_class($entity), $name, $metadata->getPrimaryKeyValue($entity), $association);
+			}
 		}
 	}
 
@@ -183,11 +186,35 @@ class IdentityMap extends \Nette\Object
 	 */
 	public function getSavedValues($entity)
 	{
-		$metadata = Metadata::getMetadata(get_class($entity));
+		$metadata = Metadata::getMetadata($this->entity);
 		if ($this->isMapped($entity)) {
 			$data = $metadata->getValues($entity, FALSE);
-			return array_diff($data, $this->originalData[spl_object_hash($entity)]);
+			$data = array_diff($data, $this->originalData[spl_object_hash($entity)]);
 		} else
-			return $metadata->getValues($entity);
+			$data = $metadata->getValues($entity);
+
+		$ref = new \Nette\Reflection\PropertyReflection($this->entity, '_associations');
+		$ref->setAccessible(TRUE);
+		$associationsData = $ref->getValue($entity);
+		$ref->setAccessible(FALSE);
+		foreach (array_merge($metadata->oneToOne, $metadata->manyToOne) as $association) {
+			if ($association instanceof Associations\OneToOne && !empty($association->mapped))
+				continue;
+
+			if (!($associationsData[$association->name] instanceof Associations\LazyLoad)) {
+				$original = $this->em->associationsMap
+					->find($this->entity, $association->name, $metadata->getPrimaryKeyValue($entity));
+				if (empty($associationsData[$association->name]) && !empty($original))
+					$data[$association->sourceColumn] = NULL;
+				else {
+					$targetMetadata = Metadata::getMetadata(get_class($associationsData[$association->name]));
+					$now = $targetMetadata->getPrimaryKeyValue($associationsData[$association->name]);
+					if ($original != $now)
+						$data[$association->sourceColumn] = $now;
+				}
+			}
+		}
+
+		return $data;
 	}
 }
