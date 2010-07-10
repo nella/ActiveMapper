@@ -76,6 +76,11 @@ abstract class Proxy extends \Nette\Object
 	{
 		if (Metadata::getMetadata(get_called_class())->hasColumn($name)) {
 			return $this->$name;
+		} elseif (isset($this->_associations[$name])) {
+			if ($this->_associations[$name] instanceof Associations\LazyLoad)
+				$this->_associations[$name] = $this->_associations[$name]->getData();
+
+			return $this->_associations[$name];
 		} else
 			throw new \MemberAccessException("Cannot read to undeclared column ".get_called_class()."::\$$name.");
 	}
@@ -129,32 +134,14 @@ abstract class Proxy extends \Nette\Object
 	{
 		try {
 			$metadata = Metadata::getMetadata(get_called_class());
-			if (strncmp($name, 'get', 3) === 0 && $metadata->hasColumn(lcfirst(substr($name, 3)))) {
+			if (strncmp($name, 'get', 3) === 0 && $metadata->hasColumn(lcfirst(substr($name, 3))))
 				return $this->universalGetValue(lcfirst(substr($name, 3)));
-			} elseif (strncmp($name, 'set', 3) === 0 && $metadata->hasColumn(lcfirst(substr($name, 3)))) {
+			elseif (strncmp($name, 'set', 3) === 0 && $metadata->hasColumn(lcfirst(substr($name, 3))))
 				return $this->universalSetValue(lcfirst(substr($name, 3)), isset($attr[0]) ? $attr[0] : NULL);
-			} else
-				return $this->universalGetAssociation($name);
+			else
+				return parent::__call($name, $attr);
 		} catch (\MemberAccessException $e) {
 			return parent::__call($name, $attr);
 		}
-	}
-
-	/**
-	 * Universal association getter
-	 *
-	 * @param string $name associtation name
-	 * @return mixed
-	 * @throws MemberAccessException
-	 */
-	private function &universalGetAssociation($name)
-	{
-		if (isset($this->_associations[$name])) {
-			if ($this->_associations[$name] instanceof Associations\LazyLoad)
-				$this->_associations[$name] = $this->_associations[$name]->getData();
-
-			return $this->_associations[$name];
-		} else
-			throw new \MemberAccessException("Cannot read undeclared association ".get_called_class()."::$name.");
 	}
 }

@@ -87,48 +87,48 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
 	public function testOneToOneData1()
 	{
 		$author = $this->manager->find('App\Models\Author', 3);
-		$this->assertEquals(3, $author->blog()->id);
+		$this->assertEquals(3, $author->blog->id);
 		$author = $this->manager->find('App\Models\Author', 3);
-		$this->assertEquals(3, $author->blog()->id);
+		$this->assertEquals(3, $author->blog->id);
 	}
 
 	public function testOneToOneData2()
 	{
 		$blog = $this->manager->find('App\Models\Blog', 3);
-		$this->assertEquals(3, $blog->author()->id);
+		$this->assertEquals(3, $blog->author->id);
 		$blog = $this->manager->find('App\Models\Blog', 3);
-		$this->assertEquals(3, $blog->author()->id);
+		$this->assertEquals(3, $blog->author->id);
 	}
 
 	public function testOneToManyData()
 	{
 		$author = $this->manager->find('App\Models\Author', 3);
-		$this->assertTrue(in_array(5, array_keys($author->applications())));
+		$this->assertTrue(in_array(5, array_keys($author->applications)));
 		$author = $this->manager->find('App\Models\Author', 3);
-		$this->assertTrue(in_array(5, array_keys($author->applications())));
+		$this->assertTrue(in_array(5, array_keys($author->applications)));
 	}
 
 	public function testManyToOneData()
 	{
 		$application = $this->manager->find('App\Models\Application', 6);
-		$this->assertEquals(3, $application->author()->id);
+		$this->assertEquals(3, $application->author->id);
 		$application = $this->manager->find('App\Models\Application', 6);
-		$this->assertEquals(3, $application->author()->id);
+		$this->assertEquals(3, $application->author->id);
 	}
 
 	public function testManyToManyData1()
 	{
 		$application = $this->manager->find('App\Models\Application', 2);
-		$this->assertTrue(in_array(4, array_keys($application->tags())));
+		$this->assertTrue(in_array(4, array_keys($application->tags)));
 		$application = $this->manager->find('App\Models\Application', 2);
-		$this->assertTrue(in_array(4, array_keys($application->tags())));
+		$this->assertTrue(in_array(4, array_keys($application->tags)));
 	}
 
 	public function testManyToManyData2()
 	{
 		$tag = $this->manager->find('App\Models\Tag', 4);
-		$this->assertTrue(in_array(2, array_keys($tag->applications())));
+		$this->assertTrue(in_array(2, array_keys($tag->applications)));
 		$tag = $this->manager->find('App\Models\Tag', 4);
-		$this->assertTrue(in_array(2, array_keys($tag->applications())));
+		$this->assertTrue(in_array(2, array_keys($tag->applications)));
 	}
 }
