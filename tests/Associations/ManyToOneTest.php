@@ -7,7 +7,7 @@ use ActiveMapper\Associations\ManyToOne;
 
 class ManyToOneTest extends \PHPUnit_Framework_TestCase
 {
-	public function testMapped1()
+	public function test1()
 	{
 		$object = new ManyToOne('App\Models\Application', 'App\Models\Author');
 		$this->assertEquals('author', $object->getName());
@@ -24,9 +24,9 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('id', $object->targetColumn);
 	}
 	
-	public function testMapped2()
+	public function test2()
 	{
-		$object = new ManyToOne('App\Models\Application', 'App\Models\Author', 'test', 'name', 'title');
+		$object = new ManyToOne('App\Models\Application', 'App\Models\Author', 'test', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -35,9 +35,9 @@ class ManyToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 
-		$this->assertEquals('title', $object->getSourceColumn());
-		$this->assertEquals('title', $object->sourceColumn);
-		$this->assertEquals('name', $object->getTargetColumn());
-		$this->assertEquals('name', $object->targetColumn);
+		$this->assertEquals('name', $object->getSourceColumn());
+		$this->assertEquals('name', $object->sourceColumn);
+		$this->assertEquals('id', $object->getTargetColumn());
+		$this->assertEquals('id', $object->targetColumn);
 	}
 }

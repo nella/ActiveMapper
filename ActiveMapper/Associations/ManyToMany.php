@@ -30,16 +30,12 @@ use ActiveMapper\Tools,
  * @property-read string $joinTargetColumn join table target column name
  * @property-read bool $mapped
  */
-class ManyToMany extends Base implements IAssociation
+final class ManyToMany extends Base implements IAssociation
 {
 	/** @var bool */
 	protected $mapped;
 	/** @var string */
 	protected $name;
-	/** @var string */
-	protected $targetColumn;
-	/** @var string */
-	protected $sourceColumn;
 	/** @var string */
 	protected $joinTable;
 	/** @var string */
@@ -54,14 +50,12 @@ class ManyToMany extends Base implements IAssociation
 	 * @param string $targetEntity valid target entity class
 	 * @param bool $mapped is this association mapped/inversed
 	 * @param string $name
-	 * @param string $sourceColumn valid source column name
-	 * @param string $targetColumn valid target column name
 	 * @param string $joinTable join table name
 	 * @param string $joinTargetColumn valid join table target column name
 	 * @param string $joinSourceColumn valid join table source column name
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $sourceColumn = NULL, $targetColumn = NULL, $joinTable = NULL, $joinTargetColumn = NULL, $joinSourceColumn = NULL)
+	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $joinTable = NULL, $joinTargetColumn = NULL, $joinSourceColumn = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
 		$targetMetadata = Metadata::getMetadata($targetEntity);
@@ -74,16 +68,6 @@ class ManyToMany extends Base implements IAssociation
 		else
 			$this->name = $name;
 
-
-		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore($sourceMetadata->primaryKey);
-		else
-			$this->sourceColumn = $sourceColumn;
-
-		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore($targetMetadata->primaryKey);
-		else
-			$this->targetColumn = $targetColumn;
 
 		if (empty($joinSourceColumn))
 			$this->joinSourceColumn = Tools::underscore($sourceMetadata->name.ucfirst($this->sourceColumn));
@@ -110,11 +94,31 @@ class ManyToMany extends Base implements IAssociation
 	}
 
 	/**
+	 * Get source column
+	 *
+	 * @return string
+	 */
+	public function getSourceColumn()
+	{
+		return Metadata::getMetadata($this->sourceEntity)->primaryKey;
+	}
+
+	/**
+	 * Get target column
+	 *
+	 * @return string
+	 */
+	public function getTargetColumn()
+	{
+		return Metadata::getMetadata($this->targetEntity)->primaryKey;
+	}
+
+	/**
 	 * Get join table
 	 * 
 	 * @return string
 	 */
-	final public function getJoinTable()
+	public function getJoinTable()
 	{
 		return $this->joinTable;
 	}
@@ -124,7 +128,7 @@ class ManyToMany extends Base implements IAssociation
 	 * 
 	 * @return string
 	 */
-	final public function getJoinSourceColumn()
+	public function getJoinSourceColumn()
 	{
 		return $this->joinSourceColumn;
 	}
@@ -134,7 +138,7 @@ class ManyToMany extends Base implements IAssociation
 	 * 
 	 * @return string
 	 */
-	final public function getJoinTargetColumn()
+	public function getJoinTargetColumn()
 	{
 		return $this->joinTargetColumn;
 	}
@@ -145,7 +149,7 @@ class ManyToMany extends Base implements IAssociation
 	 * 
 	 * @return bool
 	 */
-	final public function isMapped()
+	public function isMapped()
 	{
 		return $this->mapped;
 	}
@@ -156,7 +160,7 @@ class ManyToMany extends Base implements IAssociation
 	 *
 	 * @return bool
 	 */
-	final public function getMapped()
+	public function getMapped()
 	{
 		return $this->isMapped();
 	}

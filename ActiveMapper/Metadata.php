@@ -130,8 +130,7 @@ class Metadata extends \Nette\Object
 				$assoc = new Associations\OneToOne($this->entity, $data[0],
 					isset($data['mapped']) ? $data['mapped'] : TRUE,
 					isset($data['name']) ? $data['name'] : NULL,
-					isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
-					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
+					isset($data['column']) ? $data['column'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
 			}
@@ -141,8 +140,7 @@ class Metadata extends \Nette\Object
 				$data = (array) $data;
 				$assoc = new Associations\OneToMany($this->entity, $data[0],
 						isset($data['name']) ? $data['name'] : NULL,
-						isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
-						isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
+						isset($data['column']) ? $data['column'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
 			}
@@ -152,8 +150,7 @@ class Metadata extends \Nette\Object
 				$data = (array) $data;
 				$assoc = new Associations\ManyToOne($this->entity, $data[0],
 					isset($data['name']) ? $data['name'] : NULL,
-					isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
-					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL
+					isset($data['column']) ? $data['column'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
 			}
@@ -164,11 +161,9 @@ class Metadata extends \Nette\Object
 				$assoc = new Associations\ManyToMany($this->entity, $data[0],
 					isset($data['mapped']) ? $data['mapped'] : TRUE,
 					isset($data['name']) ? $data['name'] : NULL,
-					isset($data['targetColumn']) ? $data['targetColumn'] : NULL,
-					isset($data['sourceColumn']) ? $data['sourceColumn'] : NULL,
 					isset($data['joinTable']) ? $data['joinTable'] : NULL,
-					isset($data['joinTableTargetColumn']) ? $data['joinTableTargetColumn'] : NULL,
-					isset($data['joinTableSourceColumn']) ? $data['joinTableSourceColumn'] : NULL
+					isset($data['joinTargetColumn']) ? $data['joinTargetColumn'] : NULL,
+					isset($data['joinSourceColumn']) ? $data['joinSourceColumn'] : NULL
 				);
 				$this->associations[$assoc->name] = $assoc;
 			}

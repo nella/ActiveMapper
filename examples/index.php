@@ -20,14 +20,16 @@ echo "<h1>All authors</h1>";
 $authors = $em->findAll('App\Models\Author');
 
 foreach ($authors as $author) {
-	Debug::dump($author);
+	Debug::dump($author->name);
+	Debug::dump($author->blog()->name);
 }
 
 echo "<h1>Author by ID #3</h1>";
 // Get author by id
 $author = $em->find('App\Models\Author', 3);
 
-Debug::dump($author);
+Debug::dump($author->name);
+Debug::dump($author->blog()->name);
 
 /********************************************************************************************************************************/
 // Benchmark data

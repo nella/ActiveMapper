@@ -70,49 +70,123 @@ class LazyLoad extends \Nette\Object
 	 */
 	public function getData()
 	{
-		$metadata = Metadata::getMetadata($this->entity);
-		$assoc = $metadata->associations[$this->name];
-		if ($assoc instanceof OneToOne && $assoc->mapped) {
-			return $this->em->getIdentityMap($assoc->targetEntity)->map(
-				$this->em->connection->select("*")->from(Metadata::getMetadata($assoc->targetEntity)->tableName)
-				->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
-				->execute()->fetch()
-			);
-		} elseif ($assoc instanceof OneToOne && !$assoc->mapped) {
-			return $this->em->find($assoc->targetEntity, $this->associationKey);
-		} elseif ($assoc instanceof ManyToMany) {
-			$targetTable = Metadata::getMetadata($assoc->targetEntity)->tableName;
-			return $this->em->getIdentityMap($assoc->targetEntity)->map(
-				$this->em->connection->select("[$targetTable].*")->from($targetTable)
-				->innerJoin($assoc->joinTable)->on("[{$assoc->joinTable}].[{$assoc->joinSourceColumn}] = "
-						.$this->getModificator($assoc->sourceColumn), $this->associationKey)
-				->and("[{$assoc->joinTable}].[{$assoc->joinTargetColumn}] = ["
-						.Metadata::getMetadata($assoc->targetEntity)->tableName."].[{$assoc->targetColumn}]")
-				->execute()->fetchAll()
-			);
-		} elseif ($assoc instanceof OneToMany) {
-			return $this->em->getIdentityMap($assoc->targetEntity)->map(
-				$this->em->connection->select("*")->from(Metadata::getMetadata($assoc->targetEntity)->tableName)
-				->where("[{$assoc->targetColumn}] = ".$this->getModificator($assoc->sourceColumn), $this->associationKey)
-				->execute()->fetchAll()
-			);
-		} else {
-			return $this->em->find($assoc->targetEntity, $this->associationKey);
-		}
+		$association = Metadata::getMetadata($this->entity)->associations[$this->name];
+		if ($association instanceof OneToOne)
+			return $this->getOneToOneData();
+		elseif ($association instanceof OneToMany)
+			return $this->getOneToManyData();
+		elseif ($association instanceof ManyToOne)
+			return $this->getManyToOneData ();
+		return $this->getManyToManyData();
+	}
+
+	/**
+	 * Get entity by one to one association
+	 *
+	 * @return mixed
+	 */
+	protected function getOneToOneData()
+	{
+		$association = Metadata::getMetadata($this->entity)->associations[$this->name];
+		if ($this->em->associationsMap->isMapped($this->entity, $this->name, $this->associationKey))
+			return $this->em->find($association->targetEntity, 
+					$this->em->associationsMap->find($this->entity, $this->name, $this->associationKey));
+
+		$targetMetadata = Metadata::getMetadata($association->targetEntity);
+		if ($association->mapped)
+			$modificator = $this->getModificator($this->entity, $association->sourceColumn);
+		else
+			$modificator = $this->getModificator($association->targetEntity, $association->targetColumn);
+		$data = $this->em->connection->select("*")->from($targetMetadata->tableName)
+			->where("[{$association->targetColumn}] = $modificator", $this->associationKey)
+			->execute();
+		$entity = $this->em->getIdentityMap($association->targetEntity)->map($data->fetch());
+		$this->em->associationsMap->map($this->entity, $this->name, $this->associationKey,
+				$targetMetadata->getPrimaryKeyValue($entity));
+
+		return $entity;
+	}
+
+	/**
+	 * Get entites by one to many association
+	 * 
+	 * @return array|NULL
+	 */
+	protected function getOneToManyData()
+	{
+		$association = Metadata::getMetadata($this->entity)->associations[$this->name];
+		$targetMetadata = Metadata::getMetadata($association->targetEntity);
+		$data = $this->em->connection->select("*")->from($targetMetadata->tableName)
+			->where("[{$association->targetColumn}] = ".$this->getModificator($this->entity, $association->sourceColumn),
+					$this->associationKey)
+			->execute();
+		$entities = $this->em->getIdentityMap($association->targetEntity)->map($data->fetchAssoc($targetMetadata->primaryKey));
+		if (!empty($entities))
+			$this->em->associationsMap->map($this->entity, $this->name, $this->associationKey, array_keys($entities));
+
+		return $entities;
+	}
+
+	/**
+	 * Get entites by one to many association
+	 *
+	 * @return array|NULL
+	 */
+	protected function getManyToOneData()
+	{
+		$association = Metadata::getMetadata($this->entity)->associations[$this->name];
+		if ($this->em->associationsMap->isMapped($this->entity, $this->name, $this->associationKey))
+			return $this->em->find($association->targetEntity,
+					$this->em->associationsMap->find($this->entity, $this->name, $this->associationKey));
+
+		$targetMetadata = Metadata::getMetadata($association->targetEntity);
+		$modificator = $this->getModificator($association->targetEntity, $association->targetColumn);
+		$data = $this->em->connection->select("*")->from($targetMetadata->tableName)
+			->where("[{$association->targetColumn}] = $modificator", $this->associationKey)
+			->execute();
+		$entity = $this->em->getIdentityMap($association->targetEntity)->map($data->fetch());
+		$this->em->associationsMap->map($this->entity, $this->name, $this->associationKey,
+				$targetMetadata->getPrimaryKeyValue($entity));
+
+		return $entity;
+	}
+
+	/**
+	 * Get entities by many to many association
+	 *
+	 * @return array|NULL
+	 */
+	protected function getManyToManyData()
+	{
+		$association = Metadata::getMetadata($this->entity)->associations[$this->name];
+		$targetMetadata = Metadata::getMetadata($association->targetEntity);
+		$data = $this->em->connection->select("[{$targetMetadata->tableName}].*")->from($targetMetadata->tableName)
+			->innerJoin($association->joinTable)->on("[{$association->joinTable}].[{$association->joinSourceColumn}] = "
+					.$this->getModificator($this->entity, $association->sourceColumn), $this->associationKey)
+			->and("[{$association->joinTable}].[{$association->joinTargetColumn}] = ["
+					.$targetMetadata->tableName."].[{$association->targetColumn}]")
+			->execute();
+
+		$entities = $this->em->getIdentityMap($association->targetEntity)->map($data->fetchAssoc($targetMetadata->primaryKey));
+		if (!empty($entities))
+			$this->em->associationsMap->map($this->entity, $this->name, $this->associationKey, array_keys($entities));
+
+		return $entities;
 	}
 
 	/**
 	 * Get modificator
 	 *
+	 * @param string $entity entity class name
 	 * @param string $column entity column name
 	 * @return string
 	 * @throws InvalidArgumentException
 	 */
-	protected function getModificator($column)
+	protected function getModificator($entity, $column)
 	{
-		$metadata = Metadata::getMetadata($this->entity);
+		$metadata = Metadata::getMetadata($entity);
 		if (!$metadata->hasColumn($column))
-			throw new \InvalidArgumentException("Entity '{$this->entity}' has not '$column' column");
+			throw new \InvalidArgumentException("Entity '$entity' has not '$column' column");
 
 		$class = $metadata->getColumn($column)->reflection->name;
 		if (!in_array($class, array_keys(self::$modificators)))

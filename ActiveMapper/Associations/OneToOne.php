@@ -23,20 +23,18 @@ use dibi,
  * @package    ActiveMapper\Associations
  * @property-read string $sourceEntity source entity class
  * @property-read string $targetEntity target entity class
+ * @property-read bool $mapped
  * @property-read string $sourceColumn source column name
  * @property-read string $targetColumn target column name
- * @property-read bool $mapped
  */
-class OneToOne extends Base implements IAssociation
+final class OneToOne extends Base implements IAssociation
 {
 	/** @var bool */
 	protected $mapped;
 	/** @var string */
 	protected $name;
 	/** @var string */
-	protected $targetColumn;
-	/** @var string */
-	protected $sourceColumn;
+	protected $column;
 
 	/**
 	 * Costructor
@@ -45,44 +43,55 @@ class OneToOne extends Base implements IAssociation
 	 * @param string $targetEntity valid target entity class
 	 * @param bool $mapped is this association mapped/inversed
 	 * @param string $name
-	 * @param string $targetColumn valid targer column name
-	 * @param string $sourceColumn valid source column name
+	 * @param string $column target/source column name
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $targetColumn = NULL, $sourceColumn = NULL)
+	public function __construct($sourceEntity, $targetEntity, $mapped = TRUE, $name = NULL, $column = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
-		$targetMetadata = Metadata::getMetadata($targetEntity);
-		$sourceMetadata = Metadata::getMetadata($sourceEntity);
 
 		$this->mapped = $mapped;
 
+		$metadata = Metadata::getMetadata($targetEntity);
 		if (empty($name))
-			$this->name = lcfirst($targetMetadata->name);
+			$this->name = lcfirst($metadata->name);
 		else
 			$this->name = $name;
 
-		if ($this->mapped) {
-			if (empty($sourceColumn))
-				$this->sourceColumn = Tools::underscore($sourceMetadata->primaryKey);
-			else
-				$this->sourceColumn = $sourceColumn;
+		if (empty($column)) {
+			if ($this->mapped) {
+				$metadata = Metadata::getMetadata($sourceEntity);
+				$this->column = Tools::underscore($metadata->name.ucfirst($metadata->primaryKey));
+			} else
+				$this->column = Tools::underscore($metadata->name.ucfirst($metadata->primaryKey));
+		} else
+			$this->column = $column;
+	}
 
-			if (empty($targetColumn))
-				$this->targetColumn = Tools::underscore($sourceMetadata->name.ucfirst($this->sourceColumn));
-			else
-				$this->targetColumn = $targetColumn;
-		} else {
-			if (empty($targetColumn))
-				$this->targetColumn = Tools::underscore($targetMetadata->primaryKey);
-			else
-				$this->targetColumn = $targetColumn;
+	/**
+	 * Get source column
+	 *
+	 * @return string
+	 */
+	public function getSourceColumn()
+	{
+		if ($this->mapped)
+			return Metadata::getMetadata($this->sourceEntity)->primaryKey;
+		else
+			return $this->column;
+	}
 
-			if (empty($sourceColumn))
-				$this->sourceColumn = Tools::underscore($targetMetadata->name.ucfirst($this->targetColumn));
-			else
-				$this->sourceColumn = $sourceColumn;
-		}
+	/**
+	 * Get target column
+	 *
+	 * @return string
+	 */
+	public function getTargetColumn()
+	{
+		if ($this->mapped)
+			return $this->column;
+		else
+			return Metadata::getMetadata($this->targetEntity)->primaryKey;
 	}
 
 	/**
@@ -91,7 +100,7 @@ class OneToOne extends Base implements IAssociation
 	 * 
 	 * @return bool
 	 */
-	final public function isMapped()
+	public function isMapped()
 	{
 		return $this->mapped;
 	}
@@ -102,7 +111,7 @@ class OneToOne extends Base implements IAssociation
 	 *
 	 * @return bool
 	 */
-	final public function getMapped()
+	public function getMapped()
 	{
 		return $this->isMapped();
 	}

@@ -30,8 +30,7 @@ class LazyLoadTest extends \PHPUnit_Framework_TestCase
 	public function testOneToManyData()
 	{
 		$object = new LazyLoad($this->manager, 'App\Models\Author', 'applications', array('id' => 3));
-		$data = $object->getData();
-		$this->assertEquals(5, $data[0]->id);
+		$this->assertTrue(in_array(5, array_keys($object->getData())));
 	}
 
 	public function testManyToOneData()
@@ -43,14 +42,12 @@ class LazyLoadTest extends \PHPUnit_Framework_TestCase
 	public function testManyToManyData1()
 	{
 		$object = new LazyLoad($this->manager, 'App\Models\Application', 'tags', array('id' => 2));
-		$data = $object->getData();
-		$this->assertEquals(4, $data[0]->id);
+		$this->assertTrue(in_array(4, array_keys($object->getData())));
 	}
 
 	public function testManyToManyData2()
 	{
 		$object = new LazyLoad($this->manager, 'App\Models\Tag', 'applications', array('id' => 4));
-		$data = $object->getData();
-		$this->assertEquals(2, $data[0]->id);
+		$this->assertTrue(in_array(2, array_keys($object->getData())));
 	}
 }

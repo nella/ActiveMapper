@@ -26,14 +26,12 @@ use ActiveMapper\Tools,
  * @property-read string $sourceColumn source column name
  * @property-read string $targetColumn target column name
  */
-class ManyToOne extends Base implements IAssociation
+final class ManyToOne extends Base implements IAssociation
 {
 	/** @var string */
 	protected $name;
 	/** @var string */
-	protected $targetColumn;
-	/** @var string */
-	protected $sourceColumn;
+	protected $column;
 
 	/**
 	 * Costructor
@@ -41,29 +39,42 @@ class ManyToOne extends Base implements IAssociation
 	 * @param string $sourceEntity valid source entity class
 	 * @param string $targetEntity valid target entity class
 	 * @param string $name
-	 * @param string $targetColumn valid targer column name
-	 * @param string $sourceColumn valid source column name
+	 * @param string $column targer/source column name
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($sourceEntity, $targetEntity, $name = NULL, $targetColumn = NULL, $sourceColumn = NULL)
+	public function __construct($sourceEntity, $targetEntity, $name = NULL, $column = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
-		$targetMetadata = Metadata::getMetadata($targetEntity);
-		$sourceMetadata = Metadata::getMetadata($sourceEntity);
 
+		$metadata = Metadata::getMetadata($targetEntity);
 		if (empty($name))
-			$this->name = lcfirst($targetMetadata->name);
+			$this->name = lcfirst($metadata->name);
 		else
 			$this->name = $name;
 
-		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore($targetMetadata->primaryKey);
+		if (empty($column))
+			$this->column = Tools::underscore($metadata->name.ucfirst($metadata->primaryKey));
 		else
-			$this->targetColumn = $targetColumn;
+			$this->column = $column;
+	}
 
-		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore($targetMetadata->name.ucfirst($this->targetColumn));
-		else
-			$this->sourceColumn = $sourceColumn;
+	/**
+	 * Get source column
+	 *
+	 * @return string
+	 */
+	public function getSourceColumn()
+	{
+		return $this->column;
+	}
+
+	/**
+	 * Get target column
+	 *
+	 * @return string
+	 */
+	public function getTargetColumn()
+	{
+		return Metadata::getMetadata($this->targetEntity)->primaryKey;
 	}
 }

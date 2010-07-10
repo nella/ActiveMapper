@@ -26,14 +26,12 @@ use ActiveMapper\Tools,
  * @property-read string $sourceColumn source column name
  * @property-read string $targetColumn target column name
  */
-class OneToMany extends Base implements IAssociation
+final class OneToMany extends Base implements IAssociation
 {
 	/** @var string */
 	protected $name;
 	/** @var string */
-	protected $targetColumn;
-	/** @var string */
-	protected $sourceColumn;
+	protected $column;
 
 	/**
 	 * Costructor
@@ -41,29 +39,42 @@ class OneToMany extends Base implements IAssociation
 	 * @param string $sourceEntity valid source entity class
 	 * @param string $targetEntity valid target entity class
 	 * @param string $name
-	 * @param string $targetColumn valid targer column name
-	 * @param string $sourceColumn valid source column name
+	 * @param string $column targer/source column name
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($sourceEntity, $targetEntity, $name = NULL, $targetColumn = NULL, $sourceColumn = NULL)
+	public function __construct($sourceEntity, $targetEntity, $name = NULL, $column = NULL)
 	{
 		parent::__construct($sourceEntity, $targetEntity);
-		$targetMetadata = Metadata::getMetadata($targetEntity);
-		$sourceMetadata = Metadata::getMetadata($sourceEntity);
 
 		if (empty($name))
-			$this->name = lcfirst(Tools::pluralize($targetMetadata->name));
+			$this->name = lcfirst(Tools::pluralize(Metadata::getMetadata($targetEntity)->name));
 		else
 			$this->name = $name;
 
-		if (empty($sourceColumn))
-			$this->sourceColumn = Tools::underscore($sourceMetadata->primaryKey);
-		else
-			$this->sourceColumn = $sourceColumn;
+		if (empty($column)) {
+			$metadata = Metadata::getMetadata($sourceEntity);
+			$this->column = Tools::underscore($metadata->name.ucfirst($metadata->primaryKey));
+		} else
+			$this->column = $column;
+	}
 
-		if (empty($targetColumn))
-			$this->targetColumn = Tools::underscore($sourceMetadata->name.ucfirst($this->sourceColumn));
-		else
-			$this->targetColumn = $targetColumn;
+	/**
+	 * Get source column
+	 *
+	 * @return string
+	 */
+	public function getSourceColumn()
+	{
+		return Metadata::getMetadata($this->sourceEntity)->primaryKey;
+	}
+
+	/**
+	 * Get target column
+	 *
+	 * @return string
+	 */
+	public function getTargetColumn()
+	{
+		return $this->column;
 	}
 }

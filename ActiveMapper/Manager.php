@@ -22,6 +22,7 @@ use DibiConnection;
  *
  * @property-read DibiConnection $connection
  * @property-read ActiveMapper\UnitOfWork $unitOfWork
+ * @property-read ActiveMapper\Associations\Map $associationsMap
  */
 class Manager extends \Nette\Object
 {
@@ -35,6 +36,8 @@ class Manager extends \Nette\Object
 	private $identityMap = array();
 	/** @var ActiveMapper\UnitOfWork */
 	private $unitOfWork;
+	/** @var ActiveMapper\Associations\Map */
+	private $associationsMap;
 
 	public function __construct(DibiConnection $connection)
 	{
@@ -132,6 +135,19 @@ class Manager extends \Nette\Object
 			$this->unitOfWork = UnitOfWork::getUnitOfWork($this);
 
 		return $this->unitOfWork;
+	}
+
+	/**
+	 * Get associations map
+	 *
+	 * @return ActiveMapper\Associations\Map
+	 */
+	public function getAssociationsMap()
+	{
+		if (!isset($this->associationsMap))
+			$this->associationsMap = new Associations\Map($this);
+
+		return $this->associationsMap;
 	}
 
 	/**

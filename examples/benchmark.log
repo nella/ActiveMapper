@@ -4,3 +4,11 @@ Tue, 06 Jul 2010 21:08:33 +0200 # mapping time: 183.4ms mapping memory: 0.0kB to
 Tue, 06 Jul 2010 21:08:44 +0200 # mapping time: 24.0ms mapping memory: 1 150.8kB total time: 55.7ms total memory: 5 402.2kB
 Tue, 06 Jul 2010 21:19:31 +0200 # mapping time: 85.3ms mapping memory: 0.0kB total time: 1 941.8ms total memory: 6 277.3kB
 Tue, 06 Jul 2010 21:19:35 +0200 # mapping time: 24.0ms mapping memory: 1 152.4kB total time: 54.6ms total memory: 5 403.8kB
+Wed, 07 Jul 2010 03:34:13 +0200 # mapping time: 485.7ms mapping memory: 0.0kB total time: 2 680.9ms total memory: 6 285.1kB
+Wed, 07 Jul 2010 03:34:32 +0200 # mapping time: 53.3ms mapping memory: 1 478.2kB total time: 103.9ms total memory: 5 743.1kB
+Wed, 07 Jul 2010 03:34:33 +0200 # mapping time: 55.4ms mapping memory: 1 478.2kB total time: 87.1ms total memory: 5 743.1kB
+Wed, 07 Jul 2010 03:34:35 +0200 # mapping time: 56.5ms mapping memory: 1 478.2kB total time: 89.5ms total memory: 5 743.1kB
+Wed, 07 Jul 2010 03:34:35 +0200 # mapping time: 61.2ms mapping memory: 1 478.2kB total time: 101.0ms total memory: 5 743.1kB
+Wed, 07 Jul 2010 03:34:36 +0200 # mapping time: 60.9ms mapping memory: 1 478.2kB total time: 97.1ms total memory: 5 743.1kB
+Sat, 10 Jul 2010 08:06:03 +0200 # mapping time: 277.2ms mapping memory: 2 737.1kB total time: 349.1ms total memory: 6 999.9kB
+Sat, 10 Jul 2010 08:06:05 +0200 # mapping time: 54.6ms mapping memory: 1 598.1kB total time: 86.8ms total memory: 5 862.0kB

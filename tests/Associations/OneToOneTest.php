@@ -30,7 +30,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', TRUE, 'test', 'url', 'name');
+		$object = new OneToOne('App\Models\Author', 'App\Models\Blog', TRUE, 'test', 'url');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -39,8 +39,8 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('App\Models\Blog', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Blog', $object->targetEntity);
 
-		$this->assertEquals('name', $object->getSourceColumn());
-		$this->assertEquals('name', $object->sourceColumn);
+		$this->assertEquals('id', $object->getSourceColumn());
+		$this->assertEquals('id', $object->sourceColumn);
 		$this->assertEquals('url', $object->getTargetColumn());
 		$this->assertEquals('url', $object->targetColumn);
 
@@ -49,7 +49,7 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($object->mapped);
 	}
 	
-	public function testMapped3()
+	public function testInversed3()
 	{
 		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE);
 		$this->assertEquals('author', $object->getName());
@@ -70,9 +70,9 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse($object->mapped);
 	}
 	
-	public function testMapped4()
+	public function testInversed4()
 	{
-		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE, 'test', 'name', 'title');
+		$object = new OneToOne('App\Models\Blog', 'App\Models\Author', FALSE, 'test', 'name');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -81,10 +81,10 @@ class OneToOneTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('App\Models\Author', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Author', $object->targetEntity);
 
-		$this->assertEquals('title', $object->getSourceColumn());
-		$this->assertEquals('title', $object->sourceColumn);
-		$this->assertEquals('name', $object->getTargetColumn());
-		$this->assertEquals('name', $object->targetColumn);
+		$this->assertEquals('name', $object->getSourceColumn());
+		$this->assertEquals('name', $object->sourceColumn);
+		$this->assertEquals('id', $object->getTargetColumn());
+		$this->assertEquals('id', $object->targetColumn);
 
 		$this->assertFalse($object->isMapped());
 		$this->assertFalse($object->getMapped());

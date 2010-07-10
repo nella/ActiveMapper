@@ -22,8 +22,7 @@ use ActiveMapper\Metadata,
  * @package    ActiveMapper\Associations
  * @property-read string $sourceEntity source entity class
  * @property-read string $targetEntity target entity class
- * @property-read string $sourceTable source table name
- * @property-read string $targetEntity target table name
+ * @property-read string $name
  */
 abstract class Base extends \Nette\Object
 {
@@ -75,25 +74,5 @@ abstract class Base extends \Nette\Object
 	final public function getName()
 	{
 		return $this->name;
-	}
-
-	/**
-	 * Get source column
-	 *
-	 * @return string
-	 */
-	final public function getSourceColumn()
-	{
-		return $this->sourceColumn;
-	}
-
-	/**
-	 * Get target column
-	 *
-	 * @return string
-	 */
-	final public function getTargetColumn()
-	{
-		return $this->targetColumn;
 	}
 }

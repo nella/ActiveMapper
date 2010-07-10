@@ -38,8 +38,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 	
 	public function testMapped2()
 	{
-		$object = new ManyToMany('App\Models\Application', 'App\Models\Tag', TRUE, 'test', 'title', 'name', 'test_test',
-			'tag_name', 'application_title');
+		$object = new ManyToMany('App\Models\Application', 'App\Models\Tag', TRUE, 'test', 'test_test', 'tag_name', 'application_title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -48,10 +47,10 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('App\Models\Tag', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Tag', $object->targetEntity);
 
-		$this->assertEquals('title', $object->getSourceColumn());
-		$this->assertEquals('title', $object->sourceColumn);
-		$this->assertEquals('name', $object->getTargetColumn());
-		$this->assertEquals('name', $object->targetColumn);
+		$this->assertEquals('id', $object->getSourceColumn());
+		$this->assertEquals('id', $object->sourceColumn);
+		$this->assertEquals('id', $object->getTargetColumn());
+		$this->assertEquals('id', $object->targetColumn);
 		
 		$this->assertEquals('application_title', $object->getJoinSourceColumn());
 		$this->assertEquals('application_title', $object->joinSourceColumn);
@@ -63,7 +62,7 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($object->mapped);
 	}
 	
-	public function testMapped3()
+	public function testInversed3()
 	{
 		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE);
 		$this->assertEquals('applications', $object->getName());
@@ -92,9 +91,9 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse($object->mapped);
 	}
 	
-	public function testMapped4()
+	public function testInversed4()
 	{
-		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE, 'test', 'name', 'title', 'test_test');
+		$object = new ManyToMany('App\Models\Tag', 'App\Models\Application', FALSE, 'test', 'test_test');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -106,15 +105,15 @@ class ManyToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test_test', $object->getJoinTable());
 		$this->assertEquals('test_test', $object->joinTable);
 
-		$this->assertEquals('name', $object->getSourceColumn());
-		$this->assertEquals('name', $object->sourceColumn);
-		$this->assertEquals('title', $object->getTargetColumn());
-		$this->assertEquals('title', $object->targetColumn);
+		$this->assertEquals('id', $object->getSourceColumn());
+		$this->assertEquals('id', $object->sourceColumn);
+		$this->assertEquals('id', $object->getTargetColumn());
+		$this->assertEquals('id', $object->targetColumn);
 		
-		$this->assertEquals('tag_name', $object->getJoinSourceColumn());
-		$this->assertEquals('tag_name', $object->joinSourceColumn);
-		$this->assertEquals('application_title', $object->getJoinTargetColumn());
-		$this->assertEquals('application_title', $object->joinTargetColumn);
+		$this->assertEquals('tag_id', $object->getJoinSourceColumn());
+		$this->assertEquals('tag_id', $object->joinSourceColumn);
+		$this->assertEquals('application_id', $object->getJoinTargetColumn());
+		$this->assertEquals('application_id', $object->joinTargetColumn);
 
 		$this->assertFalse($object->isMapped());
 		$this->assertFalse($object->getMapped());

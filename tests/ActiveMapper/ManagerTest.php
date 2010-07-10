@@ -56,6 +56,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($data, $this->object->unitOfWork);
 	}
 
+	public function testGetAssociationsMap()
+	{
+		$data = new \ActiveMapper\Associations\Map($this->object);
+		$this->assertEquals($data, $this->object->getAssociationsMap());
+		$this->assertEquals($data, $this->object->associationsMap);
+	}
+
 	public function testFind1()
 	{
 		$data = $this->object->find('App\Models\Author', 1);

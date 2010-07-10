@@ -7,7 +7,7 @@ use ActiveMapper\Associations\OneToMany;
 
 class OneToManyTest extends \PHPUnit_Framework_TestCase
 {
-	public function testMapped1()
+	public function test1()
 	{
 		$object = new OneToMany('App\Models\Author', 'App\Models\Application');
 		$this->assertEquals('applications', $object->getName());
@@ -24,9 +24,9 @@ class OneToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('author_id', $object->targetColumn);
 	}
 	
-	public function testMapped2()
+	public function test2()
 	{
-		$object = new OneToMany('App\Models\Author', 'App\Models\Application', 'test', 'title', 'name');
+		$object = new OneToMany('App\Models\Author', 'App\Models\Application', 'test', 'title');
 		$this->assertEquals('test', $object->getName());
 		$this->assertEquals('test', $object->name);
 
@@ -35,8 +35,8 @@ class OneToManyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('App\Models\Application', $object->getTargetEntity());
 		$this->assertEquals('App\Models\Application', $object->targetEntity);
 
-		$this->assertEquals('name', $object->getSourceColumn());
-		$this->assertEquals('name', $object->sourceColumn);
+		$this->assertEquals('id', $object->getSourceColumn());
+		$this->assertEquals('id', $object->sourceColumn);
 		$this->assertEquals('title', $object->getTargetColumn());
 		$this->assertEquals('title', $object->targetColumn);
 	}
